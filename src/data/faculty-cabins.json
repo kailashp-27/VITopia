@@ -1,0 +1,2617 @@
+[
+  {
+    "name": "Srimathi",
+    "school": "R",
+    "cabin": "SELECT AB1, 6th floor, Room No 604, 6th Cabin"
+  },
+  {
+    "name": "Sreedevi V T",
+    "school": "SELECT",
+    "cabin": "AB1, 7th floor, Annex, 7th Cabin"
+  },
+  {
+    "name": "Hemamalini",
+    "school": "SELECT",
+    "cabin": "AB1, 6th floor, Room No 604, 16th Cabin"
+  },
+  {
+    "name": "Gnana Swathika O V",
+    "school": "SELECT",
+    "cabin": "AB1, 6th floor, Room No 604, 10th Cabin"
+  },
+  {
+    "name": "Sasipriya P",
+    "school": "SELECT",
+    "cabin": "AB1, 6th floor, Annex, 10th Cabin"
+  },
+  {
+    "name": "Kanimozhi G",
+    "school": "SELECT",
+    "cabin": "AB1, Ground floor, Machines Lab, 2nd Cabin"
+  },
+  {
+    "name": "Febin Daya J L",
+    "school": "SELECT",
+    "cabin": "AB1, 6th floor, Annex, 2nd Cabin"
+  },
+  {
+    "name": "Nithya Venkatesan",
+    "school": "SELECT",
+    "cabin": "Admin 2nd floor International relation office"
+  },
+  {
+    "name": "Meenakshi J",
+    "school": "SELECT",
+    "cabin": "AB1, 6th floor, Room No 604, 9th Cabin"
+  },
+  {
+    "name": "Sri Revathi B",
+    "school": "SELECT",
+    "cabin": "AB1, 3rd floor, 306 - Control & Instrumention Lab Room No 306"
+  },
+  {
+    "name": "Senthil Kumar N",
+    "school": "SELECT",
+    "cabin": "AB1, 6th floor, Room No 604, 13th Cabin"
+  },
+  {
+    "name": "Lavanya V",
+    "school": "SELECT",
+    "cabin": "AB1, 7th, Annex, Room No 2"
+  },
+  {
+    "name": "Meera P S",
+    "school": "SELECT",
+    "cabin": "AB1, 7th, 703A-Protection & Switchgear lab, 303A"
+  },
+  {
+    "name": "Sri Ramalakshmi P",
+    "school": "SELECT",
+    "cabin": "AB1, Ground floor, Machines Lab, 2nd Cabin"
+  },
+  {
+    "name": "Anantha Krishnan V",
+    "school": "SELECT",
+    "cabin": "AB1, 6TH Floor, Annex , No 9"
+  },
+  {
+    "name": "Prabhakar M",
+    "school": "SELECT",
+    "cabin": "AB1, 6th floor, Room No 604, 14th Cabin"
+  },
+  {
+    "name": "Angeline Ezhilarasi G",
+    "school": "SELECT",
+    "cabin": "AB1, 6th floor, Room No 604, 2nd Cabin"
+  },
+  {
+    "name": "Lenin N C",
+    "school": "SELECT",
+    "cabin": "AB2, 1st floor, 101A - Electrical Vehicles - Research Center"
+  },
+  {
+    "name": "Chendur Kumaran R",
+    "school": "SELECT",
+    "cabin": "AB1, 6th floor, Room No 604, 1st Cabin"
+  },
+  {
+    "name": "Peer Fathima A",
+    "school": "SELECT",
+    "cabin": "AB1, 6th floor, Room No 604, 15th Cabin"
+  },
+  {
+    "name": "Balamurugan P",
+    "school": "SELECT",
+    "cabin": "AB1, 7th floor, Room No 604, 6th Cabin"
+  },
+  {
+    "name": "Nilanjan Tewari",
+    "school": "SELECT",
+    "cabin": "AB1, 7th floor, 707C-Smart Grid Lab"
+  },
+  {
+    "name": "Jamuna K",
+    "school": "SELECT",
+    "cabin": "AB1, 7th, Annex, Room No 6"
+  },
+  {
+    "name": "Subbulekshmi D",
+    "school": "SELECT",
+    "cabin": "AB1, 7th, Annex, Room No 5"
+  },
+  {
+    "name": "Angalaeswari S",
+    "school": "SELECT",
+    "cabin": "AB1, 6TH Floor, Annex , No 1"
+  },
+  {
+    "name": "Deepa T",
+    "school": "SELECT",
+    "cabin": "AB1, 7th floor , Cabin No 2"
+  },
+  {
+    "name": "Iyswarya Annapoorani K",
+    "school": "SELECT",
+    "cabin": "AB2, 1st floor , Cabin No 6"
+  },
+  {
+    "name": "Kuruseelan S",
+    "school": "SELECT",
+    "cabin": "AB1, 7th floor , Cabin No 5"
+  },
+  {
+    "name": "Vaithilingam C",
+    "school": "SELECT",
+    "cabin": "AB1, 6th floor. 607-Power System Simulation lab"
+  },
+  {
+    "name": "Binu Ben Jose D R",
+    "school": "SELECT",
+    "cabin": "AB1, 6th, 603-Power Electronics lab"
+  },
+  {
+    "name": "Umayal C",
+    "school": "SELECT",
+    "cabin": "AB1, 7th, Annex, Room No 4"
+  },
+  {
+    "name": "Gunabalan R",
+    "school": "SELECT",
+    "cabin": "AB1, 7th floor , Cabin No 1"
+  },
+  {
+    "name": "Premalatha L",
+    "school": "SELECT",
+    "cabin": "AB1, 5th, Room No 504, 7th Faculty Cabin"
+  },
+  {
+    "name": "Mohamed Imran A",
+    "school": "SELECT",
+    "cabin": "AB1, 7th, Annex, No 3"
+  },
+  {
+    "name": "Arul R",
+    "school": "SELECT",
+    "cabin": "AB2, 1st floor, Faculty Cabin 5"
+  },
+  {
+    "name": "Jayapragash R",
+    "school": "SELECT",
+    "cabin": "AB1, 7th floor, 603A-Embedded Lab"
+  },
+  {
+    "name": "Sumathi",
+    "school": "V",
+    "cabin": "SELECT AB2, 2nd floor, Faculty Cabin No 6"
+  },
+  {
+    "name": "Inayathullah Abdul Kareem",
+    "school": "SELECT",
+    "cabin": "HEALTH CENTRE, 2nd floor, Faculty Cabin , 204 class Room"
+  },
+  {
+    "name": "Hari Krishnan",
+    "school": "K",
+    "cabin": "VITBS ADMN block, 4th floor, Room No 406"
+  },
+  {
+    "name": "Joseph Jeya Anand",
+    "school": "S",
+    "cabin": "VITBS ADMN block, 4th floor, Room No 406"
+  },
+  {
+    "name": "Reeves Wesley J",
+    "school": "VITBS",
+    "cabin": "ADMN block, 3th floor, Room No 306"
+  },
+  {
+    "name": "Deepa",
+    "school": "Damodaran",
+    "cabin": "VITBS ADMN block, 4th floor, Room No 406"
+  },
+  {
+    "name": "Sudarsanam S K",
+    "school": "VITBS",
+    "cabin": "ADMN block, 3th floor, Room No 308"
+  },
+  {
+    "name": "Venkatesh R",
+    "school": "VITBS",
+    "cabin": "ADMN block, 4th floor, Room No 408"
+  },
+  {
+    "name": "Sharon Sophia",
+    "school": "VITBS",
+    "cabin": "ADMN block, 3th floor, Room No 306"
+  },
+  {
+    "name": "Saju B",
+    "school": "VITBS",
+    "cabin": "ADMN block, 4th floor, Room No 306"
+  },
+  {
+    "name": "Aruna R",
+    "school": "VITBS",
+    "cabin": "ADMN block, 3th floor, Room No 306"
+  },
+  {
+    "name": "Balaji J",
+    "school": "VITBS",
+    "cabin": "ADMN block, 4th floor, Room No 408"
+  },
+  {
+    "name": "Anuradha A",
+    "school": "VITBS",
+    "cabin": "ADMN block, 3th floor, Room No 306"
+  },
+  {
+    "name": "Gopinathan N",
+    "school": "VITBS",
+    "cabin": "ADMN block, 3th floor, Room No 406"
+  },
+  {
+    "name": "Raja Rajeswari",
+    "school": "G",
+    "cabin": "VITBS ADMN block, 3th floor, Room No 308"
+  },
+  {
+    "name": "Vaidhyanatha Balaji K V",
+    "school": "VITBS",
+    "cabin": "ADMN block, 4th floor, Room No 406"
+  },
+  {
+    "name": "S Saleem",
+    "school": "VITBS",
+    "cabin": "ADMN block, 6th floor"
+  },
+  {
+    "name": "Sumathi G N",
+    "school": "VITBS",
+    "cabin": "ADMN block, 3th floor, Room No 306"
+  },
+  {
+    "name": "Thangaraja Arumugam",
+    "school": "VITBS",
+    "cabin": "ADMN block, 6th floor"
+  },
+  {
+    "name": "J Bhavani",
+    "school": "VITBS",
+    "cabin": "ADMN block, 6th floor"
+  },
+  {
+    "name": "Nisha R",
+    "school": "VITBS",
+    "cabin": "ADMN block, 6th floor"
+  },
+  {
+    "name": "Asi Vasu Deva Reddy",
+    "school": "VITBS",
+    "cabin": "ADMN block, 6th floor"
+  },
+  {
+    "name": "Shwetha M Krishnappa",
+    "school": "VITBS",
+    "cabin": "Health centre, 2nd floor, Faculty Cabin7"
+  },
+  {
+    "name": "L R K Krishnan",
+    "school": "VITBS",
+    "cabin": "ADMN block, 3th floor, Room No 306"
+  },
+  {
+    "name": "S Divya",
+    "school": "VITBS",
+    "cabin": "Health centre, 2nd floor, Faculty Cabin5"
+  },
+  {
+    "name": "Malay Bhattacharjee",
+    "school": "VITBS",
+    "cabin": "ADMN block, 3th floor, Room No 306"
+  },
+  {
+    "name": "Biswabhusan Bhuyan",
+    "school": "VITBS",
+    "cabin": "sigma, 2nd floor , Room No 20"
+  },
+  {
+    "name": "Buvanesh",
+    "school": "VITBS",
+    "cabin": "sigma, 2nd floor , Room No 19"
+  },
+  {
+    "name": "Jyotirmayee Satapathy",
+    "school": "VITBS",
+    "cabin": "sigma, 2nd floor , Room No 17"
+  },
+  {
+    "name": "Mekhala Antony",
+    "school": "VITBS",
+    "cabin": "sigma, 2nd floor , Room No 14"
+  },
+  {
+    "name": "Subhamitra Patra",
+    "school": "VITBS",
+    "cabin": "sigma, 2nd floor , Room No 21"
+  },
+  {
+    "name": "Meenakshi Sankaran",
+    "school": "VITBS",
+    "cabin": "sigma, 2nd floor , Room No 15"
+  },
+  {
+    "name": "Praveen Kakada",
+    "school": "VITBS",
+    "cabin": "Delta block , 4th floor Room No 402, Cabin No 7"
+  },
+  {
+    "name": "Sudheer Muhammed K M",
+    "school": "VITBS",
+    "cabin": "Delta block , 4th floor Room No 402, Cabin No 8"
+  },
+  {
+    "name": "Muhammed Shafi M K",
+    "school": "VITBS",
+    "cabin": "Delta block , 4th floor Room No 402, Cabin No 9"
+  },
+  {
+    "name": "Chitra Dey",
+    "school": "VITBS",
+    "cabin": "ADMN block, 4th floor"
+  },
+  {
+    "name": "Sujatha Manohar",
+    "school": "VITBS",
+    "cabin": "ADMN block, 4th floor"
+  },
+  {
+    "name": "Mahalakshmi S",
+    "school": "SAS",
+    "cabin": "AB1, I Floor-Annex, Cabin No. 6"
+  },
+  {
+    "name": "John Kennedy",
+    "school": "L",
+    "cabin": "SAS AB1, II Floor, Physics Lab"
+  },
+  {
+    "name": "Atanu Dutta",
+    "school": "SAS",
+    "cabin": "AB1, II Floor, Physics Lab"
+  },
+  {
+    "name": "Kalyani Desikan",
+    "school": "SAS",
+    "cabin": "AB1, I Floor- Annex, Cabin No. 5"
+  },
+  {
+    "name": "Kaliyappan M",
+    "school": "SAS",
+    "cabin": "AB1, I Floor-Annex, Cabin No. 9"
+  },
+  {
+    "name": "Mini Ghosh",
+    "school": "SAS",
+    "cabin": "AB1, I Floor-Annex, Cabin No. 12"
+  },
+  {
+    "name": "Prabhakar V",
+    "school": "SAS",
+    "cabin": "AB1, I Floor - Annex, Cabin No. 13"
+  },
+  {
+    "name": "Muthunagai",
+    "school": "SAS",
+    "cabin": "AB1, I Floor-Annex, Cabin No. 4"
+  },
+  {
+    "name": "Vinitha G",
+    "school": "SAS",
+    "cabin": "AB1, II Floor-Annex, Cabin No. 9"
+  },
+  {
+    "name": "Rajendra Kumar K",
+    "school": "SAS",
+    "cabin": "AB1, I Floor, Cabin No. 2"
+  },
+  {
+    "name": "Tanushree Choudhry",
+    "school": "SAS",
+    "cabin": "AB1, I Floor - Annexure, Cabin-2"
+  },
+  {
+    "name": "Vanchinathan P",
+    "school": "SAS",
+    "cabin": "AB1, I Floor - Annex, Cabin No. 14"
+  },
+  {
+    "name": "Manikandan N",
+    "school": "SAS",
+    "cabin": "AB1, II Floor-Annex, Cabin No. 2"
+  },
+  {
+    "name": "Saroj Kumar Dash",
+    "school": "SAS",
+    "cabin": "AB1, II Floor, Cabin No. 8"
+  },
+  {
+    "name": "Caroline Ponraj",
+    "school": "SAS",
+    "cabin": "AB1, II Floor-Annex, Cabin No. 4"
+  },
+  {
+    "name": "Jaganathan B",
+    "school": "SAS",
+    "cabin": "AB1, II Floor, Cabin No. 5"
+  },
+  {
+    "name": "Mohana N",
+    "school": "SAS",
+    "cabin": "AB1, II Floor, Cabin No 3"
+  },
+  {
+    "name": "Uma Maheswari S",
+    "school": "SAS",
+    "cabin": "AB1, I Floor - New Annex, Cabin No. 8"
+  },
+  {
+    "name": "Hannah Grace G",
+    "school": "SAS",
+    "cabin": "AB1, I Floor-Annex, Cabin No. 1"
+  },
+  {
+    "name": "Punithavelan N",
+    "school": "SAS",
+    "cabin": "AB1, 2nd Annex, Cabin No. 5"
+  },
+  {
+    "name": "Radha S",
+    "school": "SAS",
+    "cabin": "AB1, II Floor, Cabin No.2"
+  },
+  {
+    "name": "Pankaj Shukla",
+    "school": "SAS",
+    "cabin": "AB1, II Floor, Cabin No. 7"
+  },
+  {
+    "name": "Berin Greeni A",
+    "school": "SAS",
+    "cabin": "AB1, II Floor, Cabin-1"
+  },
+  {
+    "name": "Dhanasekar S",
+    "school": "SAS",
+    "cabin": "AB1, I Floor-Annex, Cabin No. 3"
+  },
+  {
+    "name": "Srutha Keerthi B",
+    "school": "SAS",
+    "cabin": "AB1, I Floor - New Annex, Cabin No.10"
+  },
+  {
+    "name": "Gopinath Mudhana",
+    "school": "SAS",
+    "cabin": "AB1, I Floor-Annex, Cabin No.13"
+  },
+  {
+    "name": "Krishnendu Biswas",
+    "school": "SAS",
+    "cabin": "AB1, I Floor-Annex, Cabin No. 2"
+  },
+  {
+    "name": "Sanjit Das",
+    "school": "SAS",
+    "cabin": "AB1, II Floor, Cabin No. 4"
+  },
+  {
+    "name": "Navamathavan R",
+    "school": "SAS",
+    "cabin": "AB1, II Floor, Cabin No. 10"
+  },
+  {
+    "name": "Saravanakumar R",
+    "school": "SAS",
+    "cabin": "Alpha Block, 1st Floor, F1"
+  },
+  {
+    "name": "David Maxim Gururaj A",
+    "school": "SAS",
+    "cabin": "AB1, I Floor- Annex, Cabin No. 7"
+  },
+  {
+    "name": "Abhishek Kumar Singh",
+    "school": "SAS",
+    "cabin": "Alpha Block 1st Floor, F-5"
+  },
+  {
+    "name": "Fateh Veer Singh",
+    "school": "SAS",
+    "cabin": "AB1, II Floor - Annex, Cabin No. 1"
+  },
+  {
+    "name": "Revathi G K",
+    "school": "SAS",
+    "cabin": "AB2, III Floor, Cabin No.4"
+  },
+  {
+    "name": "Jayanta Parui",
+    "school": "SAS",
+    "cabin": "Alpha Block, 1st Floor, Cabin No.7"
+  },
+  {
+    "name": "Nathiya N",
+    "school": "SAS",
+    "cabin": "AB1, I Floor, Cabin No.8"
+  },
+  {
+    "name": "Parthiban V",
+    "school": "SAS",
+    "cabin": "Alpha Block II Floor, S9"
+  },
+  {
+    "name": "Manivannan A",
+    "school": "SAS",
+    "cabin": "Alpha Block, 2nd Floor, S-11"
+  },
+  {
+    "name": "Santosh G",
+    "school": "SAS",
+    "cabin": "AB1, I floor, Cabin No. 4"
+  },
+  {
+    "name": "Balamurugan B J",
+    "school": "SAS",
+    "cabin": "AB2, 2nd Floor, Cabin-5"
+  },
+  {
+    "name": "Balamurali M M",
+    "school": "SAS",
+    "cabin": "AB1, 1st Floor, Cabin.No.1"
+  },
+  {
+    "name": "Devi Yamini S",
+    "school": "SAS",
+    "cabin": "AB2, 3rd Floor, Cabin-5"
+  },
+  {
+    "name": "Poulomi De",
+    "school": "SAS",
+    "cabin": "Alpha Block, 1st Floor, F2"
+  },
+  {
+    "name": "Vidhya V",
+    "school": "SAS",
+    "cabin": "AB1, 1st Floor, Cabin No.4"
+  },
+  {
+    "name": "Felix.A",
+    "school": "SAS",
+    "cabin": "Alpha Block, II Floor, S-3"
+  },
+  {
+    "name": "Jayagopal R",
+    "school": "SAS",
+    "cabin": "AB1, II Floor - Cabin No.15"
+  },
+  {
+    "name": "Milind Shrinivas Dangate",
+    "school": "SAS",
+    "cabin": "AB1, III Floor, (Students Welfare Office)"
+  },
+  {
+    "name": "Sangeetha P",
+    "school": "SAS",
+    "cabin": "AB2, 1st Floor, Cabin No.3"
+  },
+  {
+    "name": "M. Dhivya",
+    "school": "SAS",
+    "cabin": "AB1, 2nd Floor, Cabin No.11"
+  },
+  {
+    "name": "Kiran Kumar Tadi",
+    "school": "SAS",
+    "cabin": "Alpha Block, 2nd Floor, S-12"
+  },
+  {
+    "name": "Buthanapalli Ramakrishna",
+    "school": "SAS",
+    "cabin": "Alpha Block, 2nd Floor, S-10"
+  },
+  {
+    "name": "Ilaiyaraja Perumal",
+    "school": "SAS",
+    "cabin": "Alpha Block, 2nd floor, S-4"
+  },
+  {
+    "name": "Sudip Debnath",
+    "school": "SAS",
+    "cabin": "AB2-6th Floor – Cabin No.6"
+  },
+  {
+    "name": "P Durgaprasad",
+    "school": "SAS",
+    "cabin": "AB2-6th Floor– Cabin No.2"
+  },
+  {
+    "name": "Pravinkashyap Kambhatla",
+    "school": "SAS",
+    "cabin": "AB2-6th Floor– Cabin No.3"
+  },
+  {
+    "name": "Somnath Bera",
+    "school": "SAS",
+    "cabin": "AB2-6th Floor– Cabin No.1"
+  },
+  {
+    "name": "B Ajitha",
+    "school": "SAS",
+    "cabin": "AB2-7th Floor– Cabin No.4"
+  },
+  {
+    "name": "Vigneshwaran Swaminathan",
+    "school": "SAS",
+    "cabin": "Sigma Block-Ist Floor"
+  },
+  {
+    "name": "P Vijay Kumar",
+    "school": "SAS",
+    "cabin": "AB2-6th Floor– Cabin No.4"
+  },
+  {
+    "name": "Satyanarayana Kumar Mallavarapu",
+    "school": "SAS",
+    "cabin": "AB2-7th Floor– Cabin No.6"
+  },
+  {
+    "name": "Eithiraj R D",
+    "school": "SAS",
+    "cabin": "AB2-7th Floor– Cabin No.1"
+  },
+  {
+    "name": "Ganesan Pandian",
+    "school": "SAS",
+    "cabin": "Sigma Block, 2nd Floor, Cabin No:26"
+  },
+  {
+    "name": "G Ramachandran",
+    "school": "SAS",
+    "cabin": "Sigma Block, 2nd Floor, Cabin No:25"
+  },
+  {
+    "name": "Sujoy Sarkar",
+    "school": "SAS",
+    "cabin": "Sigma Block, 2nd Floor, Cabin No:24"
+  },
+  {
+    "name": "David Raj Micheal",
+    "school": "SAS",
+    "cabin": "AB1, 2nd floor, Cabin No. 14"
+  },
+  {
+    "name": "Durga Nagarajan",
+    "school": "SAS",
+    "cabin": "Sigma Block, 2nd Floor, Cabin No:31"
+  },
+  {
+    "name": "Kalyan Banerjee",
+    "school": "SAS",
+    "cabin": "Sigma Block, 2nd Floor, Cabin No:33"
+  },
+  {
+    "name": "Kutubuddin Ansari",
+    "school": "SAS",
+    "cabin": "Sigma Block, 2nd Floor, Cabin No:28"
+  },
+  {
+    "name": "Manigandla Prasannalakshmi",
+    "school": "SAS",
+    "cabin": "Sigma Block, 2nd Floor, Cabin No:27"
+  },
+  {
+    "name": "Balaji S",
+    "school": "SAS",
+    "cabin": "AB1, 2nd floor, Cabin No.16"
+  },
+  {
+    "name": "Arockiasamy S",
+    "school": "SAS",
+    "cabin": "AB1, I Floor- Annex, Cabin No. 11"
+  },
+  {
+    "name": "RAJASEKARAKUMAR VADAPOO",
+    "school": "SAS",
+    "cabin": "AB2-7th Floor– Cabin No.2"
+  },
+  {
+    "name": "B. Krishna Kumar",
+    "school": "SAS",
+    "cabin": "AB1, I floor, Cabin No. 6"
+  },
+  {
+    "name": "Rajivganthi C",
+    "school": "SAS",
+    "cabin": "AB-1, 5th Floor, 503, Cabin No.3"
+  },
+  {
+    "name": "Harshavarthini Shanmugam",
+    "school": "SAS",
+    "cabin": "AB-1, 5th Floor, 503, Cabin No.4"
+  },
+  {
+    "name": "M C Ramkumar",
+    "school": "SAS",
+    "cabin": "AB-1, 5th Floor, 503, Cabin No.6"
+  },
+  {
+    "name": "Sowndarrajan P T",
+    "school": "SAS",
+    "cabin": "AB-1, 5th Floor, 503, Cabin No.7"
+  },
+  {
+    "name": "Ravi Kumar Biroju",
+    "school": "SAS",
+    "cabin": "AB-1, 5th Floor, 503, Cabin No.13"
+  },
+  {
+    "name": "Selva Chandrasekaran",
+    "school": "SAS",
+    "cabin": "AB-1, 5th Floor, 503, Cabin No.14"
+  },
+  {
+    "name": "Nilesh A Wadibhasme",
+    "school": "SAS",
+    "cabin": "AB-1, 5th Floor, 503, Cabin No.17"
+  },
+  {
+    "name": "Saradha Rajkumar",
+    "school": "SSL",
+    "cabin": "AB1, I floor, Cabin No. 16"
+  },
+  {
+    "name": "Savariah Xavier Y C",
+    "school": "SSL",
+    "cabin": "AB2, 7th floor, Cabin No. 5"
+  },
+  {
+    "name": "Bhuvaneswari G",
+    "school": "SSL",
+    "cabin": "AB1, I floor, Cabin No. 10"
+  },
+  {
+    "name": "Govindarajan P",
+    "school": "SSL",
+    "cabin": "AB1, I Floor-Annex, Cabin No. 10"
+  },
+  {
+    "name": "Bhuvaneswari R",
+    "school": "SSL",
+    "cabin": "AB1, I Floor - New Annex, Cabin No. 12"
+  },
+  {
+    "name": "Rajitha K",
+    "school": "SSL",
+    "cabin": "AB1, I Floor - New Annex, Cabin No. 1"
+  },
+  {
+    "name": "Luke Gerard Christie",
+    "school": "SSL",
+    "cabin": "AB2, 7th Floor, Cabin No. 4"
+  },
+  {
+    "name": "Alan G",
+    "school": "SSL",
+    "cabin": "AB1, I Floor - New Annex, Cabin No.13"
+  },
+  {
+    "name": "Maya Rathnasabapathy",
+    "school": "SSL",
+    "cabin": "AB2, 7th Floor, (Psycometric Lab) Cabin No.1"
+  },
+  {
+    "name": "Ajit I",
+    "school": "SSL",
+    "cabin": "AB2, Ground floor, Cabin No.1"
+  },
+  {
+    "name": "Alamelu C",
+    "school": "SSL",
+    "cabin": "AB1, Ist Floor, Cabin No. 4"
+  },
+  {
+    "name": "Rajasekaran V",
+    "school": "SSL",
+    "cabin": "AB1, I Floor, Cabin No.15"
+  },
+  {
+    "name": "Vijayalakshmi Venkataraman",
+    "school": "SSL",
+    "cabin": "AB1, 4th floor, Cabin No. 405"
+  },
+  {
+    "name": "Patchainayagi S",
+    "school": "SSL",
+    "cabin": "AB2, Ground Floor, Cabin No.2"
+  },
+  {
+    "name": "Sivakami B",
+    "school": "SSL",
+    "cabin": "AB2, Ground floor, Cabin No.4"
+  },
+  {
+    "name": "Rashmi Rekha Borah",
+    "school": "SSL",
+    "cabin": "AB1, II Floor, Cabin No. 6"
+  },
+  {
+    "name": "Tiwari Mahalaxmi Shivkumar",
+    "school": "SSL",
+    "cabin": "Sigma Block, II Floor, Cabin No.9"
+  },
+  {
+    "name": "Vijayalakshmi V",
+    "school": "SSL",
+    "cabin": "AB2, Ground floor, Cabin No.6"
+  },
+  {
+    "name": "Sibaram Badatya",
+    "school": "SSL",
+    "cabin": "Sigma Block, II Floor, Cabin No.10"
+  },
+  {
+    "name": "Pooja Raghav",
+    "school": "SSL",
+    "cabin": "Sigma Block, II Floor, Cabin No.8"
+  },
+  {
+    "name": "Binu Sahayam D",
+    "school": "SSL",
+    "cabin": "Alpha Block, 1st Floor, F-6"
+  },
+  {
+    "name": "Manali Karmakar",
+    "school": "SSL",
+    "cabin": "Alpha Block, 1st Floor, F-10"
+  },
+  {
+    "name": "Swati Sharma",
+    "school": "SSL",
+    "cabin": "Sigma Block, 2nd floor, Cabin-11"
+  },
+  {
+    "name": "Akaitab Mukherjee",
+    "school": "SSL",
+    "cabin": "Sigma Block, 2nd floor, Cabin-13"
+  },
+  {
+    "name": "Devi Meenakshi K",
+    "school": "SSL",
+    "cabin": "AB-1, 1st Floor, Cabin-9"
+  },
+  {
+    "name": "Chithra G.K.",
+    "school": "SSL",
+    "cabin": "Sigma Block, 2nd floor, Cabin No12"
+  },
+  {
+    "name": "Urjani Chakravarty",
+    "school": "SSL",
+    "cabin": "Sigma Block, 2nd floor, Cabin No:29"
+  },
+  {
+    "name": "Vineeth Radhakrishnan",
+    "school": "SSL",
+    "cabin": "Sigma Block, 2nd floor, Cabin No:30"
+  },
+  {
+    "name": "Divya Muraleedharan",
+    "school": "SSL",
+    "cabin": "AB-1, 1st Floor, Cabin-6"
+  },
+  {
+    "name": "Vijayalakshmi Balachander",
+    "school": "SSL",
+    "cabin": "AB-1, 1st Floor, Cabin-7"
+  },
+  {
+    "name": "Annamalai K",
+    "school": "SMEC",
+    "cabin": "ABI - 513 - Advanced Mechanical Design Lab"
+  },
+  {
+    "name": "Arockia Selvakumar",
+    "school": "SMEC",
+    "cabin": "AB I - 4th Flr - Anx I - R # 09"
+  },
+  {
+    "name": "Bhaskara Rao L",
+    "school": "SMEC",
+    "cabin": "AB I - 4th Flr Anx I Cabin - R # 08"
+  },
+  {
+    "name": "Christo Michael T",
+    "school": "SMEC",
+    "cabin": "AB I - 5th Flr - Anx I - R # 06"
+  },
+  {
+    "name": "Davidson Jebaseelan",
+    "school": "SMEC",
+    "cabin": "AB I - 4th Flr - Anx II - R #32"
+  },
+  {
+    "name": "Deivanathan R",
+    "school": "SMEC",
+    "cabin": "AB I - 4th Flr - Anx I - R # 01"
+  },
+  {
+    "name": "Devaprakasam D",
+    "school": "SMEC",
+    "cabin": "AB I - 4th Flr - Anx I - R # 02"
+  },
+  {
+    "name": "Elango M",
+    "school": "SMEC",
+    "cabin": "AB I - 4th Flr - Anx II - R # 06"
+  },
+  {
+    "name": "Feroskhan M",
+    "school": "SMEC",
+    "cabin": "AB I - 5th Flr - Anx I - R # 04"
+  },
+  {
+    "name": "Giridharan A",
+    "school": "SMEC",
+    "cabin": "AB II-GF 015-Advanced ManuFacultyturing Tech Lab"
+  },
+  {
+    "name": "Gobinath N",
+    "school": "SMEC",
+    "cabin": "AB I - 4th Flr Faculty Cabin - R #10"
+  },
+  {
+    "name": "Harish R",
+    "school": "SMEC",
+    "cabin": "AB II- III Floor, Faculty Cabin.No.1"
+  },
+  {
+    "name": "Jafferson J M",
+    "school": "SMEC",
+    "cabin": "AB I - 4th Flr Faculty Cabin - R # 04"
+  },
+  {
+    "name": "Janardhan Reddy",
+    "school": "K",
+    "cabin": "SMEC Valeo Lab ABI Ground Floor Annexure"
+  },
+  {
+    "name": "Jegadeeshwaran R",
+    "school": "SMEC",
+    "cabin": "AB I - 4th Flr - 406 A - CIM and Robotics Lab"
+  },
+  {
+    "name": "Jeyanthi S",
+    "school": "SMEC",
+    "cabin": "AB I - GF 006 - Strenght of Materials Lab"
+  },
+  {
+    "name": "Joseph Daniel",
+    "school": "SMEC",
+    "cabin": "AB I - 4th Flr - Anx II - R# 31"
+  },
+  {
+    "name": "Karunamurthy K",
+    "school": "SMEC",
+    "cabin": "AB I - 803 - HMT Lab"
+  },
+  {
+    "name": "Lakshmi Pathi Jakkamputi",
+    "school": "SMEC",
+    "cabin": "AB I - 4th Flr - Anx I - R # 02"
+  },
+  {
+    "name": "Lenin Babu  M C",
+    "school": "SMEC",
+    "cabin": "AB I - 403 B - Dynamics of Machinery Lab"
+  },
+  {
+    "name": "Manavalla Sreekanth",
+    "school": "SMEC",
+    "cabin": "AB II - GF 014 - Turbo Machines Lab"
+  },
+  {
+    "name": "Manimaran R",
+    "school": "SMEC",
+    "cabin": "AB I - 4th Flr Faculty Cabin - R # 08"
+  },
+  {
+    "name": "Mohan R",
+    "school": "SMEC",
+    "cabin": "AB I - 4th Flr Faculty Cabin - R #14"
+  },
+  {
+    "name": "Narayanan R",
+    "school": "SMEC",
+    "cabin": "AB I - 5th Flr - Anx I - R # 08"
+  },
+  {
+    "name": "R. Padmanabhan",
+    "school": "SMEC",
+    "cabin": "AB I - 3rd Flr - Student Welfare"
+  },
+  {
+    "name": "Radha R",
+    "school": "SMEC",
+    "cabin": "AB I - 403 A - Materials Characterisation Lab"
+  },
+  {
+    "name": "Raghukiran Nadimpalli",
+    "school": "SMEC",
+    "cabin": "AB I - 4th Flr Faculty Cabin - R # 07"
+  },
+  {
+    "name": "Sakthivel G",
+    "school": "SMEC",
+    "cabin": "AB I - 4th Flr - Anx I - R # 04"
+  },
+  {
+    "name": "Saravanakumar D",
+    "school": "SMEC",
+    "cabin": "AB I - 707 B - Mechatronics Lab"
+  },
+  {
+    "name": "Sasikumar M",
+    "school": "SMEC",
+    "cabin": "AB I - 5th Flr - Anx I - R # 09"
+  },
+  {
+    "name": "Senthil Kumar M",
+    "school": "SMEC",
+    "cabin": "AB I - 4th Flr Faculty Cabin - R # 06"
+  },
+  {
+    "name": "Shyam Kumar M B",
+    "school": "SMEC",
+    "cabin": "AB I - 5th Flr - Anx I - R # 10"
+  },
+  {
+    "name": "Siva Kumar R",
+    "school": "SMEC",
+    "cabin": "AB II - 1st Floor, SMBS Research Lab - 102"
+  },
+  {
+    "name": "Sivarajan S",
+    "school": "SMEC",
+    "cabin": "AB I - 4th Flr - Anx I - R # 03"
+  },
+  {
+    "name": "Sreekanth Dondapati",
+    "school": "SMEC",
+    "cabin": "AB I - 4th Flr - Anx I - R # 13 ( Deans Cabin)"
+  },
+  {
+    "name": "Sridhar V G",
+    "school": "SMEC",
+    "cabin": "ABI - 2nd flr Annex 213 - Product Development Lab"
+  },
+  {
+    "name": "Sugumaran V",
+    "school": "SMEC",
+    "cabin": "AB II - 1st Floor, SMBS Research Lab - 102"
+  },
+  {
+    "name": "Tamil Selvan P",
+    "school": "SMEC",
+    "cabin": "AB I - 5th Flr - Anx I - R # 02"
+  },
+  {
+    "name": "Venkatachalam G",
+    "school": "SMEC",
+    "cabin": "AB I - 4th Flr - Anx I - R # 05"
+  },
+  {
+    "name": "Venugopal T",
+    "school": "SMEC",
+    "cabin": "AB I - 804 - Renewable Energy Lab"
+  },
+  {
+    "name": "Vinayagamurthy G",
+    "school": "SMEC",
+    "cabin": "AB II - 1st Flr - Aerodynamics Lab - 104"
+  },
+  {
+    "name": "Bhisham Kumar Dhurandher",
+    "school": "SMEC",
+    "cabin": "Sigma Block II Floor Right Wing - Cabin No. 2"
+  },
+  {
+    "name": "Manoj Kumar R",
+    "school": "SMEC",
+    "cabin": "Sigma Block II Floor Right Wing - Cabin No. 5"
+  },
+  {
+    "name": "Gajanand Gupta",
+    "school": "SMEC",
+    "cabin": "Sigma Block II Floor Right Wing - Cabin No. 1"
+  },
+  {
+    "name": "Mrutyunjay Panigrahi",
+    "school": "SMEC",
+    "cabin": "Sigma Block II Floor Right Wing - Cabin No. 23"
+  },
+  {
+    "name": "Muralimohan",
+    "school": "SMEC",
+    "cabin": "Sigma Block II Floor Right Wing - Cabin No. 3"
+  },
+  {
+    "name": "Swagatika Mohanty",
+    "school": "SMEC",
+    "cabin": "Sigma Block II Floor Left Wing - Cabin No. 3"
+  },
+  {
+    "name": "Ayub Ahmed Janvekar",
+    "school": "SMEC",
+    "cabin": "Sigma Block II Floor Right Wing - Cabin No. 22"
+  },
+  {
+    "name": "Tapan Kumar Mahanta",
+    "school": "SMEC",
+    "cabin": "Sigma Block II Floor Right Wing - Cabin No. 6"
+  },
+  {
+    "name": "Awani Bhushan",
+    "school": "SMEC",
+    "cabin": "Sigma Block II Floor Right Wing - Cabin No. 4"
+  },
+  {
+    "name": "Anjali Gopakumar",
+    "school": "SCE",
+    "cabin": "AB I - 7th Flr - Faculty Cabin - R # 5"
+  },
+  {
+    "name": "Arun Kumar A",
+    "school": "SCE",
+    "cabin": "AB I - 4th Flr Faculty Cabin - R #15"
+  },
+  {
+    "name": "Elavenil S",
+    "school": "SCE",
+    "cabin": "AB I - 4th Flr - Anx I Cabin # 6"
+  },
+  {
+    "name": "Helen Santhi M",
+    "school": "SCE",
+    "cabin": "AB I - 1st Flr (New Anx) - Faculty Cabin - R # 10"
+  },
+  {
+    "name": "Karthikeyan K",
+    "school": "SCE",
+    "cabin": "AB II GF 02 - Soil Lab"
+  },
+  {
+    "name": "Karthiyaini S",
+    "school": "SCE",
+    "cabin": "AB I - 5th Flr - Anx I - R # 01"
+  },
+  {
+    "name": "Mohan K",
+    "school": "SCE",
+    "cabin": "ABI - 606RH Geo science Lab"
+  },
+  {
+    "name": "Ramesh Kannan M",
+    "school": "SCE",
+    "cabin": "AB I - 5th Flr - Anx I - R # 03"
+  },
+  {
+    "name": "Sabumon P C",
+    "school": "SCE",
+    "cabin": "Deans Cabin - Academic research AB I 1st Floor"
+  },
+  {
+    "name": "Saravanan K",
+    "school": "SCE",
+    "cabin": "AB I - 4th Flr - Anx I - R # 09"
+  },
+  {
+    "name": "Senthilpandian M",
+    "school": "SCE",
+    "cabin": "ABII-1st Flr-Advanced Concrete Testing Lab- 03"
+  },
+  {
+    "name": "Shanmugasundaram",
+    "school": "SCE",
+    "cabin": "AB II- III Floor, Faculty Cabin.No.6"
+  },
+  {
+    "name": "Vasugi K",
+    "school": "SCE",
+    "cabin": "AB I - 4th Flr - Anx I - R # 10"
+  },
+  {
+    "name": "Vasugi V",
+    "school": "SCE",
+    "cabin": "AB I - 5th Flr - Anx I - R # 07"
+  },
+  {
+    "name": "Yamini Sreevalli I",
+    "school": "SCE",
+    "cabin": "AB I - 4th Flr Faculty Cabin - R #16"
+  },
+  {
+    "name": "Goutham Sarang",
+    "school": "SCE",
+    "cabin": "AB I - 4th Flr Faculty Anx II Cabin - R #1"
+  },
+  {
+    "name": "T Palani Rajan",
+    "school": "VFIT",
+    "cabin": "Admin block -first floor"
+  },
+  {
+    "name": "N Gayathri",
+    "school": "VFIT",
+    "cabin": "admin block, 8th floor - VFIT school"
+  },
+  {
+    "name": "Vinusowndarya",
+    "school": "VFIT",
+    "cabin": "admin block, 8th floor - VFIT schoolVFIT"
+  },
+  {
+    "name": "M Maanvizhi",
+    "school": "VFIT",
+    "cabin": "admin block, 8th floor - VFIT school GC lab"
+  },
+  {
+    "name": "Georgy Sunny",
+    "school": "VFIT",
+    "cabin": "admin block, 8th floor - VFIT school"
+  },
+  {
+    "name": "Jesica Roshima A",
+    "school": "VFIT",
+    "cabin": "admin block , 6th floor"
+  },
+  {
+    "name": "Selvakumar",
+    "school": "VFIT",
+    "cabin": "admin block, 8th floor - VFIT school"
+  },
+  {
+    "name": "Vasanth Kumar",
+    "school": "VFIT",
+    "cabin": "admin block, 8th floor - VFIT school"
+  },
+  {
+    "name": "Deepika SG",
+    "school": "VFIT",
+    "cabin": "admin block, 8th floor - VFIT school"
+  },
+  {
+    "name": "Bhuvaneshwari Mohan",
+    "school": "VFIT",
+    "cabin": "Sigma block - above health centre - first floor, f2 Cabin"
+  },
+  {
+    "name": "Abraham Sudharson Ponraj",
+    "school": "SENSE",
+    "cabin": "AB1/4th floor/Annexure/05"
+  },
+  {
+    "name": "Ananiah Durai S",
+    "school": "SENSE",
+    "cabin": "AB1/7th floor/VLSI Lab/706"
+  },
+  {
+    "name": "Anita Angeline A",
+    "school": "SENSE",
+    "cabin": "AB1/5th floor/Main/05"
+  },
+  {
+    "name": "Anith Nelleri",
+    "school": "SENSE",
+    "cabin": "AB1/6th floor/Annxure/07"
+  },
+  {
+    "name": "Annis Fathima A",
+    "school": "SENSE",
+    "cabin": "AB1/7th floor/DSPLab/707"
+  },
+  {
+    "name": "Augusta Sophy Beulet P",
+    "school": "SENSE",
+    "cabin": "AB1/6th floor/Annxure/03"
+  },
+  {
+    "name": "Bala Murugan M S",
+    "school": "SENSE",
+    "cabin": "AB1/5th floor/IoT Lab/505A"
+  },
+  {
+    "name": "Berlin Hency V",
+    "school": "SENSE",
+    "cabin": "AB1/5th floor/Main/10"
+  },
+  {
+    "name": "Bindu B",
+    "school": "SENSE",
+    "cabin": "AB1/4th floor/Annxure/11"
+  },
+  {
+    "name": "Brintha Therese",
+    "school": "A",
+    "cabin": "SENSE AB1/5th floor/Main/503-IQAC Room"
+  },
+  {
+    "name": "Chandrasekaran N",
+    "school": "SENSE",
+    "cabin": "AB1/4th floor/Annexure/15"
+  },
+  {
+    "name": "Chitra K",
+    "school": "SENSE",
+    "cabin": "AB1/6th floor/Annxure/06"
+  },
+  {
+    "name": "Gargi Raina",
+    "school": "SENSE",
+    "cabin": "AB2/6th floor/NaNotechNology Lab/601A"
+  },
+  {
+    "name": "Guga Priya G",
+    "school": "SENSE",
+    "cabin": "AB1/4th floor/Annexure/39"
+  },
+  {
+    "name": "Hemanth C",
+    "school": "SENSE",
+    "cabin": "AB1/4th floor/Annexure/32"
+  },
+  {
+    "name": "Jagannath M",
+    "school": "SENSE",
+    "cabin": "AB1/5th floor/Main/03"
+  },
+  {
+    "name": "Jaya Vignesh T",
+    "school": "SENSE",
+    "cabin": "AB1/4th floor/Annexure/36"
+  },
+  {
+    "name": "John Sahaya Rani Alex",
+    "school": "SENSE",
+    "cabin": "AB1/4th floor/Annxure/37"
+  },
+  {
+    "name": "Kanchana Bhaaskaran V S",
+    "school": "SENSE",
+    "cabin": "ADMN Block/1st floor /PROVC Office"
+  },
+  {
+    "name": "Karthik R",
+    "school": "SENSE",
+    "cabin": "Health Centre Block /1st Floor/F11"
+  },
+  {
+    "name": "Kaustab Ghosh",
+    "school": "SENSE",
+    "cabin": "AB1/4th floor/Annexure/33"
+  },
+  {
+    "name": "Lakshmi B",
+    "school": "SENSE",
+    "cabin": "AB1/4th floor/Annexure/35"
+  },
+  {
+    "name": "Manikandan P",
+    "school": "SENSE",
+    "cabin": "AB1/5th floor/Main/13"
+  },
+  {
+    "name": "Manoj Kumar R",
+    "school": "SENSE",
+    "cabin": "AB1/8th floor/Main/"
+  },
+  {
+    "name": "Menaka R",
+    "school": "SENSE",
+    "cabin": "AB1/5th Floor/Annexure/"
+  },
+  {
+    "name": "Mohanaprasad",
+    "school": "K",
+    "cabin": "SENSE AB1/7th floor/Main/03"
+  },
+  {
+    "name": "Muthulakshmi S",
+    "school": "SENSE",
+    "cabin": "AB1/6th floor/Embedded Systems Lab-2/606A"
+  },
+  {
+    "name": "Nagajayanthi B",
+    "school": "SENSE",
+    "cabin": "AB1/5th floor/Main/08"
+  },
+  {
+    "name": "Niraj Kumar",
+    "school": "SENSE",
+    "cabin": "AB1/6th floor/Annexure/04"
+  },
+  {
+    "name": "Prakash V",
+    "school": "SENSE",
+    "cabin": "AB2/5th floor/Microprocessor and Microcontroller Lab/501"
+  },
+  {
+    "name": "Prathiba A",
+    "school": "SENSE",
+    "cabin": "AB1/5th floor/Main/09"
+  },
+  {
+    "name": "Ralph Samuel Thangaraj",
+    "school": "SENSE",
+    "cabin": "AB1/1st floor/Annexure/05"
+  },
+  {
+    "name": "Ramesh R",
+    "school": "SENSE",
+    "cabin": "AB1/5th floor/Main/06"
+  },
+  {
+    "name": "Ravi Prakash Dwivedi",
+    "school": "SENSE",
+    "cabin": "AB1/4th floor/Annexure/34"
+  },
+  {
+    "name": "Ravi Sankar A",
+    "school": "SENSE",
+    "cabin": "AB1/7th floor/Annexure/08"
+  },
+  {
+    "name": "Ravi V",
+    "school": "SENSE",
+    "cabin": "AB1/6th floor/Annexure/08"
+  },
+  {
+    "name": "Reena Monica P",
+    "school": "SENSE",
+    "cabin": "AB1/3rd floor/Annexure/Student Welfare Office"
+  },
+  {
+    "name": "Revathi S",
+    "school": "SENSE",
+    "cabin": "AB1/4th floor/Annexure/10"
+  },
+  {
+    "name": "Sakthivel S M",
+    "school": "SENSE",
+    "cabin": "AB1/6th floor/Communication Lab/505"
+  },
+  {
+    "name": "Sangeetha R G",
+    "school": "SENSE",
+    "cabin": "AB2/1st Floor/Fibre Optic Lab/"
+  },
+  {
+    "name": "Saranya Nair M",
+    "school": "SENSE",
+    "cabin": "AB2/5th floor/Advanced Network Lab/505A"
+  },
+  {
+    "name": "Sekar Sathya Narayanan",
+    "school": "SENSE",
+    "cabin": "AB2/4th floor/Main/04"
+  },
+  {
+    "name": "Sivasubramanian A",
+    "school": "SENSE",
+    "cabin": "AB1/6th floor/Annexure/08 - Dean's Cabin - AB1/5th Floor/Main/12"
+  },
+  {
+    "name": "Sofana Reka S",
+    "school": "SENSE",
+    "cabin": "AB2/2nd floor/Main/02"
+  },
+  {
+    "name": "Srivatsan K",
+    "school": "SENSE",
+    "cabin": "AB1/5th floor/Main/02"
+  },
+  {
+    "name": "Subhashini N",
+    "school": "SENSE",
+    "cabin": "AB1/5th floor/Digital Lab/506A"
+  },
+  {
+    "name": "Suchetha M",
+    "school": "SENSE",
+    "cabin": "AB1/2nd floor/Embedded Systems Lab/214"
+  },
+  {
+    "name": "Suganthi K",
+    "school": "SENSE",
+    "cabin": "AB2/2nd floor/Main/04"
+  },
+  {
+    "name": "Susan Elias",
+    "school": "SENSE",
+    "cabin": "AB1/5th floor/Main/14"
+  },
+  {
+    "name": "Thiripurasundari D",
+    "school": "SENSE",
+    "cabin": "AB1/5th floor/Main/15"
+  },
+  {
+    "name": "Umadevi S",
+    "school": "SENSE",
+    "cabin": "AB1/5th floor/Main/04"
+  },
+  {
+    "name": "Usha Kiran Kommuri",
+    "school": "SENSE",
+    "cabin": "Canteen Block/2nd floor/"
+  },
+  {
+    "name": "Velmathi G",
+    "school": "SENSE",
+    "cabin": "AB1/8th floor/Main/steps corner New Cabin"
+  },
+  {
+    "name": "Vetrivelan P",
+    "school": "SENSE",
+    "cabin": "AB1/5th floor/Main/16"
+  },
+  {
+    "name": "Vigneswaran T",
+    "school": "SENSE",
+    "cabin": "AB1/4th floor/Annexure/38"
+  },
+  {
+    "name": "Vijayakumar P",
+    "school": "SENSE",
+    "cabin": "AB1/5th floor/Communication Lab/505"
+  },
+  {
+    "name": "Vydeki D",
+    "school": "SENSE",
+    "cabin": "AB1/5th floor/Main/01"
+  },
+  {
+    "name": "Vijayarajan R",
+    "school": "SENSE",
+    "cabin": "Health centre/1st floor/F9"
+  },
+  {
+    "name": "Om Prakash Sahu",
+    "school": "SENSE",
+    "cabin": "AB2/5th floor/Advance Battery Lab/505"
+  },
+  {
+    "name": "Arivarasi A",
+    "school": "SENSE",
+    "cabin": "AB1/3rd floor/Analog Lab/307A"
+  },
+  {
+    "name": "Gayathri Sivakumar",
+    "school": "SENSE",
+    "cabin": "AB1/5th Floor/503/Main"
+  },
+  {
+    "name": "Papanasam E.",
+    "school": "SENSE",
+    "cabin": "AB1/5th Floor/503/Main"
+  },
+  {
+    "name": "Sathya Sree J",
+    "school": "SENSE",
+    "cabin": "AB1/5th Floor/503/Main"
+  },
+  {
+    "name": "Lucky Agarwal",
+    "school": "SENSE",
+    "cabin": "AB1/5th Floor/503/Main"
+  },
+  {
+    "name": "B Prashanth Kumar",
+    "school": "SENSE",
+    "cabin": "AB1/5th Floor/503/Main"
+  },
+  {
+    "name": "Pradeep Narayanan.S",
+    "school": "SENSE",
+    "cabin": "AB1/8th floor/Semi condcutor Lab/807"
+  },
+  {
+    "name": "Ashish Kumar",
+    "school": "SENSE",
+    "cabin": "AB1/5th Floor/503/Main"
+  },
+  {
+    "name": "Chanthini Baskar",
+    "school": "SENSE",
+    "cabin": "AB1/5th Floor/503/Main"
+  },
+  {
+    "name": "S.Sivakumar",
+    "school": "SENSE",
+    "cabin": "AB1/5th Floor/503/Main"
+  },
+  {
+    "name": "E.Manikandan",
+    "school": "SENSE",
+    "cabin": "AB1/5th Floor/503/Main"
+  },
+  {
+    "name": "S. Selvendran",
+    "school": "SENSE",
+    "cabin": "AB1/5th Floor/503/Main"
+  },
+  {
+    "name": "Florence Gnana Poovathy J",
+    "school": "SENSE",
+    "cabin": "AB1/5th Floor/503/Main"
+  },
+  {
+    "name": "Jeetashree Aparajeeta",
+    "school": "SENSE",
+    "cabin": "AB1/5th Floor/503/Main"
+  },
+  {
+    "name": "Kalaivanan K",
+    "school": "SENSE",
+    "cabin": "AB1/5th Floor/503/Main"
+  },
+  {
+    "name": "P.Nirmala",
+    "school": "SENSE",
+    "cabin": "AB1/5th Floor/503/Main"
+  },
+  {
+    "name": "S.Shoba",
+    "school": "SENSE",
+    "cabin": "AB1/5th Floor/503/Main"
+  },
+  {
+    "name": "Sindhuja. M",
+    "school": "SENSE",
+    "cabin": "AB1/5th Floor/503/Main"
+  },
+  {
+    "name": "A.Bharathi Sankar",
+    "school": "SENSE",
+    "cabin": "AB1/8th floor/Hardware Trouble Shooting Lab/806"
+  },
+  {
+    "name": "Idayachandran .G",
+    "school": "SENSE",
+    "cabin": "AB1/5th Floor/503/Main"
+  },
+  {
+    "name": "Ranjeet Kumar",
+    "school": "SENSE",
+    "cabin": "AB1/5th Floor/503/Main"
+  },
+  {
+    "name": "Saurav Gupta",
+    "school": "SENSE",
+    "cabin": "AB1/5th Floor/503/Main"
+  },
+  {
+    "name": "Richards Joe Stanislaus",
+    "school": "SENSE",
+    "cabin": "AB1/5th Floor/503/Main"
+  },
+  {
+    "name": "V.R Balaji",
+    "school": "SENSE",
+    "cabin": "AB1/5th Floor/503/Main"
+  },
+  {
+    "name": "Sasithradevi. A",
+    "school": "SENSE",
+    "cabin": "AB1/5th Floor/503/Main"
+  },
+  {
+    "name": "Henridass.A",
+    "school": "SENSE",
+    "cabin": "AB1/5th Floor/503/Main"
+  },
+  {
+    "name": "E.Sathish",
+    "school": "SENSE",
+    "cabin": "AB1/5th Floor/503/Main"
+  },
+  {
+    "name": "Soundara Pandian M S",
+    "school": "VITSOL",
+    "cabin": "Admin Block 7th Floor - VITSOL Dean's Cabin"
+  },
+  {
+    "name": "Sankar D",
+    "school": "VITSOL",
+    "cabin": "Admin Block 7th Floor - Room No.10"
+  },
+  {
+    "name": "Prema E",
+    "school": "VITSOL",
+    "cabin": "Admin Block 7th Floor - Room No: 2"
+  },
+  {
+    "name": "Rabbiraj C",
+    "school": "VITSOL",
+    "cabin": "Admin Block 7th Floor - Room No.13"
+  },
+  {
+    "name": "Rajavenkatesan P R L",
+    "school": "VITSOL",
+    "cabin": "Admin Block 7th Floor - Room No.14"
+  },
+  {
+    "name": "Kesavamoorthy R",
+    "school": "VITSOL",
+    "cabin": "Admin Block 7th Floor - Room No.11"
+  },
+  {
+    "name": "Ambika R Nair",
+    "school": "VITSOL",
+    "cabin": "Admin Block 7th Floor - Room No: 7"
+  },
+  {
+    "name": "Ganesan K",
+    "school": "VITSOL",
+    "cabin": "Admin Block 7th Floor - Room No: 4"
+  },
+  {
+    "name": "M.S.Sharmila",
+    "school": "VITSOL",
+    "cabin": "Admin Block 7th Floor - Room No: 5"
+  },
+  {
+    "name": "Jayendra Kasture",
+    "school": "VITSOL",
+    "cabin": "Admin Block 7th Floor - Room No: 6"
+  },
+  {
+    "name": "Jishnu J R",
+    "school": "VITSOL",
+    "cabin": "Admin Block 4th Floor"
+  },
+  {
+    "name": "Anandha Krishna Raj S",
+    "school": "VITSOL",
+    "cabin": "Admin Block 4th Floor"
+  },
+  {
+    "name": "Tania Sebastian",
+    "school": "VITSOL",
+    "cabin": "Admin Block 7th Floor - Room No:1"
+  },
+  {
+    "name": "Rajasathya K R",
+    "school": "VITSOL",
+    "cabin": "Admin Block 7th Floor - Room No.12"
+  },
+  {
+    "name": "K Kamban Socretes",
+    "school": "VITSOL",
+    "cabin": "Admin Block 4th Floor"
+  },
+  {
+    "name": "Shinsa P Mathew",
+    "school": "VITSOL",
+    "cabin": "Admin Block 6th Floor"
+  },
+  {
+    "name": "T Abul Hassan",
+    "school": "VITSOL",
+    "cabin": "Admin Block 6th Floor"
+  },
+  {
+    "name": "Ankit Kumar Padhy",
+    "school": "VITSOL",
+    "cabin": "Admin Block 7th Floor - Room No 3"
+  },
+  {
+    "name": "Anbarasi G",
+    "school": "VITSOL",
+    "cabin": "Admin Block 4th Floor"
+  },
+  {
+    "name": "Zakkariya T H",
+    "school": "VITSOL",
+    "cabin": "Admin Block 7th Floor - Room No.8"
+  },
+  {
+    "name": "Navami",
+    "school": "VITSOL",
+    "cabin": "Admin Block 7th Floor - Room No.9"
+  },
+  {
+    "name": "Arun D Raj",
+    "school": "VITSOL",
+    "cabin": "Admin Block 4th Floor"
+  },
+  {
+    "name": "Dulung Sengupta",
+    "school": "VITSOL",
+    "cabin": "Admin Block 6th Floor"
+  },
+  {
+    "name": "Shanthi Krishna",
+    "school": "VITSOL",
+    "cabin": "Admin Block 6th Floor"
+  },
+  {
+    "name": "Aswathy Sukumaran",
+    "school": "VITSOL",
+    "cabin": "Health Centre 3rd Floor"
+  },
+  {
+    "name": "Vijaya Bharathi Ravikumar",
+    "school": "VITSOL",
+    "cabin": "Health Centre 3rd Floor"
+  },
+  {
+    "name": "Marasakatla Madhavi",
+    "school": "VITSOL",
+    "cabin": "Health Centre 3rd Floor"
+  },
+  {
+    "name": "Karthik Shiva",
+    "school": "VITSOL",
+    "cabin": "Academic Block 1 - Room No:501"
+  },
+  {
+    "name": "Ramya S R",
+    "school": "VITSOL",
+    "cabin": "Academic Block 1 - Room No:501"
+  },
+  {
+    "name": "Sivagami M",
+    "school": "SCOPE",
+    "cabin": "AB1 - 2F 206 LAB (Faculty Cabin INSIDE LAB)"
+  },
+  {
+    "name": "Pradeep Kumar",
+    "school": "T.S",
+    "cabin": "SCOPE AB1 - 3F MAIN, Cabin 311"
+  },
+  {
+    "name": "Nisha",
+    "school": "V.M",
+    "cabin": "SCOPE AB1 - 3F Annexure Cabin 12"
+  },
+  {
+    "name": "Nithya Darisini",
+    "school": "P.S",
+    "cabin": "SCOPE ADMN BLOCK-2F"
+  },
+  {
+    "name": "Sajidha S A",
+    "school": "SCOPE",
+    "cabin": "AB1 - 3F Annexure Cabin 14"
+  },
+  {
+    "name": "Sathis Kumar B",
+    "school": "SCOPE",
+    "cabin": "AB1 - 3F MAIN, Cabin 311"
+  },
+  {
+    "name": "Jeganathan L",
+    "school": "SCOPE",
+    "cabin": "AB1 - 3F Annexure Cabin 11"
+  },
+  {
+    "name": "Maheswari R",
+    "school": "SCOPE",
+    "cabin": "AB1 - 2F Annexure Cabin 10"
+  },
+  {
+    "name": "Vergin Raja Sarobin M",
+    "school": "SCOPE",
+    "cabin": "AB1 - 3F MAIN Cabin 3"
+  },
+  {
+    "name": "Rukmani P",
+    "school": "SCOPE",
+    "cabin": "AB1 - 3F MAIN, Cabin 2"
+  },
+  {
+    "name": "Harini S",
+    "school": "SCOPE",
+    "cabin": "AB1 - 3F MAIN Cabin 7"
+  },
+  {
+    "name": "Maheswari N",
+    "school": "SCOPE",
+    "cabin": "AB1 - 2F 206 LAB (Faculty Cabin INSIDE LAB)"
+  },
+  {
+    "name": "Nayeemulla Khan",
+    "school": "SCOPE",
+    "cabin": "ADMN BLOCK-2F"
+  },
+  {
+    "name": "Pattabiraman V",
+    "school": "SCOPE",
+    "cabin": "AB1 - 3F MAIN Cabin 14"
+  },
+  {
+    "name": "Graceline Jasmine S",
+    "school": "SCOPE",
+    "cabin": "AB1 - 3F MAIN Cabin 8"
+  },
+  {
+    "name": "Thomas Abraham J V",
+    "school": "SCOPE",
+    "cabin": "AB1 - 3F Annexure Cabin 4"
+  },
+  {
+    "name": "Appalaraju Muralidhar",
+    "school": "SCOPE",
+    "cabin": "AB1 - 3F Annexure Cabin 3"
+  },
+  {
+    "name": "Ilakiyaselvan N",
+    "school": "SCOPE",
+    "cabin": "AB1 - 2F Annexure Cabin 6"
+  },
+  {
+    "name": "Sathyarajasekaran K",
+    "school": "SCOPE",
+    "cabin": "AB1 - 3F Annexure Cabin 5"
+  },
+  {
+    "name": "Parvathi R",
+    "school": "SCOPE",
+    "cabin": "AB1 - 2F Annexure Cabin 11"
+  },
+  {
+    "name": "Ummity Srinivasa Rao",
+    "school": "SCOPE",
+    "cabin": "AB1 - 3F Annexure Cabin 10"
+  },
+  {
+    "name": "Saleena B",
+    "school": "SCOPE",
+    "cabin": "AB1 - 3F MAIN, Cabin 6"
+  },
+  {
+    "name": "Khadar Nawas K",
+    "school": "SCOPE",
+    "cabin": "AB1 - 3F Annexure Cabin 9"
+  },
+  {
+    "name": "Prakash B",
+    "school": "SCOPE",
+    "cabin": "AB1 - 6F 605A Lab (Faculty Cabin INSIDE LAB)"
+  },
+  {
+    "name": "Maheswari S",
+    "school": "SCOPE",
+    "cabin": "AB1 - 3F ANNEXURE Cabin 1"
+  },
+  {
+    "name": "Rajesh Kanna B",
+    "school": "SCOPE",
+    "cabin": "AB1 - 5F 506 LAB (Faculty Cabin INSIDE LAB)"
+  },
+  {
+    "name": "Shridevi S",
+    "school": "SCOPE",
+    "cabin": "AB1 - 2F ANNEXURE Cabin 14"
+  },
+  {
+    "name": "Vijayalakshmi A",
+    "school": "SCOPE",
+    "cabin": "AB1 - 3F ANNEXURE Cabin 6"
+  },
+  {
+    "name": "B V A N S S Prabhakar Rao",
+    "school": "SCOPE",
+    "cabin": "AB1 - 3F MAIN Cabin 1"
+  },
+  {
+    "name": "Premalatha M",
+    "school": "SCOPE",
+    "cabin": "AB1 - 4F NEW Annexure Cabin 18"
+  },
+  {
+    "name": "Bharathi Raja S",
+    "school": "SCOPE",
+    "cabin": "AB1 - 4F MAIN Cabin 3"
+  },
+  {
+    "name": "Viswanathan V",
+    "school": "SCOPE",
+    "cabin": "ADMIN BLOCK - 2F COE OFFICE"
+  },
+  {
+    "name": "Rajkumar S",
+    "school": "SCOPE",
+    "cabin": "AB1 - 4F MAIN Cabin 5"
+  },
+  {
+    "name": "Malathi G",
+    "school": "SCOPE",
+    "cabin": "AB1 - 2F ANNEXURE Cabin 7"
+  },
+  {
+    "name": "Kumar R",
+    "school": "SCOPE",
+    "cabin": "AB1 - 6F Annexure, 613 LAB"
+  },
+  {
+    "name": "Priyaadharshini M",
+    "school": "SCOPE",
+    "cabin": "AB1 - 2F MAIN Cabin 13"
+  },
+  {
+    "name": "Kanchana Devi V",
+    "school": "SCOPE",
+    "cabin": "AB1 - 3F Annexure Cabin 7"
+  },
+  {
+    "name": "Kavya Alluru",
+    "school": "SCOPE",
+    "cabin": "AB1 - 3F Annexure Cabin 2"
+  },
+  {
+    "name": "Jayaram B",
+    "school": "SCOPE",
+    "cabin": "AB1 - 4F MAIN Cabin 2"
+  },
+  {
+    "name": "Nivedita M",
+    "school": "SCOPE",
+    "cabin": "AB1 - 3F Annexure Cabin 13"
+  },
+  {
+    "name": "Bharadwaja Kumar",
+    "school": "SCOPE",
+    "cabin": "AB1 - 3F MAIN Cabin 15"
+  },
+  {
+    "name": "Jayasudha M",
+    "school": "SCOPE",
+    "cabin": "AB1 - 3F MAIN Cabin 10"
+  },
+  {
+    "name": "Ganesan R",
+    "school": "SCOPE",
+    "cabin": "AB1 - 3F MAIN - DEAN Cabin"
+  },
+  {
+    "name": "Jenila Livingston L M",
+    "school": "SCOPE",
+    "cabin": "AB1 - 4F MAIN Cabin 1"
+  },
+  {
+    "name": "Rekha D",
+    "school": "SCOPE",
+    "cabin": "AB1 - 7F Annexure Cabin 1"
+  },
+  {
+    "name": "Rajesh Kumar",
+    "school": "SCOPE",
+    "cabin": "AB1 - 7F Annexure Cabin 10"
+  },
+  {
+    "name": "Umamaheswari E",
+    "school": "SCOPE",
+    "cabin": "AB1 - IF Annexure Cabin 8"
+  },
+  {
+    "name": "Rajarajeswari S",
+    "school": "SCOPE",
+    "cabin": "AB1 - IF Annexure Cabin 11"
+  },
+  {
+    "name": "Neela Narayanan V",
+    "school": "SCOPE",
+    "cabin": "AB1 - 4F NEW Annexure Cabin 25"
+  },
+  {
+    "name": "ADMNul Quadir Md",
+    "school": "SCOPE",
+    "cabin": "AB1 - 4F NEW Annexure Cabin 21"
+  },
+  {
+    "name": "Christy Jackson J",
+    "school": "SCOPE",
+    "cabin": "AB1 - 4F NEW AnnexURE Cabin 20"
+  },
+  {
+    "name": "Tulasi Prasad Sariki",
+    "school": "SCOPE",
+    "cabin": "AB1 - 6F MAIN Cabin 3"
+  },
+  {
+    "name": "Alok Chauhan",
+    "school": "SCOPE",
+    "cabin": "AB1 - 6F MAIN Cabin 7"
+  },
+  {
+    "name": "Rabindra Kumar Singh",
+    "school": "SCOPE",
+    "cabin": "AB1 - 3F MAIN Cabin 4"
+  },
+  {
+    "name": "Syed Ibrahim S P",
+    "school": "SCOPE",
+    "cabin": "ADMIN BLOCK - 2F IR OFFICE"
+  },
+  {
+    "name": "Ramesh Ragala",
+    "school": "SCOPE",
+    "cabin": "AB1 - 2F 208 Lab ((Faculty Cabin INSIDE LAB)"
+  },
+  {
+    "name": "Nachiyappan S",
+    "school": "SCOPE",
+    "cabin": "AB1 - 6F MAIN Cabin 5"
+  },
+  {
+    "name": "Pradeep K V",
+    "school": "SCOPE",
+    "cabin": "AB1 - 6F MAIN Cabin 4"
+  },
+  {
+    "name": "Sivabalakrishnan M",
+    "school": "SCOPE",
+    "cabin": "AB1 - 4F NEW Annexure Cabin 26"
+  },
+  {
+    "name": "Gayathri R",
+    "school": "SCOPE",
+    "cabin": "AB1 - 4F NEW Annexure Cabin 22"
+  },
+  {
+    "name": "Punitha K",
+    "school": "SCOPE",
+    "cabin": "AB1 - 4F NEW Annexure Cabin 24"
+  },
+  {
+    "name": "Rajesh M",
+    "school": "SCOPE",
+    "cabin": "AB1 - IF NEW Annexure Cabin 4"
+  },
+  {
+    "name": "Rajiv Vincent",
+    "school": "SCOPE",
+    "cabin": "AB1 - IF NEW Annexure Cabin 6"
+  },
+  {
+    "name": "Anusooya G",
+    "school": "SCOPE",
+    "cabin": "AB1 - 4F NEW Annexure Cabin 9"
+  },
+  {
+    "name": "Sandhya P",
+    "school": "SCOPE",
+    "cabin": "AB1 - IF NEW Annexure, Cabin 14"
+  },
+  {
+    "name": "Hema N",
+    "school": "SCOPE",
+    "cabin": "AB1 - 1F NEW Annexure Cabin 9"
+  },
+  {
+    "name": "Prassanna J",
+    "school": "SCOPE",
+    "cabin": "AB1 - 4F NEW Annexure Cabin 29"
+  },
+  {
+    "name": "Priyadarshini J",
+    "school": "SCOPE",
+    "cabin": "AB1 - 4F NEW Annexure Cabin 3"
+  },
+  {
+    "name": "Prabakaran R",
+    "school": "SCOPE",
+    "cabin": "AB1 - 4F NEW Annexure Cabin 30"
+  },
+  {
+    "name": "Shola Usha Rani",
+    "school": "SCOPE",
+    "cabin": "AB1 - 4F NEW Annexure Cabin 4"
+  },
+  {
+    "name": "Karmel A",
+    "school": "SCOPE",
+    "cabin": "AB1 - 4F NEW Annexure Cabin 8"
+  },
+  {
+    "name": "Suganya G",
+    "school": "SCOPE",
+    "cabin": "AB1 - 4F NEW Annexure Cabin 12"
+  },
+  {
+    "name": "Sridhar R",
+    "school": "SCOPE",
+    "cabin": "AB1 - 4F NEW Annexure Cabin 14"
+  },
+  {
+    "name": "Asha S",
+    "school": "SCOPE",
+    "cabin": "AB1 - 4F NEW Annexure Cabin 19"
+  },
+  {
+    "name": "Nithyanandam P",
+    "school": "SCOPE",
+    "cabin": "AB1 - 4F NEW Annexure Cabin 16"
+  },
+  {
+    "name": "Subbulakshmi T",
+    "school": "SCOPE",
+    "cabin": "AB1 - 4F NEW Annexure Cabin 23"
+  },
+  {
+    "name": "Renta Chintala Bhargavi",
+    "school": "SCOPE",
+    "cabin": "AB1 - 4F NEW Annexure Cabin 7"
+  },
+  {
+    "name": "Geetha S",
+    "school": "SCOPE",
+    "cabin": "AB1 - 2F 205 LAB (Faculty Cabin INSIDE LAB)"
+  },
+  {
+    "name": "Asnath Victy Phamila Y",
+    "school": "SCOPE",
+    "cabin": "AB1 - 4F NEW AnnexURE Cabin 17"
+  },
+  {
+    "name": "Janaki Meena M",
+    "school": "SCOPE",
+    "cabin": "AB1 - 6F 605B LAB (Faculty Cabin INSIDE LAB)"
+  },
+  {
+    "name": "Jagadeesh Kannan R",
+    "school": "SCOPE",
+    "cabin": "AB1 - 3F MAIN Cabin 13"
+  },
+  {
+    "name": "Sweetlin Hemalatha C",
+    "school": "SCOPE",
+    "cabin": "AB1 - 2F Annexure Cabin 8"
+  },
+  {
+    "name": "Nagaraj S V",
+    "school": "SCOPE",
+    "cabin": "AB1 - 4F NEW Annexure Cabin 27"
+  },
+  {
+    "name": "Rajalakshmi R",
+    "school": "SCOPE",
+    "cabin": "HEALTH CENTRE, 1F, Cabin 12"
+  },
+  {
+    "name": "Ganapathy S",
+    "school": "SCOPE",
+    "cabin": "AB1 - 2F 205B LAB (Faculty Cabin INSIDE LAB)"
+  },
+  {
+    "name": "Renuka Devi S",
+    "school": "SCOPE",
+    "cabin": "AB1 - 8F MAIN Cabin 1"
+  },
+  {
+    "name": "Shyamala L",
+    "school": "SCOPE",
+    "cabin": "AB1 - IF NEW Annexure Cabin 3"
+  },
+  {
+    "name": "Jayanthi R",
+    "school": "SCOPE",
+    "cabin": "AB2 - 2F MAIN Cabin 3"
+  },
+  {
+    "name": "Anusha K",
+    "school": "SCOPE",
+    "cabin": "AB1 - 8F MAIN Cabin 2"
+  },
+  {
+    "name": "Jani Anbarasi L",
+    "school": "SCOPE",
+    "cabin": "AB1 - 3F MAIN Cabin 9"
+  },
+  {
+    "name": "Prasad M",
+    "school": "SCOPE",
+    "cabin": "AB1 - 3F 311 Lab (Faculty Cabin INSIDE LAB)"
+  },
+  {
+    "name": "Amit Kumar Tyagi",
+    "school": "SCOPE",
+    "cabin": "AB2 - 3F MAIN Cabin 2"
+  },
+  {
+    "name": "Braveen M",
+    "school": "SCOPE",
+    "cabin": "AB1 - 4F NEW Annexure Cabin 13"
+  },
+  {
+    "name": "Muthumanikandan V",
+    "school": "SCOPE",
+    "cabin": "AB2 - 4F, MAIN Cabin 2"
+  },
+  {
+    "name": "Ilavarasi A. K",
+    "school": "SCOPE",
+    "cabin": "AB2 - 3F, MAIN Cabin 3"
+  },
+  {
+    "name": "Ayesha SK",
+    "school": "SCOPE",
+    "cabin": "AB1 - 3F MAIN Cabin 5"
+  },
+  {
+    "name": "Kirthica S",
+    "school": "SCOPE",
+    "cabin": "AB1-206 LAB (Faculty Cabin INSIDE LAB)"
+  },
+  {
+    "name": "Radhika Selvamani B",
+    "school": "SCOPE",
+    "cabin": "AB2 - GF, MAIN Cabin 3"
+  },
+  {
+    "name": "Bhuvaneswari A",
+    "school": "SCOPE",
+    "cabin": "AB2 - 2F MAIN Cabin 4"
+  },
+  {
+    "name": "Manas Ranjan Prusty",
+    "school": "SCOPE",
+    "cabin": "AB1 - 3F 307 Lab (Faculty Cabin INSIDE LAB)"
+  },
+  {
+    "name": "Jothi R",
+    "school": "SCOPE",
+    "cabin": "AB1 - 7F MAIN, Cabin 4"
+  },
+  {
+    "name": "Balasundaram A",
+    "school": "SCOPE",
+    "cabin": "HEALTH CENTRE 2F, Cabin"
+  },
+  {
+    "name": "Muthukumaran K",
+    "school": "SCOPE",
+    "cabin": "DELTA BLOCK - 1F Cabin 1"
+  },
+  {
+    "name": "Venkatraman S",
+    "school": "SCOPE",
+    "cabin": "DELTA BLOCK - 1F Cabin 2"
+  },
+  {
+    "name": "Edward Jero S",
+    "school": "SCOPE",
+    "cabin": "DELTA BLOCK - GROUND FLOOR CPS LAB"
+  },
+  {
+    "name": "Ashoka Rajan R",
+    "school": "SCOPE",
+    "cabin": "DELTA BLOCK - 1F Cabin 4"
+  },
+  {
+    "name": "Jayalakshmi S L",
+    "school": "SCOPE",
+    "cabin": "AB1 - 7F Annexure Cabin 9"
+  },
+  {
+    "name": "Menaka Pushpa A",
+    "school": "SCOPE",
+    "cabin": "DELTA BLOCK - 1F Cabin 5"
+  },
+  {
+    "name": "Pavithra L K",
+    "school": "SCOPE",
+    "cabin": "DELTA BLOCK - 1F Cabin 6"
+  },
+  {
+    "name": "Parkavi K",
+    "school": "SCOPE",
+    "cabin": "DELTA BLOCK - 2F Cabin 1"
+  },
+  {
+    "name": "Shivani Gupta",
+    "school": "SCOPE",
+    "cabin": "DELTA BLOCK- 2F Cabin 2"
+  },
+  {
+    "name": "Vani V",
+    "school": "SCOPE",
+    "cabin": "AB1 - 2F 209 Lab (Faculty Cabin INSIDE LAB)"
+  },
+  {
+    "name": "Mirza Galib Anwarul Husain Baig",
+    "school": "SCOPE",
+    "cabin": "ABII - 7F"
+  },
+  {
+    "name": "Anita X",
+    "school": "SCOPE",
+    "cabin": "DELTA BLOCK - 2F Cabin 3"
+  },
+  {
+    "name": "Subbulakshmi P",
+    "school": "SCOPE",
+    "cabin": "DELTA BLOCK- 2F Cabin 4"
+  },
+  {
+    "name": "Amrit Pal",
+    "school": "SCOPE",
+    "cabin": "AB1 - 6F Main Cabin 8"
+  },
+  {
+    "name": "Leninisha S",
+    "school": "SCOPE",
+    "cabin": "DELTA BLOCK - 2F Cabin 5"
+  },
+  {
+    "name": "Bhanu Chander Balusa",
+    "school": "SCOPE",
+    "cabin": "DELTA BLOCK - 2F Cabin 6"
+  },
+  {
+    "name": "Swaminathan A",
+    "school": "SCOPE",
+    "cabin": "DELTA BLOCK - 3F Cabin 1"
+  },
+  {
+    "name": "Rishikeshan C. A.",
+    "school": "SCOPE",
+    "cabin": "DELTA BLOCK - 3F Cabin 2"
+  },
+  {
+    "name": "Sandeep Kumar Satapathy",
+    "school": "SCOPE",
+    "cabin": "AB2 - 4F MAIN Cabin 6"
+  },
+  {
+    "name": "Richa",
+    "school": "SCOPE",
+    "cabin": "AB1 - 2F Annexure Cabin 3"
+  },
+  {
+    "name": "Sindhia Lingaswamy",
+    "school": "SCOPE",
+    "cabin": "DELTA BLOCK - 3F Cabin 3"
+  },
+  {
+    "name": "Vedhapriyavadhana R",
+    "school": "SCOPE",
+    "cabin": "AB1 - 2F 205B LAB (Faculty Cabin INSIDE LAB)"
+  },
+  {
+    "name": "Arun Kumar Sivaraman",
+    "school": "SCOPE",
+    "cabin": "AB1 - 8F MAIN Cabin 4"
+  },
+  {
+    "name": "Ganala Santoshi",
+    "school": "SCOPE",
+    "cabin": "DELTA BLOCK - 3F Cabin 4"
+  },
+  {
+    "name": "Sakthivel V",
+    "school": "SCOPE",
+    "cabin": "DELTA BLOCK - 3F Cabin 5"
+  },
+  {
+    "name": "Seshu Babu Pulagara",
+    "school": "SCOPE",
+    "cabin": "DELTA BLOCK - 3F Cabin 6"
+  },
+  {
+    "name": "Prakash P",
+    "school": "SCOPE",
+    "cabin": "DELTA BLOCK - 3F Cabin 7"
+  },
+  {
+    "name": "Cinu C Kiliroor",
+    "school": "SCOPE",
+    "cabin": "Sigma Block - L11"
+  },
+  {
+    "name": "Vijayakumar K P",
+    "school": "SCOPE",
+    "cabin": "Sigma Block - Cabin 9"
+  },
+  {
+    "name": "Pradeep K",
+    "school": "SCOPE",
+    "cabin": "Sigma Block - L14"
+  },
+  {
+    "name": "Radha R",
+    "school": "SCOPE",
+    "cabin": "AB1 - 2F 210 Lab (Faculty Cabin INSIDE LAB)"
+  },
+  {
+    "name": "Kalaipriyan T",
+    "school": "SCOPE",
+    "cabin": "IB - 2F Cabin 16"
+  },
+  {
+    "name": "Rajakumar Arul",
+    "school": "SCOPE",
+    "cabin": "AB2 - 1F, MAIN Cabin 2"
+  },
+  {
+    "name": "Sudha A",
+    "school": "SCOPE",
+    "cabin": "HEALTH CENTRE 2F, Cabin"
+  },
+  {
+    "name": "Suganeshwari G",
+    "school": "SCOPE",
+    "cabin": "HEALTH CENTRE 2F, Cabin"
+  },
+  {
+    "name": "Shruti Mishra",
+    "school": "SCOPE",
+    "cabin": "AB2 - 2F, MAIN Cabin 2"
+  },
+  {
+    "name": "P. Valarmathi",
+    "school": "SCOPE",
+    "cabin": "ABII - 4th Floor"
+  },
+  {
+    "name": "Bhuvaneswari Amma N.G.",
+    "school": "SCOPE",
+    "cabin": "ABII - 4th Floor"
+  },
+  {
+    "name": "Abishi Chowdhury",
+    "school": "SCOPE",
+    "cabin": "AB1 503 - Cubical 21"
+  },
+  {
+    "name": "A. Sheik ADMNullah",
+    "school": "SCOPE",
+    "cabin": "AB1 503 - Cubical 1"
+  },
+  {
+    "name": "Priyadarshini Ramasubramanian",
+    "school": "SCOPE",
+    "cabin": "AB1 503 - Cubical 2"
+  },
+  {
+    "name": "Manimegalai T",
+    "school": "SCOPE",
+    "cabin": "AB1 503 - Cubical 5"
+  },
+  {
+    "name": "Indra Priyadharshini S",
+    "school": "SCOPE",
+    "cabin": "AB1 503 - Cubical 9"
+  },
+  {
+    "name": "D. Kavitha",
+    "school": "SCOPE",
+    "cabin": "AB1 503 - Cubical 11"
+  },
+  {
+    "name": "M. Suguna",
+    "school": "SCOPE",
+    "cabin": "AB1 503 - Cubical 15"
+  },
+  {
+    "name": "A. Sherly Alphonse",
+    "school": "SCOPE",
+    "cabin": "AB1 503 - Cubical 22"
+  },
+  {
+    "name": "Abinaya S",
+    "school": "SCOPE",
+    "cabin": "AB1 503 - Cubical 23"
+  }
+]

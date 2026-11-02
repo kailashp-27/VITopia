@@ -1,0 +1,251 @@
+.simulator-screen {
+  max-width: 560px;
+  margin: 0 auto;
+}
+.simulator-modes {
+  display: flex;
+  gap: 5px;
+  padding: 5px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+.simulator-modes button {
+  flex: 1;
+  padding: 11px 4px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--soft);
+  font:
+    500 12px/1.4 Inter,
+    "Segoe UI",
+    sans-serif;
+  cursor: pointer;
+}
+.simulator-modes button[aria-pressed="true"] {
+  background: var(--accent);
+  color: white;
+}
+.simulation-date {
+  display: block;
+  margin: 22px 0 12px;
+  font-size: 12px;
+  color: var(--soft);
+}
+.simulation-date input {
+  display: block;
+  width: 100%;
+  margin-top: 9px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  background: var(--panel);
+  color: var(--text);
+  color-scheme: dark;
+  font: inherit;
+  min-width: 0;
+}
+.simulation-note {
+  color: #b2a1c3;
+  font-size: 11px;
+  line-height: 1.7;
+}
+.simulation-overall {
+  margin: 22px 0;
+  padding: 20px;
+  background: #291d38;
+  border: 1px solid #503869;
+  border-radius: 15px;
+}
+.simulation-overall > span {
+  font-size: 12px;
+  color: var(--text);
+}
+.simulation-overall > div,
+.simulation-scores {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin: 14px 0 8px;
+  font-size: 20px;
+  font-variant-numeric: tabular-nums;
+}
+.simulation-overall > div > span,
+.simulation-scores > span {
+  color: #b6a2cb;
+}
+.simulation-overall strong {
+  color: var(--text);
+  font-size: 28px;
+}
+.simulation-overall > small {
+  color: var(--soft);
+  font-size: 11px;
+}
+.simulation-overall > p {
+  color: #bca8d1;
+  margin: 12px 0 0;
+  font-size: 11px;
+}
+.simulation-plan-heading,
+.simulation-day > header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+.simulation-plan-heading h2,
+.simulation-results > h2 {
+  font:
+    600 15px/1.5 Inter,
+    "Segoe UI",
+    sans-serif;
+}
+.simulation-plan-heading .text-button,
+.simulation-day .text-button {
+  font-size: 11px;
+  white-space: nowrap;
+}
+.simulation-day {
+  margin: 14px 0;
+  padding: 17px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+.simulation-day h3 {
+  margin: 0;
+  font:
+    500 13px/1.5 Inter,
+    "Segoe UI",
+    sans-serif;
+}
+.simulation-class-heading {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 10px;
+  color: var(--soft);
+}
+.simulation-class-title {
+  display: block;
+  margin: 10px 0 5px;
+  font:
+    500 13px/1.6 Inter,
+    "Segoe UI",
+    sans-serif;
+}
+.simulation-class > small {
+  color: #a997bc;
+  font-size: 10px;
+}
+.simulation-results {
+  margin-top: 26px;
+}
+.simulation-results article {
+  padding: 18px 0;
+  border-top: 1px solid var(--border);
+}
+.simulation-results article h3 {
+  margin: 0 0 6px;
+  font:
+    500 13px/1.6 Inter,
+    "Segoe UI",
+    sans-serif;
+}
+.simulation-results article small {
+  color: #b4a1c6;
+  font-size: 10px;
+  line-height: 1.7;
+}
+.simulation-results article p {
+  font-size: 11px;
+  color: var(--soft);
+}
+.simulation-scores strong {
+  color: var(--text);
+}
+.simulation-scores strong.warning {
+  color: #f0b29c;
+}
+
+.simulation-day > summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  list-style: none;
+}
+.simulation-day > summary::-webkit-details-marker {
+  display: none;
+}
+.simulation-day > summary h3 {
+  flex: 1;
+}
+.simulation-day > summary small {
+  color: var(--soft);
+  font-size: 10px;
+}
+.simulation-day > summary svg {
+  color: var(--soft);
+  flex-shrink: 0;
+}
+.simulation-day[open] > summary svg {
+  transform: rotate(180deg);
+}
+.ignore-simulation-day {
+  margin-top: 17px;
+  margin-left: auto;
+}
+button.simulation-class {
+  display: block;
+  width: 100%;
+  margin: 12px 0 0;
+  padding: 15px;
+  text-align: left;
+  font: inherit;
+  color: var(--text);
+  background: var(--app-bg);
+  border: 1.5px solid;
+  border-radius: 12px;
+  cursor: pointer;
+}
+button.simulation-class.present {
+  border-color: #63cc98;
+}
+button.simulation-class.absent {
+  border-color: #f07886;
+}
+button.simulation-class.ignore {
+  border-color: #ede9fe;
+}
+.simulation-class > small {
+  display: block;
+}
+.simulation-status {
+  display: block;
+  margin-top: 12px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.present .simulation-status {
+  color: #91e1b8;
+}
+.absent .simulation-status {
+  color: #ffabb7;
+}
+.ignore .simulation-status {
+  color: #ede9fe;
+}
+.simulation-class:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+.simulation-class:focus-visible,
+.simulation-day > summary:focus-visible,
+.simulator-modes button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
