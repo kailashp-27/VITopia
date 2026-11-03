@@ -1,12 +1,76 @@
 import { groupCourses, groupExams } from "../profile-groups.js";
-import { ChevronDown } from "lucide-react";
+import { BookOpen, ChevronDown, GraduationCap, MapPin } from "lucide-react";
 import { useEffect, useState } from "react";
 import { findFacultyCabin } from "../faculty-cabins.js";
 import { readFacultyCabins, saveFacultyCabins } from "../db.js";
 
-export default function ProfileDetails({ data, page, onNavigate }) {
+function renderPreviewWidget(widgetType) {
+  if (widgetType === "attendance") {
+    return <span className="class-widget attendance-widget">85.0%</span>;
+  }
+  if (widgetType === "venue") {
+    return (
+      <span className="class-widget venue-widget">
+        <MapPin size={11} />
+        <span>AB1-313</span>
+      </span>
+    );
+  }
+  if (widgetType === "slot") {
+    return <span className="class-widget slot-widget">A1</span>;
+  }
+  return null;
+}
+
+const WIDGET_OPTIONS = [
+  {
+    id: "attendance",
+    label: "Course Attendance",
+    description: "Current course attendance percentage",
+    sample: <span className="class-widget attendance-widget">85.0%</span>,
+  },
+  {
+    id: "venue",
+    label: "Course Place (Venue)",
+    description: "Classroom or lab location",
+    sample: (
+      <span className="class-widget venue-widget">
+        <MapPin size={11} />
+        <span>AB1-313</span>
+      </span>
+    ),
+  },
+  {
+    id: "slot",
+    label: "Course Slot",
+    description: "Course timetable slot code",
+    sample: <span className="class-widget slot-widget">A1</span>,
+  },
+  {
+    id: "none",
+    label: "None",
+    description: "Hide the right-side widget column",
+    sample: <span className="class-widget none-widget">—</span>,
+  },
+];
+
+export default function ProfileDetails({
+  data,
+  page,
+  onNavigate,
+  timetableWidget = "attendance",
+  onWidgetChange,
+}) {
   const registered = data?.overview?.courses;
   const courses = registered?.length ? registered : data?.attendance || [];
+  const courseGroups = groupCourses(courses);
+  const totalCourses = courseGroups.length;
+  const totalCredits = courses.reduce((sum, course) => {
+    const cred =
+      course.credits ??
+      data?.overview?.courses?.find((c) => c.code === course.code)?.credits;
+    return sum + (Number.isFinite(Number(cred)) ? Number(cred) : 0);
+  }, 0);
   const exams = data?.overview?.exams;
   const [cabins, setCabins] = useState({});
   const [lookupBusy, setLookupBusy] = useState(false);
@@ -74,11 +138,37 @@ export default function ProfileDetails({ data, page, onNavigate }) {
           <button onClick={() => onNavigate("hostel-leave")}>
             Hostel leave <span aria-hidden="true">›</span>
           </button>
+          <button onClick={() => onNavigate("widget-customization")}>
+            Widget customization <span aria-hidden="true">›</span>
+          </button>
+          <button onClick={() => onNavigate("settings")}>
+            Settings <span aria-hidden="true">›</span>
+          </button>
         </nav>
       ) : null}
       {page === "courses" ? (
         <>
           <section aria-label="Current semester courses">
+            <div className="summary-grid overview-details course-stats">
+              <section className="summary-card compact-summary overview-stat">
+                <BookOpen size={20} />
+                <h2>Total courses</h2>
+                <strong className="metric-number">{totalCourses}</strong>
+                <small>
+                  {courses.length !== totalCourses
+                    ? `${courses.length} class components`
+                    : "Registered this semester"}
+                </small>
+              </section>
+              <section className="summary-card compact-summary overview-stat">
+                <GraduationCap size={20} />
+                <h2>Total credits</h2>
+                <strong className="metric-number">
+                  {totalCredits || "—"}
+                </strong>
+                <small>This semester</small>
+              </section>
+            </div>
             <button
               type="button"
               className="button secondary full-width faculty-lookup"
@@ -87,17 +177,13 @@ export default function ProfileDetails({ data, page, onNavigate }) {
             >
               {lookupBusy ? "Looking up cabins…" : "Look up faculty cabins"}
             </button>
-            <p className="footnote">
-              From your faculty directory PDF (March 2022). Cabin locations may
-              have changed.
-            </p>
             {lookupMessage ? (
               <p className="footnote" role="status">
                 {lookupMessage}
               </p>
             ) : null}
             {courses.length ? (
-              groupCourses(courses).map((group) => (
+              courseGroups.map((group) => (
                 <article
                   className="profile-course grouped-course"
                   key={group.items.map((course) => course.code).join("-")}
@@ -210,6 +296,60 @@ export default function ProfileDetails({ data, page, onNavigate }) {
             )}
           </section>
         </>
+      ) : null}
+      {page === "widget-customization" ? (
+        <section
+          className="widget-customization-screen"
+          aria-label="Widget customization"
+        >
+          <div className="widget-preview-card">
+            <span className="widget-preview-title">Live Preview</span>
+            <article className="daily-class preview-daily-class">
+              <div className="class-time">
+                <time>08:00</time>
+                <small>08:50</small>
+              </div>
+              <div className="class-info">
+                <h3>Software Engineering</h3>
+              </div>
+              <div className="class-right">
+                {renderPreviewWidget(timetableWidget)}
+              </div>
+            </article>
+          </div>
+          <div
+            className="widget-options-list"
+            role="radiogroup"
+            aria-label="Timetable right-side widget options"
+          >
+            {WIDGET_OPTIONS.map((opt) => {
+              const selected = timetableWidget === opt.id;
+              return (
+                <button
+                  key={opt.id}
+                  type="button"
+                  role="radio"
+                  aria-checked={selected}
+                  className={`widget-option-item ${selected ? "selected" : ""}`}
+                  onClick={() => onWidgetChange && onWidgetChange(opt.id)}
+                >
+                  <div className="widget-option-radio">
+                    <span className="radio-indicator" />
+                  </div>
+                  <div className="widget-option-details">
+                    <strong>{opt.label}</strong>
+                    <span>{opt.description}</span>
+                  </div>
+                  <div className="widget-option-badge">{opt.sample}</div>
+                </button>
+              );
+            })}
+          </div>
+          <p className="footnote">
+            The selected option appears in the right-side frame of each class in
+            Today’s Timetable on the Home screen.
+          </p>
+        </section>
       ) : null}
     </div>
   );

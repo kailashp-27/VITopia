@@ -71,23 +71,36 @@ export default function App() {
   const [calendarBusy, setCalendarBusy] = useState(false);
   const calendarAbort = useRef(null);
   const online = useOnline();
+  const [timetableWidget, setTimetableWidget] = useState(() => {
+    try {
+      return localStorage.getItem("vtopia_timetable_widget") || "attendance";
+    } catch {
+      return "attendance";
+    }
+  });
+  const handleWidgetChange = (widget) => {
+    setTimetableWidget(widget);
+    try {
+      localStorage.setItem("vtopia_timetable_widget", widget);
+    } catch {}
+  };
   const profilePages = [
     "profile",
     "settings",
     "courses",
     "exams",
-    "semester",
     "simulator",
     "hostel-leave",
+    "widget-customization",
   ];
   const currentPage =
     {
       settings: { title: "Settings" },
       courses: { title: "Course list" },
       exams: { title: "Exam schedule" },
-      semester: { title: "Change semester" },
       simulator: { title: "Attendance Simulator" },
       "hostel-leave": { title: "Hostel leave" },
+      "widget-customization": { title: "Widget customization" },
     }[screen] || NAV.find((page) => page.id === screen);
   useEffect(() => {
     document.title = `${currentPage.title} · Vtopia`;
@@ -316,9 +329,9 @@ export default function App() {
             "settings",
             "courses",
             "exams",
-            "semester",
             "simulator",
             "hostel-leave",
+            "widget-customization",
           ].includes(screen) ? (
             <button
               type="button"
@@ -388,19 +401,6 @@ export default function App() {
             </button>
           </div>
         ) : null}
-        {data &&
-        screen !== "calendar" &&
-        screen !== "profile" &&
-        screen !== "settings" ? (
-          <div className="semester-line">
-            <span>{data.semester?.name || "Your semester"}</span>
-            <span className="last-sync">
-              {demoMode
-                ? "Demo"
-                : `Updated ${new Date(data.syncedAt).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "numeric", minute: "2-digit" })}`}
-            </span>
-          </div>
-        ) : null}
         {!ready ? (
           <div className="empty-inline">
             <LoaderCircle className="spinning" size={24} />
@@ -423,11 +423,13 @@ export default function App() {
               onDemo={explore}
               onClear={forget}
             />
-            {["profile", "courses", "exams"].includes(screen) ? (
+            {["profile", "courses", "exams", "widget-customization"].includes(screen) ? (
               <ProfileDetails
                 data={data}
                 page={screen}
                 onNavigate={setScreen}
+                timetableWidget={timetableWidget}
+                onWidgetChange={handleWidgetChange}
               />
             ) : null}
             {screen === "simulator" ? (
@@ -487,6 +489,7 @@ export default function App() {
             data={data}
             onNavigate={setScreen}
             onCalculate={openCalculator}
+            timetableWidget={timetableWidget}
           />
         ) : screen === "attendance" ? (
           data.attendance.length ? (
@@ -501,6 +504,19 @@ export default function App() {
         ) : (
           <Marks data={data} newCourseKeys={marksHighlights} />
         )}
+        {data &&
+        screen !== "calendar" &&
+        screen !== "profile" &&
+        screen !== "settings" ? (
+          <div className="semester-line">
+            <span>{data.semester?.name || "Your semester"}</span>
+            <span className="last-sync">
+              {demoMode
+                ? "Demo"
+                : `Updated ${new Date(data.syncedAt).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "numeric", minute: "2-digit" })}`}
+            </span>
+          </div>
+        ) : null}
       </main>
       <nav className="bottom-nav" aria-label="Main navigation">
         {NAV.map(({ id, label, icon: Icon }) => (

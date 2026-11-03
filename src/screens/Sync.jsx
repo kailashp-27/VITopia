@@ -8,6 +8,7 @@ import {
   LockKeyhole,
   RefreshCw,
   Trash2,
+  X,
 } from "lucide-react";
 import { readLogin, saveLogin, clearLogin } from "../credentials.js";
 import {
@@ -53,6 +54,7 @@ export default function Sync({
     setToken(sessionToken || null);
   }, [sessionToken]);
   const [semesterId, setSemesterId] = useState(data?.semester?.id || "");
+  const [semesterModalOpen, setSemesterModalOpen] = useState(false);
   const [now, setNow] = useState(Date.now());
   const abort = useRef(null);
   useEffect(() => {
@@ -300,12 +302,13 @@ export default function Sync({
         page === "courses" ||
         page === "exams" ||
         page === "simulator" ||
-        page === "hostel-leave"
+        page === "hostel-leave" ||
+        page === "widget-customization"
       }
       className={settings ? "sync-layout account-settings" : "sync-layout"}
     >
       <section className="sync-card">
-        <div hidden={page === "semester"}>
+        <div>
           {settings ? (
             <h2 className="profile-section-title">VTOP account</h2>
           ) : null}
@@ -520,36 +523,81 @@ export default function Sync({
           ) : null}
         </div>
         {!settings && data?.semesters?.length ? (
-          page === "semester" ? (
-            <div className="semester-form">
-              <h2 className="profile-section-title">Select semester</h2>
-              <label>
-                Semester
-                <select
-                  value={semesterId}
-                  onChange={(e) => setSemesterId(e.target.value)}
+          <button
+            type="button"
+            className="profile-page-link"
+            onClick={() => setSemesterModalOpen(true)}
+          >
+            Change semester <span aria-hidden="true">›</span>
+          </button>
+        ) : null}
+        {semesterModalOpen && data?.semesters?.length ? (
+          <div
+            className="semester-modal-portal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="semester-modal-title"
+          >
+            <div
+              className="semester-modal-backdrop"
+              onClick={() => setSemesterModalOpen(false)}
+              aria-hidden="true"
+            />
+            <div className="semester-modal-box">
+              <div className="semester-modal-header">
+                <h2 id="semester-modal-title">Change semester</h2>
+                <button
+                  type="button"
+                  className="icon-button modal-close-btn"
+                  onClick={() => setSemesterModalOpen(false)}
+                  aria-label="Close dialog"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+              <div className="semester-modal-body">
+                <label className="semester-select-label">
+                  <span>Select semester</span>
+                  <select
+                    className="semester-dropdown"
+                    value={semesterId}
+                    onChange={(e) => setSemesterId(e.target.value)}
+                    disabled={busy}
+                  >
+                    {data.semesters.map((s) => (
+                      <option value={s.id} key={s.id}>
+                        {s.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <p className="footnote">
+                  Active: {data?.semester?.name || "None"}
+                </p>
+              </div>
+              <div className="semester-modal-actions">
+                <button
+                  type="button"
+                  className="button secondary"
+                  onClick={() => setSemesterModalOpen(false)}
                   disabled={busy}
                 >
-                  {data.semesters.map((s) => (
-                    <option value={s.id} key={s.id}>
-                      {s.name}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <p className="footnote">
-                Choose a semester, then press Sync now to fetch it.
-              </p>
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="button primary"
+                  onClick={async (e) => {
+                    setSemesterModalOpen(false);
+                    await runSync(e);
+                  }}
+                  disabled={busy || !online}
+                >
+                  Switch & Sync
+                </button>
+              </div>
             </div>
-          ) : (
-            <button
-              type="button"
-              className="profile-page-link"
-              onClick={() => onNavigate("semester")}
-            >
-              Change semester <span aria-hidden="true">›</span>
-            </button>
-          )
+          </div>
         ) : null}
         {settings ? (
           <div className="profile-actions">

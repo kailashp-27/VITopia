@@ -379,7 +379,7 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 22px;
+  margin: 24px 0 0;
   font-size: 11px;
   color: #c4b5fd;
 }

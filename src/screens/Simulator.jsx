@@ -9,7 +9,16 @@ import { todayISO } from "../calendar-utils.js";
 import { shiftDate, weekDates } from "../schedule.js";
 import "../simulator.css";
 
+// Map from course code to its projected result for quick lookup
+function buildCourseMap(results) {
+  return new Map(results.map((c) => [c.code, c]));
+}
+
 const percent = (value) => (value === null ? "—" : `${value.toFixed(1)}%`);
+const pctDiff = (before, after) => {
+  if (before === null || after === null) return null;
+  return after - before;
+};
 const changeLabel = (before, after) => {
   if (before === null || after === null) return "No baseline yet";
   const difference = after - before;
@@ -35,6 +44,7 @@ export default function Simulator({ data }) {
     mode === "day" ? [dayDate] : weekDates(weekDate).map((item) => item.date),
   );
   const result = simulateAttendance(data?.attendance || [], days, choices);
+  const courseMap = buildCourseMap(result.courses);
   const affected = result.courses.filter(
     (course) => course.present || course.absent,
   );
@@ -44,6 +54,24 @@ export default function Simulator({ data }) {
     setChoices((current) => ({
       ...current,
       ...Object.fromEntries(day.classes.map((item) => [item.key, "ignore"])),
+    }));
+  const markAllAbsent = (day) =>
+    setChoices((current) => ({
+      ...current,
+      ...Object.fromEntries(
+        day.classes
+          .filter((item) => item.matched && !!item.units)
+          .map((item) => [item.key, "absent"]),
+      ),
+    }));
+  const markAllPresent = (day) =>
+    setChoices((current) => ({
+      ...current,
+      ...Object.fromEntries(
+        day.classes
+          .filter((item) => item.matched && !!item.units)
+          .map((item) => [item.key, "present"]),
+      ),
     }));
   const reset = () =>
     setChoices((current) => ({
@@ -127,6 +155,20 @@ export default function Simulator({ data }) {
         days.map((day) => {
           const DayContainer = mode === "week" ? "details" : "section";
           const DayHeading = mode === "week" ? "summary" : "header";
+          // Per-day projection: net change for overall from this day's choices
+          const dayClasses = day.classes.filter(
+            (item) => item.matched && !!item.units,
+          );
+          const dayAffected = dayClasses.filter(
+            (item) =>
+              (choices[item.key] || "present") === "present" ||
+              (choices[item.key] || "present") === "absent",
+          );
+          // Compute how many of this day's courses have a non-default status
+          const dayHasChanges = dayClasses.some(
+            (item) =>
+              choices[item.key] && choices[item.key] !== "present",
+          );
           return (
             <DayContainer
               className="simulation-day"
@@ -148,18 +190,36 @@ export default function Simulator({ data }) {
                   </>
                 ) : null}
               </DayHeading>
-              {mode === "week" && day.classes.length ? (
-                <button
-                  type="button"
-                  className="text-button ignore-simulation-day"
-                  onClick={() => ignoreDay(day)}
-                >
-                  Ignore day
-                </button>
-              ) : null}
-              <p className="schedule-caption">
-                {day.holiday ? "Holiday · no classes" : day.label}
-              </p>
+              <div className="simulation-day-subheading">
+                <p className="schedule-caption">
+                  {day.holiday ? "Holiday · no classes" : day.label}
+                </p>
+                {day.classes.length ? (
+                  <div className="simulation-day-actions">
+                    <button
+                      type="button"
+                      className="text-button absent-simulation-day"
+                      onClick={() => markAllAbsent(day)}
+                    >
+                      All absent
+                    </button>
+                    <button
+                      type="button"
+                      className="text-button present-simulation-day"
+                      onClick={() => markAllPresent(day)}
+                    >
+                      All present
+                    </button>
+                    <button
+                      type="button"
+                      className="text-button ignore-simulation-day"
+                      onClick={() => ignoreDay(day)}
+                    >
+                      Ignore day
+                    </button>
+                  </div>
+                ) : null}
+              </div>
               {!day.classes.length ? (
                 <p className="simulation-note">
                   {day.holiday
@@ -183,6 +243,19 @@ export default function Simulator({ data }) {
                     )?.title ||
                     item.title ||
                     item.code;
+                  // Per-class live projection
+                  const courseResult = courseMap.get(item.code);
+                  const diff =
+                    eligible && courseResult
+                      ? pctDiff(courseResult.before, courseResult.percent)
+                      : null;
+                  const showDiff = diff !== null;
+                  const diffLabel =
+                    diff === null
+                      ? null
+                      : diff === 0
+                        ? "unchanged"
+                        : `${diff > 0 ? "+" : ""}${diff.toFixed(1)}%`;
                   return (
                     <button
                       type="button"
@@ -210,7 +283,17 @@ export default function Simulator({ data }) {
                       <small>
                         {item.code} · {item.type}
                       </small>
-                      <span className="simulation-status">{label}</span>
+                      <div className="simulation-class-footer">
+                        <span className="simulation-status">{label}</span>
+                        {showDiff && courseResult ? (
+                          <span
+                            className={`simulation-class-pct ${diff > 0 ? "pct-up" : diff < 0 ? "pct-down" : "pct-same"}`}
+                          >
+                            {percent(courseResult.percent)}
+                            <span className="pct-delta">{diffLabel}</span>
+                          </span>
+                        ) : null}
+                      </div>
                       {!eligible ? (
                         <span className="simulation-note">
                           Attendance details unavailable; excluded from
