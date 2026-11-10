@@ -1,4 +1,3 @@
-import { useEffect, useRef, useState } from "react";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -7,14 +6,12 @@ import {
   EyeOff,
   LoaderCircle,
   LockKeyhole,
-  Palette,
   RefreshCw,
   ShieldCheck,
   Smartphone,
   WifiOff,
 } from "lucide-react";
 import { useVtopSync } from "../hooks/useVtopSync.js";
-import { THEMES, applyTheme, getSavedThemeId } from "../theme.js";
 
 export default function Login({
   online,
@@ -32,10 +29,6 @@ export default function Login({
   isStandalone = false,
   isIosInstallable = false,
 }) {
-  const [themeId, setThemeId] = useState(getSavedThemeId);
-  const [themeOpen, setThemeOpen] = useState(false);
-  const themeMenuRef = useRef(null);
-
   const sync = useVtopSync({
     online,
     data: null,
@@ -48,26 +41,6 @@ export default function Login({
     onStart,
     onFinish,
   });
-
-  useEffect(() => {
-    if (!themeOpen) return undefined;
-    const handleOutside = (e) => {
-      if (themeMenuRef.current && !themeMenuRef.current.contains(e.target)) {
-        setThemeOpen(false);
-      }
-    };
-    document.addEventListener("pointerdown", handleOutside);
-    return () => document.removeEventListener("pointerdown", handleOutside);
-  }, [themeOpen]);
-
-  const activeTheme =
-    THEMES.find((t) => t.id === themeId) || THEMES[4] || THEMES[0];
-
-  const handleSelectTheme = (id) => {
-    const applied = applyTheme(id);
-    setThemeId(applied.id);
-    setThemeOpen(false);
-  };
 
   return (
     <div className="login-shell compact-app">
@@ -82,58 +55,14 @@ export default function Login({
           </div>
         </div>
 
-        <div className="login-topbar-actions" ref={themeMenuRef}>
-          {!online ? (
+        {!online ? (
+          <div className="login-topbar-actions">
             <span className="offline-tag login-offline-tag" role="status">
               <WifiOff size={14} />
               <span>Offline</span>
             </span>
-          ) : null}
-          <button
-            type="button"
-            className="login-theme-btn"
-            aria-label="Choose appearance theme"
-            aria-expanded={themeOpen}
-            onClick={() => setThemeOpen((prev) => !prev)}
-          >
-            <span
-              className="login-theme-swatch"
-              style={{ background: activeTheme.accent }}
-              aria-hidden="true"
-            />
-            <Palette size={15} />
-            <span className="login-theme-label">{activeTheme.name}</span>
-          </button>
-
-          {themeOpen ? (
-            <div className="login-theme-popover" role="menu">
-              {THEMES.map((t) => {
-                const selected = t.id === activeTheme.id;
-                return (
-                  <button
-                    key={t.id}
-                    type="button"
-                    role="menuitemradio"
-                    aria-checked={selected}
-                    className={`login-theme-option ${selected ? "selected" : ""}`}
-                    onClick={() => handleSelectTheme(t.id)}
-                  >
-                    <span
-                      className="login-theme-dot"
-                      style={{
-                        background: t.bg,
-                        borderColor: t.accent,
-                      }}
-                    >
-                      <span style={{ background: t.accent }} />
-                    </span>
-                    <span>{t.name}</span>
-                  </button>
-                );
-              })}
-            </div>
-          ) : null}
-        </div>
+          </div>
+        ) : null}
       </header>
 
       <main id="main" className="login-main">
@@ -154,12 +83,7 @@ export default function Login({
 
         <section className="login-card" aria-labelledby="login-heading">
           <div className="login-card-intro">
-            <span className="login-eyebrow">FIRST-TIME SETUP</span>
             <h1 id="login-heading">Sign in with VTOP</h1>
-            <p>
-              Enter your VTOP username and password to sync attendance,
-              timetable, marks, and exams directly to this device.
-            </p>
           </div>
 
           {!online ? (
@@ -241,13 +165,7 @@ export default function Login({
                     onChange={(e) => sync.setRemember(e.target.checked)}
                     disabled={sync.busy}
                   />
-                  <span>
-                    Remember login on this device
-                    <small>
-                      Encrypted locally for 1-tap sync. No password leaves for
-                      storage on any database.
-                    </small>
-                  </span>
+                  <span>Remember login on this device</span>
                 </label>
               </div>
             )}
@@ -408,35 +326,9 @@ export default function Login({
 
         <div className="login-trust-strip">
           <span>
-            <ShieldCheck size={13} /> Encrypted locally
+            <ShieldCheck size={13} /> Offline IndexedDB cache
           </span>
-          <span>·</span>
-          <span>Offline IndexedDB cache</span>
-          <span>·</span>
-          <span>No server database</span>
         </div>
-
-        <footer className="author-credit login-author-credit">
-          <a
-            href="https://github.com/kailashp-27"
-            target="_blank"
-            rel="noreferrer"
-            className="author-badge"
-            title="View Kailash's GitHub profile"
-          >
-            <span>Developed by Kailash</span>
-            <svg
-              className="github-icon"
-              viewBox="0 0 24 24"
-              width="16"
-              height="16"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
-            </svg>
-          </a>
-        </footer>
       </main>
     </div>
   );
