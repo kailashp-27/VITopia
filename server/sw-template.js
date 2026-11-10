@@ -9,6 +9,8 @@ self.addEventListener("install", (event) => {
         cache.addAll([
           "/",
           "/icon.svg",
+          "/icon-192.png",
+          "/icon-512.png",
           "/manifest.webmanifest",
           ...PRECACHE_ASSETS,
         ]),

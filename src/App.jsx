@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { Suspense, lazy, useEffect, useRef, useState } from "react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -15,18 +15,23 @@ import {
   X,
 } from "lucide-react";
 import Sync from "./screens/Sync.jsx";
-import ProfileDetails from "./screens/Profile.jsx";
 import Overview from "./screens/Overview.jsx";
-import Calendar from "./screens/Calendar.jsx";
-import Simulator from "./screens/Simulator.jsx";
-import HostelLeave from "./screens/HostelLeave.jsx";
+import Login from "./screens/Login.jsx";
 import { Calculator, CourseTable, Marks } from "./components/Academic.jsx";
-import { clearLogin } from "./credentials.js";
+import { clearLogin, readLogin } from "./credentials.js";
 import { clearEvents } from "./events.js";
 import { clearCache, readCache, saveCache } from "./db.js";
 import { fetchCalendar } from "./api-client.js";
 import { demo } from "./demo.js";
 import { unreadMarksCourses } from "./marks-updates.js";
+
+const ProfileDetails = lazy(() => import("./screens/Profile.jsx"));
+const Calendar = lazy(() => import("./screens/Calendar.jsx"));
+const Simulator = lazy(() => import("./screens/Simulator.jsx"));
+const HostelLeave = lazy(() => import("./screens/HostelLeave.jsx"));
+const CgpaCalculator = lazy(() => import("./screens/CgpaCalculator.jsx"));
+const ShareTimetable = lazy(() => import("./screens/ShareTimetable.jsx"));
+const QuickSyncModal = lazy(() => import("./components/QuickSyncModal.jsx"));
 const NAV = [
   { id: "overview", label: "Home", title: "Overview", icon: Home },
   {
@@ -67,10 +72,23 @@ export default function App() {
   }
   const [notice, setNotice] = useState("");
   const [installPrompt, setInstallPrompt] = useState(null);
+  const [installDismissed, setInstallDismissed] = useState(false);
+  const [authHold, setAuthHold] = useState(false);
   const [sessionToken, setSessionToken] = useState(null);
   const [calendarBusy, setCalendarBusy] = useState(false);
+  const [quickSyncOpen, setQuickSyncOpen] = useState(false);
+  const [quickSyncBusy, setQuickSyncBusy] = useState(false);
   const calendarAbort = useRef(null);
   const online = useOnline();
+  const isStandalone =
+    typeof window !== "undefined" &&
+    (window.matchMedia?.("(display-mode: standalone)").matches ||
+      window.navigator?.standalone === true);
+  const isIosInstallable =
+    typeof navigator !== "undefined" &&
+    /iphone|ipad|ipod/i.test(navigator.userAgent) &&
+    !isStandalone;
+  const showLoginGate = ready && !demoMode && (!data || authHold);
   const [timetableWidget, setTimetableWidget] = useState(() => {
     try {
       return localStorage.getItem("vtopia_timetable_widget") || "attendance";
@@ -90,8 +108,13 @@ export default function App() {
     "courses",
     "exams",
     "simulator",
+    "cgpa-calculator",
+    "share-timetable",
     "hostel-leave",
     "widget-customization",
+    "theme-customization",
+    "details",
+    "proctor",
   ];
   const currentPage =
     {
@@ -99,12 +122,19 @@ export default function App() {
       courses: { title: "Course list" },
       exams: { title: "Exam schedule" },
       simulator: { title: "Attendance Simulator" },
+      "cgpa-calculator": { title: "CGPA Predictor & Targeter" },
+      "share-timetable": { title: "Friend’s Timetable" },
       "hostel-leave": { title: "Hostel leave" },
-      "widget-customization": { title: "Widget customization" },
+      "widget-customization": { title: "Timetable widget" },
+      "theme-customization": { title: "Appearance & Theme" },
+      details: { title: "Student details" },
+      proctor: { title: "Proctor information" },
     }[screen] || NAV.find((page) => page.id === screen);
   useEffect(() => {
-    document.title = `${currentPage.title} · Vtopia`;
-  }, [currentPage.title]);
+    document.title = showLoginGate
+      ? "Sign in · Vtopia"
+      : `${currentPage.title} · Vtopia`;
+  }, [currentPage.title, showLoginGate]);
   useEffect(() => {
     let active = true;
     readCache()
@@ -161,9 +191,21 @@ export default function App() {
       e.preventDefault();
       setInstallPrompt(e);
     };
+    const installedHandler = () => {
+      setInstallPrompt(null);
+    };
     window.addEventListener("beforeinstallprompt", handler);
-    return () => window.removeEventListener("beforeinstallprompt", handler);
+    window.addEventListener("appinstalled", installedHandler);
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handler);
+      window.removeEventListener("appinstalled", installedHandler);
+    };
   }, []);
+  async function handleInstallApp() {
+    if (!installPrompt) return;
+    await installPrompt.prompt();
+    setInstallPrompt(null);
+  }
   useEffect(() => {
     if (!course) return;
     const escape = (e) => {
@@ -291,6 +333,7 @@ export default function App() {
     }
   }
   function explore() {
+    setAuthHold(false);
     setData(demo);
     setDemoMode(true);
     setScreen("overview");
@@ -299,12 +342,13 @@ export default function App() {
   async function leaveDemo() {
     setDemoMode(false);
     setData(dataRef.current);
-    setScreen("profile");
+    setScreen("overview");
   }
   async function forget() {
     try {
       await Promise.all([clearCache(), clearLogin(), clearEvents()]);
       dataRef.current = null;
+      setAuthHold(false);
       setData(null);
       setDemoMode(false);
       setSessionToken(null);
@@ -314,72 +358,147 @@ export default function App() {
       setNotice("Could not clear all device data.");
     }
   }
-  function refresh() {
-    if (screen === "calendar") void refreshCalendar();
-    else setScreen("profile");
+  async function refresh() {
+    if (screen === "calendar") {
+      void refreshCalendar();
+      return;
+    }
+    if (!online) {
+      setNotice("Connect to the internet to sync.");
+      return;
+    }
+    if (demoMode) {
+      setScreen("profile");
+      return;
+    }
+    try {
+      const savedLogin = sessionToken ? null : await readLogin().catch(() => null);
+      if (sessionToken || savedLogin) {
+        setNotice("");
+        setQuickSyncOpen(true);
+        return;
+      }
+    } catch {}
+    setScreen("profile");
   }
+  if (!ready) {
+    return (
+      <div className="app-shell compact-app boot-shell">
+        <div className="boot-loading" role="status">
+          <LoaderCircle className="spinning" size={26} />
+          <span>Loading Vtopia…</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (showLoginGate) {
+    return (
+      <div className="app-shell compact-app">
+        <a className="skip-link" href="#main">
+          Skip to content
+        </a>
+        <Login
+          online={online}
+          notice={notice}
+          onDismissNotice={() => setNotice("")}
+          onData={receiveData}
+          onSession={setSessionToken}
+          onCalendar={receiveCalendar}
+          onOverview={receiveOverview}
+          onStart={() => setAuthHold(true)}
+          onFinish={(ok) => {
+            setAuthHold(false);
+            if (ok || dataRef.current) setScreen("overview");
+          }}
+          onDemo={explore}
+          installPrompt={installPrompt}
+          onInstallApp={handleInstallApp}
+          isStandalone={isStandalone}
+          isIosInstallable={isIosInstallable}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="app-shell compact-app">
       <a className="skip-link" href="#main">
         Skip to content
       </a>
-      <header className="app-header">
-        <div className="page-title">
-          {[
-            "settings",
-            "courses",
-            "exams",
-            "simulator",
-            "hostel-leave",
-            "widget-customization",
-          ].includes(screen) ? (
-            <button
-              type="button"
-              className="header-icon"
-              aria-label="Back to Profile"
-              onClick={() => setScreen("profile")}
-            >
-              <ArrowLeft size={21} />
-            </button>
-          ) : null}
-          <h1>{currentPage.title}</h1>
-        </div>
-        <div className="header-actions">
-          {!online ? (
-            <span className="offline-tag">
-              <WifiOff size={15} />
-              <span className="sr-only">Offline</span>
-            </span>
-          ) : null}
-          {screen !== "settings" ? (
-            <>
+      {screen !== "share-timetable" ? (
+        <header className="app-header">
+          <div className="page-title">
+            {[
+              "settings",
+              "courses",
+              "exams",
+              "simulator",
+              "cgpa-calculator",
+              "hostel-leave",
+              "widget-customization",
+              "theme-customization",
+              "details",
+              "proctor",
+            ].includes(screen) ? (
               <button
+                type="button"
                 className="header-icon"
-                aria-label={
-                  screen === "calendar"
-                    ? "Refresh academic calendar"
-                    : "Sync account"
-                }
-                onClick={refresh}
-                disabled={calendarBusy}
+                aria-label="Back"
+                onClick={() => {
+                  if (
+                    ["widget-customization", "theme-customization"].includes(
+                      screen,
+                    )
+                  ) {
+                    setScreen("settings");
+                  } else {
+                    setScreen("profile");
+                  }
+                }}
               >
-                {calendarBusy ? (
-                  <LoaderCircle className="spinning" size={22} />
-                ) : (
-                  <RefreshCw size={22} />
-                )}
+                <ArrowLeft size={21} />
               </button>
-              <button
-                className="header-icon"
-                aria-label="Open settings"
-                onClick={() => setScreen("settings")}
-              >
-                <Settings size={23} />
-              </button>
-            </>
-          ) : null}
-        </div>
-      </header>
+            ) : null}
+            <h1>{currentPage.title}</h1>
+          </div>
+          <div className="header-actions">
+            {!online ? (
+              <span className="offline-tag">
+                <WifiOff size={15} />
+                <span className="sr-only">Offline</span>
+              </span>
+            ) : null}
+            {screen !== "settings" ? (
+              <>
+                <button
+                  className="header-icon"
+                  aria-label={
+                    screen === "calendar"
+                      ? "Refresh academic calendar"
+                      : "Quick sync account"
+                  }
+                  onClick={refresh}
+                  disabled={calendarBusy || quickSyncBusy}
+                >
+                  {calendarBusy || quickSyncBusy ? (
+                    <LoaderCircle className="spinning" size={22} />
+                  ) : (
+                    <RefreshCw size={22} />
+                  )}
+                </button>
+                <button
+                  className="header-icon"
+                  aria-label="Open settings"
+                  onClick={() => setScreen("settings")}
+                >
+                  <Settings size={23} />
+                </button>
+              </>
+            ) : null}
+          </div>
+        </header>
+      ) : null}
       <main id="main">
         {demoMode ? (
           <div className="demo-banner">
@@ -408,69 +527,159 @@ export default function App() {
           </div>
         ) : profilePages.includes(screen) ? (
           <div className="profile-screen">
-            <Sync
-              online={online}
-              settings={screen === "settings"}
-              page={screen}
-              onNavigate={setScreen}
-              onSettings={() => setScreen("settings")}
-              sessionToken={sessionToken}
-              data={demoMode ? null : data}
-              onData={receiveData}
-              onSession={setSessionToken}
-              onCalendar={receiveCalendar}
-              onOverview={receiveOverview}
-              onDemo={explore}
-              onClear={forget}
-            />
-            {["profile", "courses", "exams", "widget-customization"].includes(screen) ? (
-              <ProfileDetails
-                data={data}
+            {screen !== "share-timetable" ? (
+              <Sync
+                online={online}
+                settings={screen === "settings"}
                 page={screen}
                 onNavigate={setScreen}
-                timetableWidget={timetableWidget}
-                onWidgetChange={handleWidgetChange}
+                onSettings={() => setScreen("settings")}
+                sessionToken={sessionToken}
+                data={demoMode ? null : data}
+                demoMode={demoMode}
+                onData={receiveData}
+                onSession={setSessionToken}
+                onCalendar={receiveCalendar}
+                onOverview={receiveOverview}
+                onDemo={explore}
+                onClear={forget}
               />
+            ) : null}
+            {["profile", "courses", "exams", "widget-customization", "theme-customization", "details", "proctor", "settings"].includes(screen) ? (
+              <Suspense
+                fallback={
+                  <div className="empty-inline">
+                    <LoaderCircle className="spinning" size={22} />
+                    Loading…
+                  </div>
+                }
+              >
+                <ProfileDetails
+                  data={data}
+                  page={screen}
+                  onNavigate={setScreen}
+                  timetableWidget={timetableWidget}
+                  onWidgetChange={handleWidgetChange}
+                  demoMode={demoMode}
+                />
+              </Suspense>
             ) : null}
             {screen === "simulator" ? (
-              <Simulator
-                key={`${demoMode}-${data?.semester?.id}`}
-                data={data}
-              />
+              <Suspense
+                fallback={
+                  <div className="empty-inline">
+                    <LoaderCircle className="spinning" size={22} />
+                    Loading…
+                  </div>
+                }
+              >
+                <Simulator
+                  key={`${demoMode}-${data?.semester?.id}`}
+                  data={data}
+                />
+              </Suspense>
+            ) : null}
+            {screen === "cgpa-calculator" ? (
+              <Suspense
+                fallback={
+                  <div className="empty-inline">
+                    <LoaderCircle className="spinning" size={22} />
+                    Loading…
+                  </div>
+                }
+              >
+                <CgpaCalculator
+                  key={`${demoMode}-${data?.semester?.id}-${data?.overview?.profile?.registration || ""}`}
+                  data={data}
+                  demoMode={demoMode}
+                  onNavigate={setScreen}
+                />
+              </Suspense>
+            ) : null}
+            {screen === "share-timetable" ? (
+              <Suspense
+                fallback={
+                  <div className="empty-inline">
+                    <LoaderCircle className="spinning" size={22} />
+                    Loading…
+                  </div>
+                }
+              >
+                <ShareTimetable
+                  data={data}
+                  demoMode={demoMode}
+                  onNavigate={setScreen}
+                />
+              </Suspense>
             ) : null}
             {screen === "hostel-leave" ? (
-              <HostelLeave
-                data={data}
-                token={sessionToken}
-                online={online}
-                demoMode={demoMode}
-                onSession={setSessionToken}
-                onLeave={receiveHostelLeave}
-                onSync={() => setScreen("profile")}
-              />
+              <Suspense
+                fallback={
+                  <div className="empty-inline">
+                    <LoaderCircle className="spinning" size={22} />
+                    Loading…
+                  </div>
+                }
+              >
+                <HostelLeave
+                  data={data}
+                  token={sessionToken}
+                  online={online}
+                  demoMode={demoMode}
+                  onSession={setSessionToken}
+                  onLeave={receiveHostelLeave}
+                  onSync={() => setScreen("profile")}
+                />
+              </Suspense>
             ) : null}
             {screen === "settings" && installPrompt ? (
               <button
                 className="button secondary full-width install-action"
-                onClick={async () => {
-                  await installPrompt.prompt();
-                  setInstallPrompt(null);
-                }}
+                onClick={handleInstallApp}
               >
                 <Download size={16} />
                 Install app
               </button>
             ) : null}
             {screen === "settings" ? (
-              <footer className="author-credit">by Kailash</footer>
+              <footer className="author-credit">
+                <a
+                  href="https://github.com/kailashp-27"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="author-badge"
+                  title="View Kailash's GitHub profile"
+                >
+                  <span>Developed by Kailash</span>
+                  <svg
+                    className="github-icon"
+                    viewBox="0 0 24 24"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+                  </svg>
+                </a>
+              </footer>
             ) : null}
           </div>
         ) : screen === "calendar" ? (
-          <Calendar
-            calendar={data?.calendar}
-            demoMode={demoMode}
-            onSync={() => setScreen("profile")}
-          />
+          <Suspense
+            fallback={
+              <div className="empty-inline">
+                <LoaderCircle className="spinning" size={22} />
+                Loading…
+              </div>
+            }
+          >
+            <Calendar
+              calendar={data?.calendar}
+              demoMode={demoMode}
+              onSync={() => setScreen("profile")}
+            />
+          </Suspense>
         ) : !data ? (
           <div className="empty-workspace">
             <p>No synced data yet.</p>
@@ -485,12 +694,41 @@ export default function App() {
             </button>
           </div>
         ) : screen === "overview" ? (
-          <Overview
-            data={data}
-            onNavigate={setScreen}
-            onCalculate={openCalculator}
-            timetableWidget={timetableWidget}
-          />
+          <>
+            {!isStandalone && !installDismissed && installPrompt ? (
+              <div className="home-install-banner" role="region" aria-label="Install Vtopia app">
+                <div className="home-install-copy">
+                  <Download size={16} />
+                  <span>
+                    <strong>Install Vtopia</strong> for app icon & offline launch
+                  </span>
+                </div>
+                <div className="home-install-actions">
+                  <button
+                    type="button"
+                    className="home-install-cta"
+                    onClick={handleInstallApp}
+                  >
+                    Install
+                  </button>
+                  <button
+                    type="button"
+                    className="icon-button"
+                    aria-label="Dismiss install prompt"
+                    onClick={() => setInstallDismissed(true)}
+                  >
+                    <X size={15} />
+                  </button>
+                </div>
+              </div>
+            ) : null}
+            <Overview
+              data={data}
+              onNavigate={setScreen}
+              onCalculate={openCalculator}
+              timetableWidget={timetableWidget}
+            />
+          </>
         ) : screen === "attendance" ? (
           data.attendance.length ? (
             <CourseTable
@@ -553,6 +791,25 @@ export default function App() {
           target={75}
           onClose={() => setCourse(null)}
         />
+      ) : null}
+      {quickSyncOpen ? (
+        <Suspense fallback={null}>
+          <QuickSyncModal
+            online={online}
+            data={demoMode ? null : data}
+            sessionToken={sessionToken}
+            onData={receiveData}
+            onSession={setSessionToken}
+            onCalendar={receiveCalendar}
+            onOverview={receiveOverview}
+            onOpenSettings={() => setScreen("settings")}
+            onBusyChange={setQuickSyncBusy}
+            onClose={() => {
+              setQuickSyncOpen(false);
+              setQuickSyncBusy(false);
+            }}
+          />
+        </Suspense>
       ) : null}
     </div>
   );

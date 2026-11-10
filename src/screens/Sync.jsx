@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -10,19 +10,14 @@ import {
   Trash2,
   X,
 } from "lucide-react";
-import { readLogin, saveLogin, clearLogin } from "../credentials.js";
-import {
-  syncRequest,
-  fetchCalendar,
-  fetchCaptcha,
-  fetchOverview,
-} from "../api-client.js";
-import { prepareVerification } from "../captcha-flow.js";
+import { useVtopSync } from "../hooks/useVtopSync.js";
+import { demo } from "../demo.js";
 
 export default function Sync({
   online,
   onData,
   data,
+  demoMode = false,
   onDemo,
   onClear,
   onSession,
@@ -34,268 +29,45 @@ export default function Sync({
   onSettings,
   sessionToken,
 }) {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [saved, setSaved] = useState(false);
-  const [ready, setReady] = useState(false);
-  const [remember, setRemember] = useState(false);
-  const [visible, setVisible] = useState(false);
-  const [editing, setEditing] = useState(false);
-  const [busy, setBusy] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState("");
-  const [errorCode, setErrorCode] = useState("");
-  const [progress, setProgress] = useState("");
-  const [challenge, setChallenge] = useState(null);
-  const [captcha, setCaptcha] = useState("");
-  const [manual, setManual] = useState(false);
-  const [token, setToken] = useState(sessionToken || null);
-  useEffect(() => {
-    setToken(sessionToken || null);
-  }, [sessionToken]);
-  const [semesterId, setSemesterId] = useState(data?.semester?.id || "");
   const [semesterModalOpen, setSemesterModalOpen] = useState(false);
-  const [now, setNow] = useState(Date.now());
-  const abort = useRef(null);
-  useEffect(() => {
-    let active = true;
-    readLogin()
-      .then((login) => {
-        if (active && login) {
-          setUsername(login.username);
-          setPassword(login.password);
-          setSaved(true);
-          setRemember(true);
-        }
-      })
-      .catch(() => {
-        if (active)
-          setError("Saved login could not be opened. Please enter it again.");
-      })
-      .finally(() => {
-        if (active) setReady(true);
-      });
-    const timer = setInterval(() => setNow(Date.now()), 1000);
-    return () => {
-      active = false;
-      clearInterval(timer);
-      abort.current?.abort();
-    };
-  }, []);
-  const expired = challenge && now >= challenge.expiresAt;
-  async function storeLogin() {
-    setSaving(true);
-    setError("");
-    try {
-      await saveLogin(username.trim().toUpperCase(), password);
-      setSaved(true);
-      setRemember(true);
-      setEditing(false);
-      setProgress("Login saved on this device.");
-    } catch {
-      setError(
-        "This browser could not save the login securely. You can still sync without saving.",
-      );
-    } finally {
-      setSaving(false);
-    }
-  }
-  async function forgetLogin() {
-    try {
-      await clearLogin();
-      setSaved(false);
-      setRemember(false);
-      setPassword("");
-      setToken(null);
-      onSession(null);
-      setChallenge(null);
-      setProgress("Saved login removed.");
-    } catch {
-      setError(
-        "Could not remove the saved login. Clear this site’s data in browser settings.",
-      );
-    }
-  }
-  async function getChallenge(signal) {
-    const result = await fetchCaptcha(signal);
-    signal.throwIfAborted();
-    setNow(Date.now());
-    setChallenge(result);
-    return result;
-  }
-  function showFailure(error) {
-    setErrorCode(error.code || "");
-    setError(
-      error.name === "TimeoutError"
-        ? "VTOP took too long. Please try again."
-        : error.message || "Sync could not finish.",
-    );
-    setProgress("");
-  }
-  async function loadManualCaptcha() {
-    if (busy || !online) return;
-    setBusy(true);
-    setError("");
-    setErrorCode("");
-    setChallenge(null);
-    setCaptcha("");
-    setManual(true);
-    setProgress("Loading verification image…");
-    const controller = new AbortController();
-    abort.current = controller;
-    try {
-      await getChallenge(
-        AbortSignal.any([controller.signal, AbortSignal.timeout(30000)]),
-      );
-      setProgress("Enter the six characters, then tap Verify and sync.");
-    } catch (error) {
-      if (!controller.signal.aborted) showFailure(error);
-    } finally {
-      if (!controller.signal.aborted) setBusy(false);
-    }
-  }
-  async function runSync(event) {
-    const semesterOnly = !!token;
-    event?.preventDefault();
-    if (busy || !online) return;
-    if ((!semesterOnly || !token) && (!username.trim() || !password)) {
-      setError("Add your VTOP login in Settings before syncing.");
-      onSettings();
-      return;
-    }
-    setBusy(true);
-    setError("");
-    setErrorCode("");
-    setProgress("Connecting to VTOP…");
-    const controller = new AbortController();
-    abort.current = controller;
-    const signal = AbortSignal.any([
-      controller.signal,
-      AbortSignal.timeout(115000),
-    ]);
-    let payload;
-    try {
-      if (semesterOnly && token) payload = { token, semesterId };
-      else {
-        if (!username.trim() || !password)
-          throw new Error("Enter your VTOP username and password first.");
-        const verification = await prepareVerification({
-          challenge,
-          answer: captcha,
-          manual,
-          load: () => getChallenge(signal),
-          read: async (image) => {
-            const { readCaptcha } = await import("../captcha-reader.js");
-            return readCaptcha(image, { signal, onProgress: setProgress });
-          },
-        });
-        signal.throwIfAborted();
-        const active = verification.challenge;
-        if (verification.needsManual || active.expiresAt <= Date.now()) {
-          setManual(true);
-          if (active.expiresAt <= Date.now()) await getChallenge(signal);
-          setCaptcha("");
-          setProgress(
-            "Enter the six characters below, then tap Verify and sync.",
-          );
-          return;
-        }
-        if (remember) await saveLogin(username.trim().toUpperCase(), password);
-        else if (saved) {
-          await clearLogin();
-          setSaved(false);
-        }
-        payload = {
-          username: username.trim().toUpperCase(),
-          password,
-          captcha: verification.answer,
-          token: active.token,
-          ...(semesterId ? { semesterId } : {}),
-        };
-      }
-      const result = await syncRequest(payload, setProgress, signal);
-      if (payload) payload.password = "";
-      setToken(result.token);
-      onSession(result.token);
-      setChallenge(null);
-      setCaptcha("");
-      setManual(false);
-      setSemesterId(result.data.semester.id);
-      if (remember) {
-        setSaved(true);
-        setEditing(false);
-      } else setPassword("");
-      await onData(result.data);
-      let overviewFailed = false;
-      setProgress("Fetching timetable, ODs and feedback status…");
-      try {
-        const extra = await fetchOverview(
-          result.token,
-          result.data.semester.id,
-          AbortSignal.any([controller.signal, AbortSignal.timeout(110000)]),
-        );
-        const overview = extra.overview;
-        await onOverview(overview, result.data.semester.id);
-        if (extra.token) {
-          result.token = extra.token;
-          setToken(extra.token);
-          onSession(extra.token);
-        }
-        overviewFailed =
-          !overview.timetable?.available ||
-          !overview.ods?.available ||
-          !overview.feedback?.available ||
-          !overview.exams?.available;
-      } catch (error) {
-        if (controller.signal.aborted) return;
-        overviewFailed = true;
-      }
-      setProgress("Fetching academic calendar…");
-      try {
-        const calendar = await fetchCalendar(
-          result.token,
-          result.data.semester.id,
-          AbortSignal.any([controller.signal, AbortSignal.timeout(110000)]),
-        );
-        await onCalendar(calendar, result.data.semester.id);
-        setProgress(
-          overviewFailed
-            ? "Synced. Some overview details are unavailable from VTOP."
-            : "Synced.",
-        );
-      } catch (error) {
-        if (controller.signal.aborted) return;
-        setProgress(
-          "Attendance and marks synced. Academic calendar could not be fetched.",
-        );
-      }
-    } catch (error) {
-      setChallenge(null);
-      setToken(null);
-      onSession(null);
-      setCaptcha("");
-      if (!controller.signal.aborted) {
-        showFailure(error);
-        if (error.code === "INVALID_CAPTCHA") {
-          // Obtain one fresh image and wait. Never retry the login automatically.
-          setManual(true);
-          setProgress("Loading a new image for manual entry…");
-          try {
-            await getChallenge(signal);
-            setError(
-              "VTOP rejected the captcha. Enter the new image’s six characters to try again.",
-            );
-            setProgress("");
-          } catch (challengeError) {
-            if (!controller.signal.aborted) showFailure(challengeError);
-          }
-        }
-      }
-    } finally {
-      if (payload) payload.password = "";
-      if (!controller.signal.aborted) setBusy(false);
-    }
-  }
+  const {
+    username,
+    setUsername,
+    password,
+    setPassword,
+    saved,
+    ready,
+    remember,
+    setRemember,
+    visible,
+    setVisible,
+    editing,
+    setEditing,
+    busy,
+    saving,
+    error,
+    errorCode,
+    progress,
+    challenge,
+    captcha,
+    setCaptcha,
+    expired,
+    semesterId,
+    setSemesterId,
+    storeLogin,
+    forgetLogin,
+    loadManualCaptcha,
+    runSync,
+  } = useVtopSync({
+    online,
+    data,
+    sessionToken,
+    onData,
+    onSession,
+    onCalendar,
+    onOverview,
+    onMissingCredentials: onSettings,
+  });
   return (
     <div
       hidden={
@@ -303,7 +75,11 @@ export default function Sync({
         page === "exams" ||
         page === "simulator" ||
         page === "hostel-leave" ||
-        page === "widget-customization"
+        page === "widget-customization" ||
+        page === "theme-customization" ||
+        page === "details" ||
+        page === "proctor" ||
+        page === "cgpa-calculator"
       }
       className={settings ? "sync-layout account-settings" : "sync-layout"}
     >
@@ -313,14 +89,45 @@ export default function Sync({
             <h2 className="profile-section-title">VTOP account</h2>
           ) : null}
           {!settings ? (
-            <div className="profile-identity">
-              <h2>{data?.overview?.profile?.name || "Your profile"}</h2>
-              <p>
-                {data?.overview?.profile?.registration ||
-                  (username
-                    ? `Login: ${username}`
-                    : "Name and register number appear after sync")}
-              </p>
+            <div
+              className="profile-identity"
+              onClick={() => onNavigate("details")}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  onNavigate("details");
+                }
+              }}
+              style={{ cursor: "pointer" }}
+            >
+              <div className="profile-identity-info">
+                <h2>
+                  {data?.overview?.profile?.name ||
+                    (demoMode ? demo.overview?.profile?.name : null) ||
+                    "Your profile"}
+                </h2>
+                <p>
+                  {data?.overview?.profile?.registration ||
+                    (demoMode ? demo.overview?.profile?.registration : null) ||
+                    (username
+                      ? `Login: ${username}`
+                      : "Name and register number appear after sync")}
+                </p>
+              </div>
+              <button
+                type="button"
+                className="profile-details-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onNavigate("details");
+                }}
+                aria-label="View student details"
+              >
+                <span>Student details</span>
+                <ArrowRight size={14} />
+              </button>
             </div>
           ) : null}
 

@@ -3,6 +3,11 @@ import { createRoot } from "react-dom/client";
 import App from "./App.jsx";
 import "./styles.css";
 import './compact.css';
+import { applyTheme, getSavedThemeId } from "./theme.js";
+
+// Initialize saved theme immediately
+applyTheme(getSavedThemeId());
+
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <App />

@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { TrendingUp, Check, CircleHelp, X } from "lucide-react";
-import { attendancePlan, projectAttendance, weightedMarks } from "../calc.js";
+import {
+  attendancePlan,
+  overallAttendance,
+  projectAttendance,
+  weightedMarks,
+} from "../calc.js";
 import { marksCourseKey } from "../marks-updates.js";
 const number = (n) => (n === null || !Number.isFinite(n) ? "—" : n.toFixed(1));
 const courseKey = (c) => `${c.code}-${c.type}-${c.slot || ""}`;
@@ -53,62 +58,142 @@ export function Ring({ percent, size = 160, label = "overall attendance" }) {
     </div>
   );
 }
+const isLabCourse = (c) =>
+  /lab/i.test(c.type || "") ||
+  (!/theory/i.test(c.type || "") && (c.code || "").trim().toUpperCase().endsWith("P"));
+
 export function CourseTable({ courses, target = 75, onOpen }) {
+  const [filter, setFilter] = useState("all");
+
+  const overall = overallAttendance(courses);
+  const belowCourses = courses.filter((c) => {
+    const { percent } = attendancePlan(c.attended, c.total, target);
+    return percent !== null && percent < target;
+  });
+  const theoryCourses = courses.filter((c) => !isLabCourse(c));
+  const labCourses = courses.filter((c) => isLabCourse(c));
+
+  const visibleCourses =
+    filter === "below"
+      ? belowCourses
+      : filter === "theory"
+        ? theoryCourses
+        : filter === "lab"
+          ? labCourses
+          : courses;
+
   return (
-    <div className="course-list">
-      <div className="course-list-head" aria-hidden="true">
-        <span>Course</span>
-        <span>Attended</span>
-        <span>Attendance</span>
-        <span>75% rule</span>
+    <div className="attendance-screen-wrapper">
+      <div className="attendance-summary-strip">
+        <div className="attendance-summary-left">
+          <span className="attendance-summary-pct">
+            {number(overall.percent)}%
+          </span>
+          <span className="attendance-summary-counts">
+            Overall · {overall.attended} / {overall.total}
+          </span>
+        </div>
+        <span
+          className={`attendance-summary-alert ${belowCourses.length ? "warning" : "good"}`}
+        >
+          {belowCourses.length
+            ? `${belowCourses.length} below ${target}%`
+            : `All ${target}%+`}
+        </span>
       </div>
-      {courses.map((c) => {
-        const { percent } = attendancePlan(c.attended, c.total, target);
-        return (
+
+      <div
+        className="attendance-filter-pills"
+        role="tablist"
+        aria-label="Filter courses"
+      >
+        {[
+          { id: "all", label: `All (${courses.length})` },
+          {
+            id: "below",
+            label: `Below ${target}% (${belowCourses.length})`,
+            warn: belowCourses.length > 0,
+          },
+          { id: "theory", label: `Theory (${theoryCourses.length})` },
+          { id: "lab", label: `Lab (${labCourses.length})` },
+        ].map((pill) => (
+          <button
+            key={pill.id}
+            type="button"
+            role="tab"
+            aria-selected={filter === pill.id}
+            className={`attendance-filter-pill ${filter === pill.id ? "active" : ""} ${pill.warn ? "has-warn" : ""}`}
+            onClick={() => setFilter(pill.id)}
+          >
+            {pill.label}
+          </button>
+        ))}
+      </div>
+
+      {visibleCourses.length ? (
+        <div className="course-list attendance-card-grid">
+          {visibleCourses.map((c) => {
+            const { percent } = attendancePlan(c.attended, c.total, target);
+            const isBelow = percent !== null && percent < target;
+            return (
+              <button
+                type="button"
+                className={`course-row attendance-neat-card ${isBelow ? "is-below-target" : ""}`}
+                key={courseKey(c)}
+                aria-label={`Calculate attendance for ${c.title || c.code}`}
+                onClick={() => onOpen(c)}
+              >
+                <div className="attendance-card-header">
+                  <span className="attendance-card-title">
+                    {c.title || c.code}
+                  </span>
+                  <span className="attendance-card-meta">
+                    <span className="attendance-code-pill">{c.code}</span>
+                    <span className="attendance-type-pill">
+                      {c.type || "Course"}
+                    </span>
+                  </span>
+                </div>
+
+                <div className="attendance-card-numbers">
+                  <span
+                    className={`attendance-percentage-num ${isBelow ? "warning" : ""}`}
+                  >
+                    {number(percent)}
+                    <small>%</small>
+                  </span>
+                  <span className="attendance-count-num">
+                    {c.attended} / {c.total}
+                  </span>
+                </div>
+
+                <div className="attendance-card-bottom">
+                  <span
+                    className={`attendance-status-badge ${isBelow ? "warning" : "good"}`}
+                  >
+                    <Status course={c} target={target} />
+                  </span>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="attendance-filter-empty">
+          <p>
+            {filter === "below"
+              ? `No courses below ${target}% — you are safe across all subjects!`
+              : "No courses match this filter."}
+          </p>
           <button
             type="button"
-            className="course-row"
-            key={courseKey(c)}
-            aria-label={`Calculate attendance for ${c.title || c.code}`}
-            onClick={() => onOpen(c)}
+            className="text-button"
+            onClick={() => setFilter("all")}
           >
-            <span className="course-identity">
-              <span className="course-title">{c.title || c.code}</span>
-              <span className="course-code">
-                {c.code} · {c.type || "Course"}
-              </span>
-              <span className="mobile-course-detail">
-                <span>
-                  {c.attended}/{c.total} attended
-                </span>
-                <Status course={c} target={target} />
-              </span>
-            </span>
-            <span className="course-count">
-              {c.attended}
-              <span className="muted"> / {c.total}</span>
-            </span>
-            <span className="percentage">
-              <strong
-                className={
-                  percent !== null && percent < target ? "warning" : ""
-                }
-              >
-                {number(percent)}
-                <small>%</small>
-              </strong>
-              <span
-                className={`mini-track ${percent !== null && percent < target ? "amber" : ""}`}
-              >
-                <i style={{ width: `${percent || 0}%` }} />
-              </span>
-            </span>
-            <span className="desktop-course-status">
-              <Status course={c} target={target} />
-            </span>
+            Show all courses
           </button>
-        );
-      })}
+        </div>
+      )}
     </div>
   );
 }

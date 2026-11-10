@@ -29,7 +29,7 @@
 }
 .leave-tabs button[aria-pressed="true"] {
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent, #ffffff);
 }
 .leave-tabs button:focus-visible {
   outline: 2px solid var(--soft);
@@ -37,7 +37,7 @@
 }
 .leave-updated,
 .leave-reference {
-  color: #b5a1ca;
+  color: var(--muted);
   font-size: 10px;
   line-height: 1.7;
 }
@@ -64,7 +64,8 @@
 }
 .leave-status {
   color: var(--text);
-  background: #362748;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
   border-radius: 7px;
   padding: 5px 8px;
   font-size: 10px;
@@ -84,7 +85,7 @@
   border-top: 1px solid var(--border);
 }
 .leave-record dt {
-  color: #b29bc8;
+  color: var(--muted);
 }
 .leave-record dd {
   margin: 0;

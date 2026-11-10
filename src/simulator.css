@@ -16,7 +16,7 @@
   border: 0;
   border-radius: 8px;
   background: transparent;
-  color: var(--soft);
+  color: var(--muted);
   font:
     500 12px/1.4 Inter,
     "Segoe UI",
@@ -25,13 +25,13 @@
 }
 .simulator-modes button[aria-pressed="true"] {
   background: var(--accent);
-  color: white;
+  color: var(--on-accent, #ffffff);
 }
 .simulation-date {
   display: block;
   margin: 22px 0 12px;
   font-size: 12px;
-  color: var(--soft);
+  color: var(--muted);
 }
 .simulation-date input {
   display: block;
@@ -42,20 +42,19 @@
   padding: 12px;
   background: var(--panel);
   color: var(--text);
-  color-scheme: dark;
   font: inherit;
   min-width: 0;
 }
 .simulation-note {
-  color: #b2a1c3;
+  color: var(--muted);
   font-size: 11px;
   line-height: 1.7;
 }
 .simulation-overall {
   margin: 22px 0;
   padding: 20px;
-  background: #291d38;
-  border: 1px solid #503869;
+  background: color-mix(in srgb, var(--accent) 10%, var(--panel));
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border));
   border-radius: 15px;
 }
 .simulation-overall > span {
@@ -73,18 +72,19 @@
 }
 .simulation-overall > div > span,
 .simulation-scores > span {
-  color: #b6a2cb;
+  color: var(--muted);
 }
 .simulation-overall strong {
   color: var(--text);
   font-size: 28px;
 }
 .simulation-overall > small {
-  color: var(--soft);
+  color: var(--accent);
   font-size: 11px;
+  font-weight: 600;
 }
 .simulation-overall > p {
-  color: #bca8d1;
+  color: var(--muted);
   margin: 12px 0 0;
   font-size: 11px;
 }
@@ -97,6 +97,7 @@
 }
 .simulation-plan-heading h2,
 .simulation-results > h2 {
+  color: var(--text);
   font:
     600 15px/1.5 Inter,
     "Segoe UI",
@@ -116,6 +117,7 @@
 }
 .simulation-day h3 {
   margin: 0;
+  color: var(--text);
   font:
     500 13px/1.5 Inter,
     "Segoe UI",
@@ -127,18 +129,19 @@
   justify-content: space-between;
   gap: 8px;
   font-size: 10px;
-  color: var(--soft);
+  color: var(--muted);
 }
 .simulation-class-title {
   display: block;
   margin: 10px 0 5px;
+  color: var(--text);
   font:
     500 13px/1.6 Inter,
     "Segoe UI",
     sans-serif;
 }
 .simulation-class > small {
-  color: #a997bc;
+  color: var(--muted);
   font-size: 10px;
 }
 .simulation-results {
@@ -150,25 +153,26 @@
 }
 .simulation-results article h3 {
   margin: 0 0 6px;
+  color: var(--text);
   font:
     500 13px/1.6 Inter,
     "Segoe UI",
     sans-serif;
 }
 .simulation-results article small {
-  color: #b4a1c6;
+  color: var(--muted);
   font-size: 10px;
   line-height: 1.7;
 }
 .simulation-results article p {
   font-size: 11px;
-  color: var(--soft);
+  color: var(--muted);
 }
 .simulation-scores strong {
   color: var(--text);
 }
 .simulation-scores strong.warning {
-  color: #f0b29c;
+  color: #ef4444;
 }
 
 .simulation-day > summary {
@@ -185,11 +189,11 @@
   flex: 1;
 }
 .simulation-day > summary small {
-  color: var(--soft);
+  color: var(--muted);
   font-size: 10px;
 }
 .simulation-day > summary svg {
-  color: var(--soft);
+  color: var(--muted);
   flex-shrink: 0;
 }
 .simulation-day[open] > summary svg {
@@ -206,7 +210,7 @@
 .simulation-day-subheading .schedule-caption {
   margin: 0;
   font-size: 10px;
-  color: #b5a1ca;
+  color: var(--muted);
   line-height: 1.5;
 }
 .simulation-day-actions {
@@ -227,19 +231,19 @@
   cursor: pointer;
 }
 .absent-simulation-day {
-  color: #ffabb7;
+  color: #ef4444;
 }
 .absent-simulation-day:hover {
-  color: #ff7a8a;
+  color: #dc2626;
 }
 .present-simulation-day {
-  color: #91e1b8;
+  color: #22c55e;
 }
 .present-simulation-day:hover {
-  color: #a3ecc5;
+  color: #16a34a;
 }
 .ignore-simulation-day {
-  color: var(--soft);
+  color: var(--muted);
 }
 .ignore-simulation-day:hover {
   color: var(--text);
@@ -252,19 +256,20 @@ button.simulation-class {
   text-align: left;
   font: inherit;
   color: var(--text);
-  background: var(--app-bg);
-  border: 1.5px solid;
+  background: var(--surface-alt);
+  border: 1.5px solid var(--border);
   border-radius: 12px;
   cursor: pointer;
 }
 button.simulation-class.present {
-  border-color: #63cc98;
+  border-color: #22c55e;
 }
 button.simulation-class.absent {
-  border-color: #f07886;
+  border-color: #ef4444;
 }
 button.simulation-class.ignore {
-  border-color: #ede9fe;
+  border-color: var(--border);
+  opacity: 0.75;
 }
 .simulation-class > small {
   display: block;
@@ -281,13 +286,13 @@ button.simulation-class.ignore {
   font-weight: 600;
 }
 .present .simulation-status {
-  color: #91e1b8;
+  color: #22c55e;
 }
 .absent .simulation-status {
-  color: #ffabb7;
+  color: #ef4444;
 }
 .ignore .simulation-status {
-  color: #ede9fe;
+  color: var(--muted);
 }
 .simulation-class-pct {
   display: flex;
@@ -300,13 +305,13 @@ button.simulation-class.ignore {
   gap: 1px;
 }
 .simulation-class-pct.pct-down {
-  color: #ffabb7;
+  color: #ef4444;
 }
 .simulation-class-pct.pct-up {
-  color: #91e1b8;
+  color: #22c55e;
 }
 .simulation-class-pct.pct-same {
-  color: #a38db8;
+  color: var(--muted);
 }
 .pct-delta {
   display: block;

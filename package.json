@@ -15,7 +15,9 @@
   "dependencies": {
     "cheerio": "^1.1.2",
     "idb": "^8.0.3",
+    "jsqr": "^1.4.0",
     "lucide-react": "^0.468.0",
+    "qrcode": "^1.5.4",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "tough-cookie": "^5.1.2",
