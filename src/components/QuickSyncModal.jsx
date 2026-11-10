@@ -8,6 +8,7 @@ import {
   X,
 } from "lucide-react";
 import { useVtopSync } from "../hooks/useVtopSync.js";
+import { useBackOverlay } from "../hooks/useBackOverlay.js";
 
 export default function QuickSyncModal({
   online,
@@ -64,6 +65,8 @@ export default function QuickSyncModal({
     onBusyChange?.(false);
     onClose();
   };
+
+  useBackOverlay(true, handleClose);
 
   return (
     <div

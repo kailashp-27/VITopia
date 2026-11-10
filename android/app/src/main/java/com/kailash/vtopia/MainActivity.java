@@ -2,11 +2,13 @@ package com.kailash.vtopia;
 
 import android.content.Intent;
 import android.os.Bundle;
+import androidx.activity.OnBackPressedCallback;
 import com.getcapacitor.BridgeActivity;
 
 public class MainActivity extends BridgeActivity {
     public static final String EXTRA_WIDGET_TARGET = "vtopia_target";
     private String pendingLaunchTarget = null;
+    private OnBackPressedCallback backCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -14,6 +16,41 @@ public class MainActivity extends BridgeActivity {
         captureTarget(getIntent(), false);
         super.onCreate(savedInstanceState);
         VtopiaWidgetPlugin.refreshWidgets(this);
+
+        backCallback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (bridge == null || bridge.getWebView() == null) {
+                    exitFromBack();
+                    return;
+                }
+                bridge.eval(
+                    "(function(){try{return typeof window.__vtopiaHandleBack==='function'?Boolean(window.__vtopiaHandleBack()):false;}catch(e){return false;}})()",
+                    result -> {
+                        if (isFinishing() || isDestroyed()) {
+                            return;
+                        }
+                        if (!"true".equals(result)) {
+                            exitFromBack();
+                        }
+                    }
+                );
+            }
+        };
+        getOnBackPressedDispatcher().addCallback(this, backCallback);
+    }
+
+    private void exitFromBack() {
+        if (backCallback != null) {
+            backCallback.setEnabled(false);
+        }
+        try {
+            getOnBackPressedDispatcher().onBackPressed();
+        } finally {
+            if (backCallback != null && !isFinishing() && !isDestroyed()) {
+                backCallback.setEnabled(true);
+            }
+        }
     }
 
     @Override

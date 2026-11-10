@@ -11,22 +11,42 @@
   --serif: Georgia, "Times New Roman", serif;
   color-scheme: dark;
 }
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 body {
   margin: 0;
+  -webkit-tap-highlight-color: transparent;
 }
 button,
 input,
-select {
+select,
+textarea {
   font: inherit;
 }
 button,
 a,
 input,
-select {
+select,
+textarea,
+details,
+summary,
+label,
+[role="button"] {
   -webkit-tap-highlight-color: transparent;
+}
+button,
+summary,
+[role="button"] {
+  -webkit-touch-callout: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+:focus:not(:focus-visible) {
+  outline: none;
 }
 button {
   cursor: pointer;

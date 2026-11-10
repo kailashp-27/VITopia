@@ -31,6 +31,11 @@ import {
   pinNativeWidget,
   pushWidgetSnapshot,
 } from "./native-bridge.js";
+import {
+  closeTopBackOverlay,
+  popOrFallbackBackScreen,
+  pushHistoryScreen,
+} from "./back-navigation.js";
 
 const ProfileDetails = lazy(() => import("./screens/Profile.jsx"));
 const Calendar = lazy(() => import("./screens/Calendar.jsx"));
@@ -66,6 +71,7 @@ function useOnline() {
 }
 export default function App() {
   const [screen, setScreen] = useState("overview");
+  const navRef = useRef({ screen: "overview", stack: [] });
   const [data, setData] = useState(null);
   const dataRef = useRef(null);
   const [demoMode, setDemoMode] = useState(false);
@@ -129,6 +135,62 @@ export default function App() {
     "details",
     "proctor",
   ];
+  const readyRef = useRef(false);
+  readyRef.current = ready;
+  const showLoginGateRef = useRef(false);
+  showLoginGateRef.current = showLoginGate;
+
+  function selectTopTab(tabId) {
+    navRef.current = { screen: tabId, stack: [] };
+    setScreen(tabId);
+  }
+
+  function resetNavigation(nextScreen = "overview") {
+    navRef.current = { screen: nextScreen, stack: [] };
+    setScreen(nextScreen);
+  }
+
+  function navigateTo(nextScreen) {
+    const { screen: current, stack } = navRef.current;
+    if (!nextScreen || nextScreen === current) return;
+    if (nextScreen === "profile" && profilePages.includes(current)) {
+      const profileIdx = stack.lastIndexOf("profile");
+      const nextStack = profileIdx >= 0 ? stack.slice(0, profileIdx) : [];
+      navRef.current = { screen: "profile", stack: nextStack };
+      setScreen("profile");
+      return;
+    }
+    const nextStack = pushHistoryScreen(current, nextScreen, stack);
+    navRef.current = { screen: nextScreen, stack: nextStack };
+    setScreen(nextScreen);
+  }
+
+  function navigateBack() {
+    const { screen: current, stack } = navRef.current;
+    const { handled, nextScreen, nextStack } = popOrFallbackBackScreen(
+      current,
+      stack,
+    );
+    if (!handled) return false;
+    navRef.current = { screen: nextScreen, stack: nextStack };
+    setScreen(nextScreen);
+    return true;
+  }
+
+  useEffect(() => {
+    window.__vtopiaHandleBack = () => {
+      if (!readyRef.current || showLoginGateRef.current) {
+        return false;
+      }
+      if (closeTopBackOverlay()) {
+        return true;
+      }
+      return navigateBack();
+    };
+    return () => {
+      delete window.__vtopiaHandleBack;
+    };
+  }, []);
   const currentPage =
     {
       settings: { title: "Settings" },
@@ -223,7 +285,12 @@ export default function App() {
   }, [isNativeApp]);
   useEffect(() => {
     if (!pendingTarget || !ready || showLoginGate) return;
-    setScreen(pendingTarget);
+    if (pendingTarget === "exams") {
+      navRef.current = { screen: "exams", stack: ["overview"] };
+      setScreen("exams");
+    } else {
+      resetNavigation(pendingTarget);
+    }
     setPendingTarget(null);
   }, [pendingTarget, ready, showLoginGate]);
   useEffect(() => {
@@ -397,13 +464,13 @@ export default function App() {
     setAuthHold(false);
     setData(demo);
     setDemoMode(true);
-    setScreen("overview");
+    resetNavigation("overview");
     window.scrollTo({ top: 0, behavior: "instant" });
   }
   async function leaveDemo() {
     setDemoMode(false);
     setData(dataRef.current);
-    setScreen("overview");
+    resetNavigation("overview");
   }
   async function forget() {
     try {
@@ -413,7 +480,7 @@ export default function App() {
       setData(null);
       setDemoMode(false);
       setSessionToken(null);
-      setScreen("overview");
+      resetNavigation("overview");
       setNotice("Device data cleared.");
     } catch {
       setNotice("Could not clear all device data.");
@@ -429,7 +496,7 @@ export default function App() {
       return;
     }
     if (demoMode) {
-      setScreen("profile");
+      navigateTo("profile");
       return;
     }
     try {
@@ -440,7 +507,7 @@ export default function App() {
         return;
       }
     } catch {}
-    setScreen("profile");
+    navigateTo("profile");
   }
   if (!ready) {
     return (
@@ -470,7 +537,7 @@ export default function App() {
           onStart={() => setAuthHold(true)}
           onFinish={(ok) => {
             setAuthHold(false);
-            if (ok || dataRef.current) setScreen("overview");
+            if (ok || dataRef.current) resetNavigation("overview");
           }}
           onDemo={explore}
           installPrompt={installPrompt}
@@ -506,17 +573,7 @@ export default function App() {
                 type="button"
                 className="header-icon"
                 aria-label="Back"
-                onClick={() => {
-                  if (
-                    ["widget-customization", "theme-customization"].includes(
-                      screen,
-                    )
-                  ) {
-                    setScreen("settings");
-                  } else {
-                    setScreen("profile");
-                  }
-                }}
+                onClick={() => navigateBack()}
               >
                 <ArrowLeft size={21} />
               </button>
@@ -551,7 +608,7 @@ export default function App() {
                 <button
                   className="header-icon"
                   aria-label="Open settings"
-                  onClick={() => setScreen("settings")}
+                  onClick={() => navigateTo("settings")}
                 >
                   <Settings size={23} />
                 </button>
@@ -593,8 +650,8 @@ export default function App() {
                 online={online}
                 settings={screen === "settings"}
                 page={screen}
-                onNavigate={setScreen}
-                onSettings={() => setScreen("settings")}
+                onNavigate={navigateTo}
+                onSettings={() => navigateTo("settings")}
                 sessionToken={sessionToken}
                 data={demoMode ? null : data}
                 demoMode={demoMode}
@@ -618,7 +675,7 @@ export default function App() {
                 <ProfileDetails
                   data={data}
                   page={screen}
-                  onNavigate={setScreen}
+                  onNavigate={navigateTo}
                   timetableWidget={timetableWidget}
                   onWidgetChange={handleWidgetChange}
                   demoMode={demoMode}
@@ -653,7 +710,7 @@ export default function App() {
                   key={`${demoMode}-${data?.semester?.id}-${data?.overview?.profile?.registration || ""}`}
                   data={data}
                   demoMode={demoMode}
-                  onNavigate={setScreen}
+                  onNavigate={navigateTo}
                 />
               </Suspense>
             ) : null}
@@ -669,7 +726,8 @@ export default function App() {
                 <ShareTimetable
                   data={data}
                   demoMode={demoMode}
-                  onNavigate={setScreen}
+                  onNavigate={navigateTo}
+                  onBack={navigateBack}
                 />
               </Suspense>
             ) : null}
@@ -689,7 +747,7 @@ export default function App() {
                   demoMode={demoMode}
                   onSession={setSessionToken}
                   onLeave={receiveHostelLeave}
-                  onSync={() => setScreen("profile")}
+                  onSync={() => navigateTo("profile")}
                 />
               </Suspense>
             ) : null}
@@ -772,7 +830,7 @@ export default function App() {
             <Calendar
               calendar={data?.calendar}
               demoMode={demoMode}
-              onSync={() => setScreen("profile")}
+              onSync={() => navigateTo("profile")}
             />
           </Suspense>
         ) : !data ? (
@@ -780,7 +838,7 @@ export default function App() {
             <p>No synced data yet.</p>
             <button
               className="button primary"
-              onClick={() => setScreen("profile")}
+              onClick={() => navigateTo("profile")}
             >
               Connect VTOP <ArrowRight size={15} />
             </button>
@@ -819,7 +877,7 @@ export default function App() {
             ) : null}
             <Overview
               data={data}
-              onNavigate={setScreen}
+              onNavigate={navigateTo}
               onCalculate={openCalculator}
               timetableWidget={timetableWidget}
             />
@@ -868,7 +926,7 @@ export default function App() {
                 : ""
             }
             aria-current={screen === id ? "page" : undefined}
-            onClick={() => setScreen(id)}
+            onClick={() => selectTopTab(id)}
           >
             <span className="bottom-icon">
               <Icon size={25} strokeWidth={1.9} />
@@ -897,7 +955,7 @@ export default function App() {
             onSession={setSessionToken}
             onCalendar={receiveCalendar}
             onOverview={receiveOverview}
-            onOpenSettings={() => setScreen("settings")}
+            onOpenSettings={() => navigateTo("settings")}
             onBusyChange={setQuickSyncBusy}
             onClose={() => {
               setQuickSyncOpen(false);

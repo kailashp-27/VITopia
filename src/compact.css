@@ -990,6 +990,9 @@ body {
   cursor: pointer;
   text-align: left;
   user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   transition:
     transform 0.15s ease,
@@ -998,12 +1001,15 @@ body {
     background 0.15s ease;
   overflow: hidden;
 }
-.glance-widget-card:hover {
-  border-color: var(--accent);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+@media (hover: hover) and (pointer: fine) {
+  .glance-widget-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  }
 }
 .glance-widget-card:active {
   transform: scale(0.98);
+  background: var(--surface-alt);
 }
 .glance-widget-card:focus-visible {
   outline: 2px solid var(--accent);
@@ -1299,9 +1305,16 @@ body {
   cursor: pointer;
   transition: background-color 0.15s ease;
   user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
   -webkit-tap-highlight-color: transparent;
 }
-.daily-class:hover {
+@media (hover: hover) and (pointer: fine) {
+  .daily-class:hover {
+    background: var(--surface-alt);
+  }
+}
+.daily-class:active {
   background: var(--surface-alt);
 }
 .daily-class.highlighted {
@@ -1537,12 +1550,21 @@ body {
 .attendance-neat-card.is-below-target {
   border-color: rgba(255, 82, 82, 0.35);
 }
-.attendance-neat-card:hover,
+@media (hover: hover) and (pointer: fine) {
+  .attendance-neat-card:hover {
+    background: var(--surface-alt);
+    border-color: var(--accent);
+    transform: translateY(-1px);
+  }
+}
 .attendance-neat-card:focus-visible {
   background: var(--surface-alt);
   border-color: var(--accent);
-  transform: translateY(-1px);
   outline: none;
+}
+.attendance-neat-card:active {
+  background: var(--surface-alt);
+  transform: scale(0.985);
 }
 .attendance-card-header {
   display: flex;
@@ -1668,10 +1690,19 @@ body {
 .page-title h1 {
   margin: 0;
 }
+.collapsible-marks,
+.exam-group,
+.simulation-day {
+  -webkit-tap-highlight-color: transparent;
+}
 .collapsible-marks > summary {
   list-style: none;
   cursor: pointer;
   border-radius: 10px;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 .collapsible-marks > summary::-webkit-details-marker {
   display: none;
@@ -1679,6 +1710,11 @@ body {
 .collapsible-marks > summary:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 8px;
+}
+.collapsible-marks .mark-rows,
+.exam-group .exam-list {
+  user-select: text;
+  -webkit-user-select: text;
 }
 .marks-course-title {
   display: block;
@@ -1904,6 +1940,9 @@ body {
   justify-content: space-between;
   gap: 14px;
   margin-bottom: 20px;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
 }
 .profile-identity-info {
   flex: 1;
@@ -1939,17 +1978,19 @@ body {
   white-space: nowrap;
   flex-shrink: 0;
 }
-.profile-details-btn:hover {
-  background: var(--accent);
-  color: var(--on-accent, #ffffff);
-  border-color: var(--accent);
-  transform: translateY(-1px);
+@media (hover: hover) and (pointer: fine) {
+  .profile-details-btn:hover {
+    background: var(--accent);
+    color: var(--on-accent, #ffffff);
+    border-color: var(--accent);
+    transform: translateY(-1px);
+  }
+  .profile-details-btn:hover svg {
+    transform: translateX(2px);
+  }
 }
 .profile-details-btn svg {
   transition: transform 0.18s ease;
-}
-.profile-details-btn:hover svg {
-  transform: translateX(2px);
 }
 
 .compact-app .account-settings .saved-login {
@@ -1977,6 +2018,11 @@ body {
     "Segoe UI",
     sans-serif;
   cursor: pointer;
+  transition: background-color 0.14s ease, transform 0.12s ease;
+}
+.profile-page-list button:active,
+.profile-page-link:active {
+  background: var(--surface-alt);
 }
 .profile-page-link {
   margin-top: 18px;
@@ -2177,8 +2223,10 @@ body {
   font-family: inherit;
   transition: border-color 0.15s ease, background 0.15s ease;
 }
-.widget-option-item:hover {
-  border-color: var(--accent);
+@media (hover: hover) and (pointer: fine) {
+  .widget-option-item:hover {
+    border-color: var(--accent);
+  }
 }
 .widget-option-item.selected {
   border-color: var(--accent);
@@ -2682,9 +2730,11 @@ body {
   color: inherit;
 }
 
-.student-cgpa-banner:hover {
-  border-color: var(--accent-hover);
-  background: var(--surface-alt);
+@media (hover: hover) and (pointer: fine) {
+  .student-cgpa-banner:hover {
+    border-color: var(--accent-hover);
+    background: var(--surface-alt);
+  }
 }
 
 .cgpa-left {
@@ -2920,9 +2970,11 @@ body {
   font: inherit;
 }
 
-.proctor-shortcut-card:hover {
-  border-color: var(--accent);
-  background: var(--surface-alt);
+@media (hover: hover) and (pointer: fine) {
+  .proctor-shortcut-card:hover {
+    border-color: var(--accent);
+    background: var(--surface-alt);
+  }
 }
 
 .proctor-shortcut-left {
@@ -3277,12 +3329,16 @@ body {
   text-align: left;
   transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
   user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
   outline: none;
 }
 
-.theme-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+@media (hover: hover) and (pointer: fine) {
+  .theme-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  }
 }
 
 .theme-card.selected {
@@ -4362,11 +4418,14 @@ body {
   cursor: pointer;
   transition: transform 0.12s ease, filter 0.12s ease;
   padding: 0;
+  -webkit-tap-highlight-color: transparent;
 }
-.friend-slot-box:hover {
-  transform: scale(1.12);
-  filter: brightness(1.12);
-  z-index: 2;
+@media (hover: hover) and (pointer: fine) {
+  .friend-slot-box:hover {
+    transform: scale(1.12);
+    filter: brightness(1.12);
+    z-index: 2;
+  }
 }
 .friend-slot-box.is-empty {
   background: var(--surface-alt);

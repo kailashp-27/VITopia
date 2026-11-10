@@ -24,6 +24,7 @@ import {
   shiftDate,
 } from "../schedule.js";
 import { readFacultyCabins } from "../db.js";
+import { useBackOverlay } from "../hooks/useBackOverlay.js";
 
 function renderTimetableWidget(item, widgetType, attendanceMap) {
   if (widgetType === "none") return null;
@@ -768,6 +769,8 @@ export default function Overview({
   const [now, setNow] = useState(() => new Date());
   const [selectedClass, setSelectedClass] = useState(null);
   const [cabins, setCabins] = useState({});
+
+  useBackOverlay(Boolean(selectedClass), () => setSelectedClass(null));
 
   useEffect(() => {
     let active = true;

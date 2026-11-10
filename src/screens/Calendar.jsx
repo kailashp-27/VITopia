@@ -18,6 +18,7 @@ import {
   reminderCountdown,
 } from "../calendar-utils.js";
 import { addEvent, readEvents, removeEvent } from "../events.js";
+import { useBackOverlay } from "../hooks/useBackOverlay.js";
 const WEEK = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 export default function Calendar({ calendar, onSync, demoMode }) {
   const today = todayISO();
@@ -25,6 +26,7 @@ export default function Calendar({ calendar, onSync, demoMode }) {
   const [selected, setSelected] = useState(today);
   const [events, setEvents] = useState([]);
   const [adding, setAdding] = useState(false);
+  useBackOverlay(adding, () => setAdding(false));
   const [title, setTitle] = useState("");
   const [eventDate, setEventDate] = useState(today);
   const [error, setError] = useState("");

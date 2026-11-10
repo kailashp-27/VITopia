@@ -27,6 +27,7 @@ import {
   DAYS_OF_WEEK,
   FRIEND_COLORS,
 } from "../timetable-share.js";
+import { useBackOverlay } from "../hooks/useBackOverlay.js";
 
 const DAY_SHORT = {
   MON: "Mo",
@@ -70,7 +71,12 @@ const DEFAULT_DEMO_FRIEND = {
   ],
 };
 
-export default function ShareTimetable({ data, demoMode = false, onNavigate }) {
+export default function ShareTimetable({
+  data,
+  demoMode = false,
+  onNavigate,
+  onBack,
+}) {
   // Read current student name and registration from synced VTOP profile
   const profile = data?.overview?.profile || data?.profile || {};
   const studentName = profile.name || data?.student?.name || "Student";
@@ -156,6 +162,13 @@ export default function ShareTimetable({ data, demoMode = false, onNavigate }) {
     }
     setCameraActive(false);
   };
+
+  useBackOverlay(Boolean(selectedCell), () => setSelectedCell(null));
+  useBackOverlay(showQrModal, () => setShowQrModal(false));
+  useBackOverlay(showAddModal, () => {
+    stopCamera();
+    setShowAddModal(false);
+  });
 
   useEffect(() => {
     return () => {
@@ -399,7 +412,7 @@ export default function ShareTimetable({ data, demoMode = false, onNavigate }) {
           type="button"
           className="friend-header-back"
           aria-label="Back to Profile"
-          onClick={() => onNavigate("profile")}
+          onClick={() => (onBack ? onBack() : onNavigate("profile"))}
         >
           <ArrowLeft size={22} />
         </button>

@@ -11,6 +11,7 @@ import {
   X,
 } from "lucide-react";
 import { useVtopSync } from "../hooks/useVtopSync.js";
+import { useBackOverlay } from "../hooks/useBackOverlay.js";
 import { demo } from "../demo.js";
 
 export default function Sync({
@@ -30,6 +31,10 @@ export default function Sync({
   sessionToken,
 }) {
   const [semesterModalOpen, setSemesterModalOpen] = useState(false);
+  useBackOverlay(
+    Boolean(semesterModalOpen && data?.semesters?.length),
+    () => setSemesterModalOpen(false),
+  );
   const {
     username,
     setUsername,

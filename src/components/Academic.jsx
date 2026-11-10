@@ -7,6 +7,7 @@ import {
   weightedMarks,
 } from "../calc.js";
 import { marksCourseKey } from "../marks-updates.js";
+import { useBackOverlay } from "../hooks/useBackOverlay.js";
 const number = (n) => (n === null || !Number.isFinite(n) ? "—" : n.toFixed(1));
 const courseKey = (c) => `${c.code}-${c.type}-${c.slot || ""}`;
 function Status({ course, target = 75 }) {
@@ -210,7 +211,10 @@ export function Marks({ data, newCourseKeys = [] }) {
           return (
             <details
               onClick={(event) => {
-                if (!event.target.closest("summary"))
+                if (
+                  !event.target.closest("summary, a, button, input, select, textarea") &&
+                  !window.getSelection?.()?.toString()
+                )
                   event.currentTarget.open = !event.currentTarget.open;
               }}
               className="marks-card collapsible-marks"
@@ -286,6 +290,7 @@ export function Calculator({ course, target, onClose }) {
     miss,
     target,
   );
+  useBackOverlay(true, onClose);
   return (
     <div
       className="modal-backdrop"
