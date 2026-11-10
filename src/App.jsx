@@ -26,11 +26,15 @@ import { fetchCalendar } from "./api-client.js";
 import { demo } from "./demo.js";
 import { unreadMarksCourses } from "./marks-updates.js";
 import {
+  getNativeAppVersion,
   initNativeBridge,
   isCapacitorNative,
+  openNativeExternalUrl,
   pinNativeWidget,
   pushWidgetSnapshot,
+  triggerLightHaptic,
 } from "./native-bridge.js";
+import { checkForAppUpdate } from "./app-update.js";
 import {
   closeTopBackOverlay,
   popOrFallbackBackScreen,
@@ -72,6 +76,7 @@ function useOnline() {
 export default function App() {
   const [screen, setScreen] = useState("overview");
   const navRef = useRef({ screen: "overview", stack: [] });
+  const [navTransition, setNavTransition] = useState({ dir: "none", seq: 0 });
   const [data, setData] = useState(null);
   const dataRef = useRef(null);
   const [demoMode, setDemoMode] = useState(false);
@@ -93,6 +98,10 @@ export default function App() {
   const [quickSyncBusy, setQuickSyncBusy] = useState(false);
   const [pendingTarget, setPendingTarget] = useState(null);
   const [widgetStatus, setWidgetStatus] = useState("");
+  const [nativeVersion, setNativeVersion] = useState(null);
+  const [appUpdate, setAppUpdate] = useState(null);
+  const [checkingUpdate, setCheckingUpdate] = useState(false);
+  const updateCheckedRef = useRef(false);
   const calendarAbort = useRef(null);
   const demoModeRef = useRef(false);
   demoModeRef.current = demoMode;
@@ -141,7 +150,12 @@ export default function App() {
   showLoginGateRef.current = showLoginGate;
 
   function selectTopTab(tabId) {
+    const prev = navRef.current.screen;
     navRef.current = { screen: tabId, stack: [] };
+    if (prev !== tabId) {
+      void triggerLightHaptic();
+      setNavTransition((t) => ({ dir: "tab", seq: t.seq + 1 }));
+    }
     setScreen(tabId);
   }
 
@@ -157,11 +171,13 @@ export default function App() {
       const profileIdx = stack.lastIndexOf("profile");
       const nextStack = profileIdx >= 0 ? stack.slice(0, profileIdx) : [];
       navRef.current = { screen: "profile", stack: nextStack };
+      setNavTransition((t) => ({ dir: "pop", seq: t.seq + 1 }));
       setScreen("profile");
       return;
     }
     const nextStack = pushHistoryScreen(current, nextScreen, stack);
     navRef.current = { screen: nextScreen, stack: nextStack };
+    setNavTransition((t) => ({ dir: "push", seq: t.seq + 1 }));
     setScreen(nextScreen);
   }
 
@@ -173,6 +189,7 @@ export default function App() {
     );
     if (!handled) return false;
     navRef.current = { screen: nextScreen, stack: nextStack };
+    setNavTransition((t) => ({ dir: "pop", seq: t.seq + 1 }));
     setScreen(nextScreen);
     return true;
   }
@@ -297,6 +314,47 @@ export default function App() {
     if (!ready || !isNativeApp) return;
     void pushWidgetSnapshot(data, demoMode);
   }, [ready, isNativeApp, data, demoMode]);
+  async function runAppUpdateCheck(versionInfo) {
+    const info = versionInfo || nativeVersion;
+    if (!info?.versionCode) return null;
+    setCheckingUpdate(true);
+    try {
+      const status = await checkForAppUpdate({
+        currentVersionCode: info.versionCode,
+      });
+      if (status) {
+        updateCheckedRef.current = true;
+        setAppUpdate(status);
+      }
+      return status;
+    } finally {
+      setCheckingUpdate(false);
+    }
+  }
+  useEffect(() => {
+    if (!ready || !isNativeApp) return undefined;
+    let active = true;
+    const controller = new AbortController();
+    getNativeAppVersion()
+      .then(async (info) => {
+        if (!active || !info) return;
+        setNativeVersion(info);
+        if (!online || updateCheckedRef.current) return;
+        const status = await checkForAppUpdate({
+          currentVersionCode: info.versionCode,
+          signal: controller.signal,
+        });
+        if (active && status) {
+          updateCheckedRef.current = true;
+          setAppUpdate(status);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+      controller.abort();
+    };
+  }, [ready, isNativeApp, online]);
   useEffect(() => {
     const handler = (e) => {
       e.preventDefault();
@@ -318,6 +376,7 @@ export default function App() {
     setInstallPrompt(null);
   }
   async function handlePinWidget(kind) {
+    void triggerLightHaptic();
     setWidgetStatus("");
     try {
       const result = await pinNativeWidget(kind);
@@ -606,18 +665,32 @@ export default function App() {
                   )}
                 </button>
                 <button
-                  className="header-icon"
-                  aria-label="Open settings"
+                  className="header-icon header-icon-badge-wrap"
+                  aria-label={
+                    isNativeApp && appUpdate?.available
+                      ? "Open settings, app update available"
+                      : "Open settings"
+                  }
                   onClick={() => navigateTo("settings")}
                 >
                   <Settings size={23} />
+                  {isNativeApp && appUpdate?.available ? (
+                    <span className="settings-gear-dot" aria-hidden="true" />
+                  ) : null}
                 </button>
               </>
             ) : null}
           </div>
         </header>
       ) : null}
-      <main id="main">
+      <main
+        id="main"
+        className={
+          navTransition.seq > 0
+            ? `screen-anim-${navTransition.dir}-${navTransition.seq % 2}`
+            : undefined
+        }
+      >
         {demoMode ? (
           <div className="demo-banner">
             <span>Sample data</span>
@@ -751,6 +824,47 @@ export default function App() {
                 />
               </Suspense>
             ) : null}
+            {screen === "settings" && isNativeApp && appUpdate?.available ? (
+              <section
+                className="settings-update-section"
+                aria-label="App updates"
+              >
+                <h2 className="profile-section-title">App updates</h2>
+                <div className="settings-update-card is-available">
+                  <div className="settings-update-copy">
+                    <div className="settings-update-head">
+                      <strong>Update available</strong>
+                      <span className="settings-update-badge">
+                        v{appUpdate.versionName}
+                      </span>
+                    </div>
+                    <span className="settings-update-meta">
+                      Installed: v{nativeVersion?.versionName || "1.1.0"} (build{" "}
+                      {nativeVersion?.versionCode ?? 3}) · New build{" "}
+                      {appUpdate.versionCode}
+                    </span>
+                    {appUpdate.releaseNotes ? (
+                      <p className="settings-update-notes">
+                        {appUpdate.releaseNotes}
+                      </p>
+                    ) : null}
+                  </div>
+                  <div className="settings-update-actions">
+                    <button
+                      type="button"
+                      className="button primary full-width"
+                      onClick={() => {
+                        void triggerLightHaptic();
+                        void openNativeExternalUrl(appUpdate.downloadUrl);
+                      }}
+                    >
+                      <Download size={16} />
+                      Download APK
+                    </button>
+                  </div>
+                </div>
+              </section>
+            ) : null}
             {screen === "settings" && isNativeApp ? (
               <section
                 className="settings-widgets-section"
@@ -783,6 +897,39 @@ export default function App() {
                   {widgetStatus ||
                     "Tap above or long-press your phone home screen → Widgets → Vtopia."}
                 </p>
+              </section>
+            ) : null}
+            {screen === "settings" && isNativeApp && !appUpdate?.available ? (
+              <section
+                className="settings-update-section"
+                aria-label="App updates"
+              >
+                <h2 className="profile-section-title">App version</h2>
+                <div className="settings-update-card">
+                  <div className="settings-version-row">
+                    <div>
+                      <strong>
+                        Vtopia v{nativeVersion?.versionName || "1.1.0"}
+                      </strong>
+                      <span className="settings-update-meta">
+                        {appUpdate
+                          ? `Up to date · Build ${nativeVersion?.versionCode ?? appUpdate.versionCode}`
+                          : `Build ${nativeVersion?.versionCode ?? 3}`}
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      className="text-button"
+                      disabled={checkingUpdate || !online}
+                      onClick={() => {
+                        void triggerLightHaptic();
+                        void runAppUpdateCheck();
+                      }}
+                    >
+                      {checkingUpdate ? "Checking…" : "Check"}
+                    </button>
+                  </div>
+                </div>
               </section>
             ) : null}
             {screen === "settings" && installPrompt && !isNativeApp ? (

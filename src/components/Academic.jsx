@@ -8,6 +8,7 @@ import {
 } from "../calc.js";
 import { marksCourseKey } from "../marks-updates.js";
 import { useBackOverlay } from "../hooks/useBackOverlay.js";
+import { triggerLightHaptic } from "../native-bridge.js";
 const number = (n) => (n === null || !Number.isFinite(n) ? "—" : n.toFixed(1));
 const courseKey = (c) => `${c.code}-${c.type}-${c.slot || ""}`;
 function Status({ course, target = 75 }) {
@@ -327,7 +328,11 @@ export function Calculator({ course, target, onClose }) {
               max="10"
               step="1"
               value={attend}
-              onChange={(e) => setAttend(Number(e.target.value))}
+              onChange={(e) => {
+                const next = Number(e.target.value);
+                if (next !== attend) void triggerLightHaptic();
+                setAttend(next);
+              }}
             />
             <span className="range-ends" aria-hidden="true">
               <span>0</span>
@@ -344,7 +349,11 @@ export function Calculator({ course, target, onClose }) {
               max="10"
               step="1"
               value={miss}
-              onChange={(e) => setMiss(Number(e.target.value))}
+              onChange={(e) => {
+                const next = Number(e.target.value);
+                if (next !== miss) void triggerLightHaptic();
+                setMiss(next);
+              }}
             />
             <span className="range-ends" aria-hidden="true">
               <span>0</span>
@@ -373,6 +382,7 @@ export function Calculator({ course, target, onClose }) {
           type="button"
           className="text-button reset-projection"
           onClick={() => {
+            if (attend !== 0 || miss !== 0) void triggerLightHaptic();
             setAttend(0);
             setMiss(0);
           }}

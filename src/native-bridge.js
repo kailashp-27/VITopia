@@ -1,4 +1,5 @@
 import { Capacitor, registerPlugin } from "@capacitor/core";
+import { Haptics, ImpactStyle } from "@capacitor/haptics";
 import { StatusBar, Style } from "@capacitor/status-bar";
 import { THEMES, getSavedThemeId } from "./theme.js";
 import { buildWidgetSnapshot } from "./widget-snapshot.js";
@@ -43,6 +44,38 @@ export async function clearWidgetSnapshot(themeId) {
 export async function pinNativeWidget(kind) {
   if (!isCapacitorNative()) return { requested: false, supported: false };
   return VtopiaWidget.pinWidget({ kind });
+}
+
+export async function triggerLightHaptic() {
+  if (!isCapacitorNative()) return;
+  try {
+    await Haptics.impact({ style: ImpactStyle.Light });
+  } catch {}
+}
+
+export async function getNativeAppVersion() {
+  if (!isCapacitorNative()) return null;
+  try {
+    const info = await VtopiaWidget.getAppVersion();
+    const versionCode = Number(info?.versionCode);
+    const versionName =
+      typeof info?.versionName === "string" ? info.versionName : "";
+    if (!Number.isInteger(versionCode) || versionCode <= 0) return null;
+    return { versionCode, versionName };
+  } catch {
+    return null;
+  }
+}
+
+export async function openNativeExternalUrl(url) {
+  if (typeof url !== "string" || !url.startsWith("https://")) return;
+  if (isCapacitorNative()) {
+    try {
+      await VtopiaWidget.openExternalUrl({ url });
+      return;
+    } catch {}
+  }
+  window.open(url, "_blank", "noopener,noreferrer");
 }
 
 export function initNativeBridge({ onNavigate, onThemeChange } = {}) {
