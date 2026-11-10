@@ -10,7 +10,7 @@ export function createLeaveHandler(
 ) {
   return async (req, res) => {
     try {
-      prepare(req, res, "POST");
+      if (prepare(req, res, "POST")) return;
       rateLimit(req, "hostel-leave", res);
       const body = await readBody(req);
       const session = unsealSession(body?.token);

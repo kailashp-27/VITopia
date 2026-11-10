@@ -6,7 +6,7 @@ import { rateLimit } from "../lib/rate-limit.js";
 export default async function handler(req, res) {
   let streaming = false;
   try {
-    prepare(req, res, "POST");
+    if (prepare(req, res, "POST")) return;
     rateLimit(req, "sync", res);
     const body = await readBody(req);
     if (!body || typeof body !== "object" || Array.isArray(body))

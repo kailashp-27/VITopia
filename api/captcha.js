@@ -4,7 +4,7 @@ import { prepare, sendError } from "../lib/http.js";
 import { rateLimit } from "../lib/rate-limit.js";
 export default async function handler(req, res) {
   try {
-    prepare(req, res, "GET");
+    if (prepare(req, res, "GET")) return;
     rateLimit(req, "captcha", res);
     // Validate configuration before creating an upstream session.
     sealSession({});

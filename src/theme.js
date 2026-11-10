@@ -184,5 +184,16 @@ export function applyTheme(themeId) {
   try {
     localStorage.setItem("vtopia_theme", theme.id);
   } catch {}
+  try {
+    if (
+      typeof window !== "undefined" &&
+      typeof window.dispatchEvent === "function" &&
+      typeof CustomEvent === "function"
+    ) {
+      window.dispatchEvent(
+        new CustomEvent("vtopia-theme-change", { detail: theme }),
+      );
+    }
+  } catch {}
   return theme;
 }

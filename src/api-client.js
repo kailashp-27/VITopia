@@ -1,3 +1,33 @@
+const DEFAULT_NATIVE_API_BASE = "https://vtopia-chennai.vercel.app";
+
+export function getApiBase() {
+  let configured = "";
+  try {
+    configured = import.meta?.env?.VITE_API_BASE || "";
+  } catch {
+    configured = "";
+  }
+  if (configured) {
+    return String(configured).replace(/\/+$/, "");
+  }
+  try {
+    if (
+      typeof window !== "undefined" &&
+      window.Capacitor?.isNativePlatform?.()
+    ) {
+      return DEFAULT_NATIVE_API_BASE;
+    }
+  } catch {}
+  return "";
+}
+
+export function apiUrl(path) {
+  const base = getApiBase();
+  if (!base) return path;
+  const normalized = path.startsWith("/") ? path : `/${path}`;
+  return `${base}${normalized}`;
+}
+
 export function apiError(result, fallback) {
   const error = new Error(result.message || fallback);
   error.code = result.code;
@@ -5,13 +35,16 @@ export function apiError(result, fallback) {
 }
 
 export async function fetchCaptcha(signal) {
-  const response = await fetch("/api/captcha", { cache: "no-store", signal });
+  const response = await fetch(apiUrl("/api/captcha"), {
+    cache: "no-store",
+    signal,
+  });
   const result = await response.json();
   if (!response.ok) throw apiError(result, "Cannot connect to VTOP.");
   return result;
 }
 export async function fetchOverview(token, semesterId, signal) {
-  const response = await fetch("/api/overview", {
+  const response = await fetch(apiUrl("/api/overview"), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ token, semesterId }),
@@ -25,7 +58,7 @@ export async function fetchOverview(token, semesterId, signal) {
 }
 
 export async function fetchCalendar(token, semesterId, signal) {
-  const response = await fetch("/api/calendar", {
+  const response = await fetch(apiUrl("/api/calendar"), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ token, semesterId }),
@@ -38,7 +71,7 @@ export async function fetchCalendar(token, semesterId, signal) {
   return result.calendar;
 }
 export async function fetchHostelLeave(token, signal) {
-  const response = await fetch("/api/hostel-leave", {
+  const response = await fetch(apiUrl("/api/hostel-leave"), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ token }),
@@ -51,7 +84,7 @@ export async function fetchHostelLeave(token, signal) {
   return result;
 }
 export async function syncRequest(payload, onProgress, signal) {
-  const response = await fetch("/api/sync", {
+  const response = await fetch(apiUrl("/api/sync"), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),

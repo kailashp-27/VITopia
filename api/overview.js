@@ -6,7 +6,7 @@ import { AppError } from "../lib/errors.js";
 import { fetchOverview, validateOverviewSemester } from "../lib/overview.js";
 export default async function handler(req, res) {
   try {
-    prepare(req, res, "POST");
+    if (prepare(req, res, "POST")) return;
     rateLimit(req, "overview", res);
     const body = await readBody(req);
     const session = unsealSession(body?.token);

@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Vtopia</string>
+    <string name="title_activity_main">Vtopia</string>
+    <string name="package_name">com.kailash.vtopia</string>
+    <string name="custom_url_scheme">com.kailash.vtopia</string>
+    <string name="widget_class_name">Current / Next Class</string>
+    <string name="widget_class_description">Live class status, attendance badge, room and timing.</string>
+    <string name="widget_exam_name">Next Exam</string>
+    <string name="widget_exam_description">Upcoming exam countdown, schedule, venue and seat.</string>
+</resources>

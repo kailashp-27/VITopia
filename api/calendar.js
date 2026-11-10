@@ -6,7 +6,7 @@ import { rateLimit } from "../lib/rate-limit.js";
 import { fetchAcademicCalendar } from "../lib/calendar.js";
 export default async function handler(req, res) {
   try {
-    prepare(req, res, "POST");
+    if (prepare(req, res, "POST")) return;
     rateLimit(req, "calendar", res);
     const body = await readBody(req);
     let session;

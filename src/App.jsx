@@ -7,6 +7,7 @@ import {
   CalendarDays,
   Download,
   Home,
+  LayoutGrid,
   LoaderCircle,
   RefreshCw,
   Settings,
@@ -24,6 +25,12 @@ import { clearCache, readCache, saveCache } from "./db.js";
 import { fetchCalendar } from "./api-client.js";
 import { demo } from "./demo.js";
 import { unreadMarksCourses } from "./marks-updates.js";
+import {
+  initNativeBridge,
+  isCapacitorNative,
+  pinNativeWidget,
+  pushWidgetSnapshot,
+} from "./native-bridge.js";
 
 const ProfileDetails = lazy(() => import("./screens/Profile.jsx"));
 const Calendar = lazy(() => import("./screens/Calendar.jsx"));
@@ -78,12 +85,18 @@ export default function App() {
   const [calendarBusy, setCalendarBusy] = useState(false);
   const [quickSyncOpen, setQuickSyncOpen] = useState(false);
   const [quickSyncBusy, setQuickSyncBusy] = useState(false);
+  const [pendingTarget, setPendingTarget] = useState(null);
+  const [widgetStatus, setWidgetStatus] = useState("");
   const calendarAbort = useRef(null);
+  const demoModeRef = useRef(false);
+  demoModeRef.current = demoMode;
   const online = useOnline();
+  const isNativeApp = isCapacitorNative();
   const isStandalone =
-    typeof window !== "undefined" &&
-    (window.matchMedia?.("(display-mode: standalone)").matches ||
-      window.navigator?.standalone === true);
+    isNativeApp ||
+    (typeof window !== "undefined" &&
+      (window.matchMedia?.("(display-mode: standalone)").matches ||
+        window.navigator?.standalone === true));
   const isIosInstallable =
     typeof navigator !== "undefined" &&
     /iphone|ipad|ipod/i.test(navigator.userAgent) &&
@@ -179,13 +192,44 @@ export default function App() {
     );
   }, [screen, demoMode, data?.unreadMarks]);
   useEffect(() => {
-    if (!import.meta.env.PROD || !("serviceWorker" in navigator)) return;
+    if (
+      !import.meta.env.PROD ||
+      isNativeApp ||
+      !("serviceWorker" in navigator)
+    )
+      return;
     navigator.serviceWorker
       .register("/sw.js", { updateViaCache: "none" })
       .catch(() =>
         setNotice("Offline installation is unavailable in this browser."),
       );
-  }, []);
+  }, [isNativeApp]);
+  useEffect(() => {
+    if (!isNativeApp) return undefined;
+    return initNativeBridge({
+      onNavigate: (target) => {
+        if (target === "overview" || target === "exams") {
+          setPendingTarget(target);
+        }
+      },
+      onThemeChange: (theme) => {
+        void pushWidgetSnapshot(
+          dataRef.current,
+          demoModeRef.current,
+          theme?.id,
+        );
+      },
+    });
+  }, [isNativeApp]);
+  useEffect(() => {
+    if (!pendingTarget || !ready || showLoginGate) return;
+    setScreen(pendingTarget);
+    setPendingTarget(null);
+  }, [pendingTarget, ready, showLoginGate]);
+  useEffect(() => {
+    if (!ready || !isNativeApp) return;
+    void pushWidgetSnapshot(data, demoMode);
+  }, [ready, isNativeApp, data, demoMode]);
   useEffect(() => {
     const handler = (e) => {
       e.preventDefault();
@@ -205,6 +249,23 @@ export default function App() {
     if (!installPrompt) return;
     await installPrompt.prompt();
     setInstallPrompt(null);
+  }
+  async function handlePinWidget(kind) {
+    setWidgetStatus("");
+    try {
+      const result = await pinNativeWidget(kind);
+      if (result?.requested) {
+        setWidgetStatus("Confirm adding the 2×2 widget on your home screen.");
+      } else {
+        setWidgetStatus(
+          "Launcher auto-pinning unavailable. Long-press your home screen → Widgets → Vtopia.",
+        );
+      }
+    } catch {
+      setWidgetStatus(
+        "Long-press your home screen → Widgets → Vtopia to add this widget.",
+      );
+    }
   }
   useEffect(() => {
     if (!course) return;
@@ -632,7 +693,41 @@ export default function App() {
                 />
               </Suspense>
             ) : null}
-            {screen === "settings" && installPrompt ? (
+            {screen === "settings" && isNativeApp ? (
+              <section
+                className="settings-widgets-section"
+                aria-label="Home screen widgets"
+              >
+                <h2 className="profile-section-title">Home screen widgets</h2>
+                <div className="profile-page-list settings-page-list">
+                  <button
+                    type="button"
+                    onClick={() => handlePinWidget("class")}
+                  >
+                    <span className="settings-widget-btn-label">
+                      <LayoutGrid size={16} />
+                      Current / Next Class (2×2)
+                    </span>
+                    <span aria-hidden="true">›</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handlePinWidget("exam")}
+                  >
+                    <span className="settings-widget-btn-label">
+                      <LayoutGrid size={16} />
+                      Next Exam Schedule (2×2)
+                    </span>
+                    <span aria-hidden="true">›</span>
+                  </button>
+                </div>
+                <p className="footnote settings-widget-note" role="status">
+                  {widgetStatus ||
+                    "Tap above or long-press your phone home screen → Widgets → Vtopia."}
+                </p>
+              </section>
+            ) : null}
+            {screen === "settings" && installPrompt && !isNativeApp ? (
               <button
                 className="button secondary full-width install-action"
                 onClick={handleInstallApp}
