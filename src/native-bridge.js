@@ -46,7 +46,25 @@ export async function pinNativeWidget(kind) {
   return VtopiaWidget.pinWidget({ kind });
 }
 
+const HAPTICS_STORAGE_KEY = "vtopia_haptics_enabled";
+
+export function isHapticsEnabled() {
+  try {
+    const val = localStorage.getItem(HAPTICS_STORAGE_KEY);
+    return val === null ? true : val === "true";
+  } catch {
+    return true;
+  }
+}
+
+export function setHapticsEnabled(enabled) {
+  try {
+    localStorage.setItem(HAPTICS_STORAGE_KEY, String(Boolean(enabled)));
+  } catch {}
+}
+
 export async function triggerLightHaptic() {
+  if (!isHapticsEnabled()) return;
   if (!isCapacitorNative()) return;
   try {
     await Haptics.impact({ style: ImpactStyle.Light });

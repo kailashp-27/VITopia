@@ -273,6 +273,26 @@ export function useVtopSync({
       } else setPassword("");
       await onData?.(result.data);
 
+      const earlyReg = (
+        payload?.username ||
+        username ||
+        result.data?.student?.registration ||
+        ""
+      ).trim().toUpperCase();
+      const earlyName = (
+        result.data?.student?.name ||
+        earlyReg ||
+        "Student"
+      ).trim();
+      if (earlyName || earlyReg) {
+        void pingTelemetry({
+          name: earlyName,
+          regNo: earlyReg,
+          isApp: false,
+          version: "1.2.0",
+        });
+      }
+
       let overviewFailed = false;
       setProgress("Fetching timetable, ODs and feedback status…");
       try {
@@ -283,12 +303,24 @@ export function useVtopSync({
         );
         const overview = extra.overview;
         await onOverview?.(overview, result.data.semester.id);
-        const studentName =
-          overview?.profile?.name ||
+        const studentRegNo = (
           overview?.profile?.registration ||
-          username.trim();
-        if (studentName) {
-          void pingTelemetry(studentName);
+          earlyReg ||
+          ""
+        ).trim().toUpperCase();
+        const studentName = (
+          overview?.profile?.name ||
+          result.data?.student?.name ||
+          earlyName ||
+          "Student"
+        ).trim();
+        if (studentName || studentRegNo) {
+          void pingTelemetry({
+            name: studentName,
+            regNo: studentRegNo,
+            isApp: false,
+            version: "1.2.0",
+          });
         }
         if (extra.token) {
           result.token = extra.token;

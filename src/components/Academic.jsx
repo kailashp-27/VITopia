@@ -330,15 +330,6 @@ function AttendanceHistoryModal({
                     ) : null}
                   </div>
                   <span className={`history-status-badge is-${rec.kind}`}>
-                    {rec.kind === "present" && (
-                      <Check size={12} strokeWidth={2.8} aria-hidden="true" />
-                    )}
-                    {rec.kind === "absent" && (
-                      <X size={12} strokeWidth={2.8} aria-hidden="true" />
-                    )}
-                    {rec.kind === "od" && (
-                      <span className="history-od-dot-small" aria-hidden="true" />
-                    )}
                     <span>{statusLabel}</span>
                   </span>
                 </div>

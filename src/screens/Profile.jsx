@@ -7,6 +7,7 @@ import {
   Calendar,
   Check,
   ChevronDown,
+  Coffee,
   Copy,
   ExternalLink,
   Eye,
@@ -20,6 +21,7 @@ import {
   Moon,
   Palette,
   Phone,
+  Sparkles,
   Sun,
   User,
   UserCheck,
@@ -32,7 +34,11 @@ import { getExamCountdown } from "../exam-utils.js";
 import { demo } from "../demo.js";
 import { THEMES, applyTheme, getSavedThemeId } from "../theme.js";
 import { useBackOverlay } from "../hooks/useBackOverlay.js";
-import { triggerLightHaptic } from "../native-bridge.js";
+import {
+  triggerLightHaptic,
+  isHapticsEnabled,
+  setHapticsEnabled,
+} from "../native-bridge.js";
 
 function inferBranchFromReg(reg) {
   if (typeof reg !== "string" || !reg) return "";
@@ -240,6 +246,17 @@ export default function ProfileDetails({
   const [copiedKey, setCopiedKey] = useState(null);
   const [showCgpa, setShowCgpa] = useState(false);
   const [activeThemeId, setActiveThemeId] = useState(getSavedThemeId());
+  const [hapticsEnabled, setHapticsEnabledState] = useState(() =>
+    isHapticsEnabled(),
+  );
+
+  const handleToggleHaptics = (enabled) => {
+    setHapticsEnabled(enabled);
+    setHapticsEnabledState(enabled);
+    if (enabled) {
+      void triggerLightHaptic();
+    }
+  };
 
   const handleThemeSelect = (themeId) => {
     setActiveThemeId(themeId);
@@ -450,14 +467,21 @@ export default function ProfileDetails({
       {page === "exams" ? (
         <>
           <section aria-label="Semester exam schedule">
-            {!exams?.available ? (
-              <p className="empty-inline">
-                Exam schedule not available. Sync to fetch it from VTOP.
-              </p>
-            ) : !exams.items.length ? (
-              <p className="empty-inline">
-                VTOP has not published exams for this semester.
-              </p>
+            {!exams?.available || !exams.items?.length ? (
+              <div className="exam-chill-card">
+                <div className="exam-chill-icon-wrap" aria-hidden="true">
+                  <Coffee size={32} />
+                </div>
+                <h3 className="exam-chill-title">No Exams Scheduled! 🎉</h3>
+                <p className="exam-chill-text">
+                  No CAT-1, CAT-2, or FAT schedules have been published on VTOP yet.
+                  Take a breather, relax, and enjoy your semester stress-free! 🏖️✨
+                </p>
+                <div className="exam-chill-footer">
+                  <Sparkles size={14} className="exam-chill-sparkle" />
+                  <span>When exam timetables and seat allotments are released, sync VTOP to see them here automatically.</span>
+                </div>
+              </div>
             ) : (
               groupExams(exams.items).map((group) => (
                 <details
@@ -466,9 +490,16 @@ export default function ProfileDetails({
                   aria-label={group.title}
                 >
                   <summary>
-                    <h2>{group.title}</h2>
-                    <span>{group.items.length} exams</span>
-                    <ChevronDown size={18} aria-hidden="true" />
+                    <div className="exam-group-head-main">
+                      <span className="exam-group-badge">EXAM</span>
+                      <h2 className="exam-group-title">{group.title}</h2>
+                    </div>
+                    <div className="exam-group-head-meta">
+                      <span className="exam-group-count">
+                        {group.items.length} {group.items.length === 1 ? "exam" : "exams"}
+                      </span>
+                      <ChevronDown size={18} className="exam-group-chevron" aria-hidden="true" />
+                    </div>
                   </summary>
                   <div className="exam-list">
                     {group.items.map((exam, i) => {
@@ -551,6 +582,22 @@ export default function ProfileDetails({
               Hostel leave <span aria-hidden="true">›</span>
             </button>
           </nav>
+
+          <div className="settings-toggle-row">
+            <div className="settings-toggle-info">
+              <strong>Haptic feedback</strong>
+              <span>Vibration feedback on tap and buttons</span>
+            </div>
+            <label className="settings-switch">
+              <input
+                type="checkbox"
+                aria-label="Enable haptic feedback"
+                checked={hapticsEnabled}
+                onChange={(e) => handleToggleHaptics(e.target.checked)}
+              />
+              <span className="settings-slider" />
+            </label>
+          </div>
         </section>
       ) : null}
       {page === "theme-customization" ? (

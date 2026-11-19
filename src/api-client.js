@@ -96,13 +96,28 @@ export async function submitHostelLeave(token, application, signal) {
     throw apiError(result, "Hostel leave application could not be submitted.");
   return result;
 }
-export async function pingTelemetry(name) {
-  if (!name || typeof name !== "string") return { ok: false };
+export async function pingTelemetry(nameOrPayload, maybeRegNo) {
+  let payload;
+  if (typeof nameOrPayload === "object" && nameOrPayload !== null) {
+    payload = nameOrPayload;
+  } else {
+    payload = {
+      name: nameOrPayload,
+      regNo: maybeRegNo || "",
+    };
+  }
+  if (!payload.name || typeof payload.name !== "string") return { ok: false };
   try {
     const response = await fetch(apiUrl("/api/admin"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "ping", name: name.trim() }),
+      body: JSON.stringify({
+        action: "ping",
+        name: payload.name.trim(),
+        regNo: (payload.regNo || "").trim(),
+        isApp: Boolean(payload.isApp),
+        version: payload.version || "1.2.0",
+      }),
       cache: "no-store",
     });
     if (response.ok) {
@@ -110,18 +125,6 @@ export async function pingTelemetry(name) {
     }
   } catch {}
   return { ok: false };
-}
-export async function fetchAdminUsers(pin, signal) {
-  const response = await fetch(apiUrl("/api/admin"), {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ action: "list", pin }),
-    signal,
-    cache: "no-store",
-  });
-  const result = await response.json();
-  if (!response.ok) throw apiError(result, "Admin access denied.");
-  return result;
 }
 export async function syncRequest(payload, onProgress, signal) {
   const response = await fetch(apiUrl("/api/sync"), {

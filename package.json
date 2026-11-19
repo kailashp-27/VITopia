@@ -10,7 +10,8 @@
     "dev": "node --env-file-if-exists=.env.local server/dev.js",
     "build": "vite build",
     "preview": "vite preview --host 127.0.0.1",
-    "test": "node --test tests/*.test.js"
+    "test": "node --test tests/*.test.js",
+    "admin:users": "node scripts/fetch-users.js"
   },
   "dependencies": {
     "@capacitor/android": "^7.6.10",

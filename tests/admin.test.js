@@ -35,20 +35,34 @@ test("admin API rejects non-POST and invalid pins", async () => {
   assert.equal(unauthRes.statusCode, 403);
 });
 
-test("admin API records pings and returns active user roster on valid PIN", async () => {
+test("admin API records pings, tracks regNo and login count, and exports full roster on valid PIN", async () => {
   const store = new Map();
   const handler = createAdminHandler(store);
 
-  // Ping 1: Aditya Sharma
+  // Ping 1: Aditya Sharma with regNo
   const pingRes1 = response();
-  await handler(req({ action: "ping", name: "Aditya Sharma" }), pingRes1);
+  await handler(
+    req({ action: "ping", name: "Aditya Sharma", regNo: "24BCE1042" }),
+    pingRes1,
+  );
   assert.equal(pingRes1.statusCode, 200);
   assert.equal(pingRes1.body.ok, true);
 
-  // Ping 2: Kailash N
+  // Ping 2: Kailash with regNo
   const pingRes2 = response();
-  await handler(req({ action: "ping", name: "Kailash N" }), pingRes2);
+  await handler(
+    req({ action: "ping", name: "KAILASH P", regNo: "24BCE1001", isApp: true }),
+    pingRes2,
+  );
   assert.equal(pingRes2.statusCode, 200);
+
+  // Ping 3: Kailash logs in a second time (loginCount increment check)
+  const pingRes3 = response();
+  await handler(
+    req({ action: "ping", name: "KAILASH P", regNo: "24BCE1001", isApp: true }),
+    pingRes3,
+  );
+  assert.equal(pingRes3.statusCode, 200);
 
   // List with valid PIN
   const listRes = response();
@@ -57,12 +71,21 @@ test("admin API records pings and returns active user roster on valid PIN", asyn
   assert.equal(listRes.body.success, true);
   assert.equal(listRes.body.total, 2);
   assert.equal(listRes.body.activeToday, 2);
+  assert.equal(listRes.body.totalLogins, 3);
 
-  const names = listRes.body.users.map((u) => u.name);
-  assert.ok(names.includes("Aditya Sharma"));
-  assert.ok(names.includes("Kailash N"));
+  const kailash = listRes.body.users.find((u) => u.regNo === "24BCE1001");
+  assert.ok(kailash);
+  assert.equal(kailash.loginCount, 2);
+  assert.equal(kailash.platform, "Android App");
 
-  // Check that records have lastActive and no extra credentials
+  // Export action
+  const exportRes = response();
+  await handler(req({ action: "export", pin: ADMIN_PIN }), exportRes);
+  assert.equal(exportRes.statusCode, 200);
+  assert.equal(exportRes.body.total, 2);
+  assert.ok(Array.isArray(exportRes.body.users));
+
+  // Check privacy: no credentials stored
   for (const user of listRes.body.users) {
     assert.ok(user.name);
     assert.ok(user.lastActive);

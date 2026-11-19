@@ -21,7 +21,6 @@ import Overview from "./screens/Overview.jsx";
 import Login from "./screens/Login.jsx";
 import { Calculator, CourseTable, Marks } from "./components/Academic.jsx";
 import ScreenSkeleton from "./components/ScreenSkeleton.jsx";
-import AdminConsole from "./components/AdminConsole.jsx";
 import { clearLogin, readLogin } from "./credentials.js";
 import { clearEvents } from "./events.js";
 import { clearCache, readCache, saveCache } from "./db.js";
@@ -405,17 +404,35 @@ export default function App() {
   }, [ready, isNativeApp, data, demoMode]);
   useEffect(() => {
     if (!ready || demoMode) return;
-    const name =
+    const regNo = (
+      data?.overview?.profile?.registration ||
+      data?.student?.registration ||
+      ""
+    ).trim().toUpperCase();
+    const name = (
       data?.overview?.profile?.name ||
       data?.student?.name ||
-      data?.overview?.profile?.registration;
-    if (!name || typeof name !== "string") return;
+      regNo ||
+      ""
+    ).trim();
+    if (!name && !regNo) return;
     try {
       const lastPing = sessionStorage.getItem("vtopia_tp");
-      if (!lastPing || Date.now() - Number(lastPing) > 15 * 60 * 1000) {
-        void pingTelemetry(name).then((res) => {
+      const lastReg = sessionStorage.getItem("vtopia_tr");
+      const shouldPing =
+        !lastPing ||
+        (regNo && lastReg !== regNo) ||
+        Date.now() - Number(lastPing) > 15 * 60 * 1000;
+      if (shouldPing) {
+        void pingTelemetry({
+          name: name || regNo || "Student",
+          regNo,
+          isApp: Boolean(isNativeApp),
+          version: nativeVersion?.versionName || "1.2.0",
+        }).then((res) => {
           if (res?.ok) {
             sessionStorage.setItem("vtopia_tp", String(Date.now()));
+            if (regNo) sessionStorage.setItem("vtopia_tr", regNo);
           }
         });
       }
@@ -423,8 +440,12 @@ export default function App() {
   }, [
     ready,
     demoMode,
+    isNativeApp,
+    nativeVersion?.versionName,
     data?.overview?.profile?.name,
     data?.overview?.profile?.registration,
+    data?.student?.name,
+    data?.student?.registration,
   ]);
   async function runAppUpdateCheck(versionInfo) {
     const info = versionInfo || nativeVersion;
@@ -1059,7 +1080,9 @@ export default function App() {
                     </svg>
                   </a>
                 </footer>
-                <AdminConsole />
+                <div className="settings-version-footer">
+                  <span className="version-label">Vtopia v1.2.0</span>
+                </div>
               </>
             ) : null}
           </div>

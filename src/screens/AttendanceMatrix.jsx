@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { BookOpen, ChevronDown, Hand } from "lucide-react";
+import { ChevronDown, Hand } from "lucide-react";
 import {
   buildAttendanceMatrix,
   courseStatusSummary,
@@ -55,46 +55,56 @@ export default function AttendanceMatrix({ data }) {
       ? selectedProjection.percent - summary.percent
       : null;
 
+  const pctNum = summary.percent ?? 0;
+
   return (
     <div className="matrix-screen">
-      <section className="matrix-card" aria-label="Course selection">
-        <div className="matrix-card-head">
-          <span className="matrix-head-icon" aria-hidden="true">
-            <BookOpen size={16} />
-          </span>
-          <div>
-            <h2>Course selection</h2>
-            <p>Track individual course attendance</p>
+      {/* Neat Course Selection Dropdown Card */}
+      <section className="matrix-card matrix-selection-card" aria-label="Course selection">
+        <div className="matrix-dropdown-field">
+          <label htmlFor="matrix-course-select" className="matrix-dropdown-label">
+            Course
+          </label>
+          <div className="matrix-dropdown-wrapper">
+            <select
+              id="matrix-course-select"
+              aria-label="Select course"
+              className="matrix-dropdown-select"
+              value={courseKey(course)}
+              onChange={(e) => {
+                void triggerLightHaptic();
+                setSelectedKey(e.target.value);
+                setActiveCell(null);
+              }}
+            >
+              {courses.map((c) => (
+                <option key={courseKey(c)} value={courseKey(c)}>
+                  {c.title || c.code}
+                </option>
+              ))}
+            </select>
+            <div className="matrix-dropdown-display" aria-hidden="true">
+              <span className="matrix-dropdown-current-name">
+                {course.title || course.code}
+              </span>
+              <ChevronDown size={18} className="matrix-dropdown-arrow" />
+            </div>
           </div>
         </div>
 
-        <div className="matrix-select-wrap">
-          <select
-            aria-label="Choose a course"
-            className="matrix-course-select"
-            value={courseKey(course)}
-            onChange={(e) => {
-              void triggerLightHaptic();
-              setSelectedKey(e.target.value);
-              setActiveCell(null);
-            }}
-          >
-            {courses.map((c) => (
-              <option key={courseKey(c)} value={courseKey(c)}>
-                {c.code} — {c.title || c.code}
-                {c.type ? ` (${c.type})` : ""}
-              </option>
-            ))}
-          </select>
-          <ChevronDown
-            size={16}
-            className="matrix-select-chevron"
-            aria-hidden="true"
-          />
+        <div className="matrix-course-info-row">
+          <div className="matrix-course-heading-group">
+            <h2 className="matrix-course-name">{course.title || course.code}</h2>
+            {course.type ? (
+              <span className="matrix-course-type-pill">{course.type}</span>
+            ) : null}
+          </div>
+          {course.faculty ? (
+            <p className="matrix-course-faculty">{course.faculty}</p>
+          ) : null}
         </div>
 
         <div className="matrix-stats-block">
-          <span className="matrix-stats-label">Course statistics</span>
           <div className="matrix-stats-row">
             <div className="matrix-stats-numbers">
               <div className="matrix-stats-pct-line">
@@ -106,16 +116,31 @@ export default function AttendanceMatrix({ data }) {
                 </span>
               </div>
               <span className="matrix-classes-ratio">
-                {summary.attended} / {summary.total} classes
+                {summary.attended} / {summary.total} classes attended
               </span>
             </div>
             <span className={`matrix-status-box tier-${summary.tier}`}>
               {summary.statusLabel}
             </span>
           </div>
+
+          <div
+            className="matrix-progress-track"
+            role="progressbar"
+            aria-valuenow={Math.round(pctNum)}
+            aria-valuemin="0"
+            aria-valuemax="100"
+          >
+            <div
+              className={`matrix-progress-fill tier-${summary.tier}`}
+              style={{ width: `${Math.min(100, Math.max(0, pctNum))}%` }}
+            />
+            <div className="matrix-target-line" title="75% threshold" />
+          </div>
         </div>
       </section>
 
+      {/* Projection Grid */}
       <section className="matrix-card" aria-label="Attendance projection matrix">
         <div className="matrix-grid-top">
           <span className="matrix-axis-title">Absent ↓ / Attend →</span>
@@ -196,13 +221,6 @@ export default function AttendanceMatrix({ data }) {
                 {selectedProjection.attended} / {selectedProjection.total} classes
               </span>
             </div>
-            <p className="matrix-detail-advice">
-              {selectedProjection.plan.attend > 0
-                ? `Need to attend next ${selectedProjection.plan.attend} ${selectedProjection.plan.attend === 1 ? "class" : "classes"} to reach 75%`
-                : selectedProjection.plan.skip > 0
-                  ? `Can skip ${selectedProjection.plan.skip} ${selectedProjection.plan.skip === 1 ? "class" : "classes"} and stay at 75%+`
-                  : "Right on the 75% margin — no classes to skip"}
-            </p>
           </div>
         ) : (
           <div className="matrix-tap-hint">
