@@ -97,15 +97,19 @@ export async function submitHostelLeave(token, application, signal) {
   return result;
 }
 export async function pingTelemetry(name) {
-  if (!name || typeof name !== "string") return;
+  if (!name || typeof name !== "string") return { ok: false };
   try {
-    await fetch(apiUrl("/api/admin"), {
+    const response = await fetch(apiUrl("/api/admin"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action: "ping", name: name.trim() }),
       cache: "no-store",
     });
+    if (response.ok) {
+      return await response.json();
+    }
   } catch {}
+  return { ok: false };
 }
 export async function fetchAdminUsers(pin, signal) {
   const response = await fetch(apiUrl("/api/admin"), {

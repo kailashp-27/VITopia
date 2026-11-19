@@ -5,6 +5,7 @@ import {
   fetchCalendar,
   fetchCaptcha,
   fetchOverview,
+  pingTelemetry,
 } from "../api-client.js";
 import { prepareVerification } from "../captcha-flow.js";
 
@@ -282,6 +283,13 @@ export function useVtopSync({
         );
         const overview = extra.overview;
         await onOverview?.(overview, result.data.semester.id);
+        const studentName =
+          overview?.profile?.name ||
+          overview?.profile?.registration ||
+          username.trim();
+        if (studentName) {
+          void pingTelemetry(studentName);
+        }
         if (extra.token) {
           result.token = extra.token;
           setToken(extra.token);

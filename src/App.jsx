@@ -405,16 +405,27 @@ export default function App() {
   }, [ready, isNativeApp, data, demoMode]);
   useEffect(() => {
     if (!ready || demoMode) return;
-    const name = data?.overview?.profile?.name;
+    const name =
+      data?.overview?.profile?.name ||
+      data?.student?.name ||
+      data?.overview?.profile?.registration;
     if (!name || typeof name !== "string") return;
     try {
       const lastPing = sessionStorage.getItem("vtopia_tp");
       if (!lastPing || Date.now() - Number(lastPing) > 15 * 60 * 1000) {
-        sessionStorage.setItem("vtopia_tp", String(Date.now()));
-        void pingTelemetry(name);
+        void pingTelemetry(name).then((res) => {
+          if (res?.ok) {
+            sessionStorage.setItem("vtopia_tp", String(Date.now()));
+          }
+        });
       }
     } catch {}
-  }, [ready, demoMode, data?.overview?.profile?.name]);
+  }, [
+    ready,
+    demoMode,
+    data?.overview?.profile?.name,
+    data?.overview?.profile?.registration,
+  ]);
   async function runAppUpdateCheck(versionInfo) {
     const info = versionInfo || nativeVersion;
     if (!info?.versionCode) return null;
