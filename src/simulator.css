@@ -2,48 +2,99 @@
   max-width: 560px;
   margin: 0 auto;
 }
-.simulator-modes {
+.simulation-range-card {
   display: flex;
-  gap: 5px;
-  padding: 5px;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
   background: var(--panel);
   border: 1px solid var(--border);
-  border-radius: 12px;
-}
-.simulator-modes button {
-  flex: 1;
-  padding: 11px 4px;
-  border: 0;
-  border-radius: 8px;
-  background: transparent;
-  color: var(--muted);
-  font:
-    500 12px/1.4 Inter,
-    "Segoe UI",
-    sans-serif;
-  cursor: pointer;
-}
-.simulator-modes button[aria-pressed="true"] {
-  background: var(--accent);
-  color: var(--on-accent, #ffffff);
+  border-radius: 14px;
+  margin-bottom: 12px;
 }
 .simulation-date {
   display: block;
-  margin: 22px 0 12px;
+  margin: 0;
   font-size: 12px;
   color: var(--muted);
 }
-.simulation-date input {
-  display: block;
-  width: 100%;
+.simulation-date-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.simulation-range-badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface-alt, #161616));
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--border));
+  padding: 2px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.simulation-date-picker-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   margin-top: 9px;
+  padding: 2px 12px;
   border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 12px;
-  background: var(--panel);
+  background: var(--surface-alt);
+  cursor: pointer;
+  transition: border-color 0.14s ease;
+}
+.simulation-date-picker-wrap:focus-within,
+.simulation-date-picker-wrap:hover {
+  border-color: var(--accent);
+}
+.simulation-date-icon {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+.simulation-date input {
+  display: block;
+  flex: 1 1 auto;
+  width: 100%;
+  margin: 0;
+  border: none;
+  padding: 9px 0;
+  background: transparent;
   color: var(--text);
-  font: inherit;
+  font: 600 13px/1.3 inherit;
   min-width: 0;
+  box-sizing: border-box;
+  cursor: pointer;
+  outline: none;
+}
+.simulation-quick-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.simulation-quick-chip {
+  flex: 1 1 auto;
+  padding: 7px 10px;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  background: var(--surface-alt);
+  color: var(--muted);
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.14s ease;
+  white-space: nowrap;
+}
+.simulation-quick-chip:hover {
+  color: var(--text);
+  border-color: var(--accent);
+}
+.simulation-quick-chip.active {
+  background: var(--accent);
+  color: var(--on-accent, #ffffff);
+  border-color: var(--accent);
 }
 .simulation-note {
   color: var(--muted);
@@ -51,42 +102,88 @@
   line-height: 1.7;
 }
 .simulation-overall {
-  margin: 22px 0;
-  padding: 20px;
-  background: color-mix(in srgb, var(--accent) 10%, var(--panel));
-  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border));
-  border-radius: 15px;
-}
-.simulation-overall > span {
-  font-size: 12px;
-  color: var(--text);
-}
-.simulation-overall > div,
-.simulation-scores {
+  margin: 12px 0 18px;
+  padding: 12px 14px;
   display: flex;
-  gap: 12px;
   align-items: center;
-  margin: 14px 0 8px;
-  font-size: 20px;
+  justify-content: space-between;
+  gap: 12px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  transition: border-color 0.16s ease, background-color 0.16s ease;
+}
+.simulation-overall.is-up {
+  border-color: color-mix(in srgb, var(--status-good, #4ade80) 40%, var(--border));
+  background: color-mix(in srgb, var(--status-good, #4ade80) 7%, var(--panel));
+}
+.simulation-overall.is-down {
+  border-color: color-mix(in srgb, var(--status-danger, #f87171) 42%, var(--border));
+  background: color-mix(in srgb, var(--status-danger, #f87171) 7%, var(--panel));
+}
+.simulation-overall-left {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.simulation-overall-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+}
+.simulation-overall-values {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
   font-variant-numeric: tabular-nums;
 }
-.simulation-overall > div > span,
-.simulation-scores > span {
+.simulation-overall-before {
+  font-size: 14px;
+  font-weight: 500;
   color: var(--muted);
 }
-.simulation-overall strong {
+.simulation-overall-arrow {
+  font-size: 13px;
+  color: var(--muted);
+}
+.simulation-overall-after {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.1;
   color: var(--text);
-  font-size: 28px;
 }
-.simulation-overall > small {
-  color: var(--accent);
-  font-size: 11px;
-  font-weight: 600;
+.simulation-overall-after.tier-good {
+  color: var(--status-good, #4ade80);
 }
-.simulation-overall > p {
+.simulation-overall-after.tier-warning {
+  color: var(--status-warning, #eab308);
+}
+.simulation-overall-after.tier-danger {
+  color: var(--status-danger, #f87171);
+}
+.simulation-delta-pill {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  background: var(--surface-alt);
   color: var(--muted);
-  margin: 12px 0 0;
-  font-size: 11px;
+  border: 1px solid var(--border);
+}
+.simulation-delta-pill.is-up {
+  background: var(--status-good-bg, rgba(74, 222, 128, 0.14));
+  color: var(--status-good, #4ade80);
+  border-color: color-mix(in srgb, var(--status-good, #4ade80) 32%, transparent);
+}
+.simulation-delta-pill.is-down {
+  background: var(--status-danger-bg, rgba(248, 113, 113, 0.14));
+  color: var(--status-danger, #f87171);
+  border-color: color-mix(in srgb, var(--status-danger, #f87171) 32%, transparent);
 }
 .simulation-plan-heading,
 .simulation-day > header {
@@ -328,4 +425,42 @@ button.simulation-class.ignore {
 .simulator-modes button:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 4px;
+}
+
+
+/* Color-coded collapsed/expanded day states */
+.simulation-day {
+  transition: border-color 0.16s ease, background-color 0.16s ease;
+}
+.simulation-day.day-state-all-present {
+  border-color: color-mix(in srgb, var(--status-good, #4ade80) 48%, var(--border));
+  background: color-mix(in srgb, var(--status-good, #4ade80) 7%, var(--panel));
+}
+.simulation-day.day-state-all-absent {
+  border-color: color-mix(in srgb, var(--status-danger, #f87171) 52%, var(--border));
+  background: color-mix(in srgb, var(--status-danger, #f87171) 8%, var(--panel));
+}
+.simulation-day.day-state-mixed {
+  border-color: color-mix(in srgb, var(--status-warning, #eab308) 52%, var(--border));
+  background: color-mix(in srgb, var(--status-warning, #eab308) 8%, var(--panel));
+}
+.simulation-day.day-state-all-ignore {
+  border-color: color-mix(in srgb, var(--muted, #888888) 45%, var(--border));
+  background: var(--surface-alt);
+}
+.simulation-day .day-state-meta.state-all-present {
+  color: var(--status-good, #4ade80);
+  font-weight: 600;
+}
+.simulation-day .day-state-meta.state-all-absent {
+  color: var(--status-danger, #f87171);
+  font-weight: 600;
+}
+.simulation-day .day-state-meta.state-mixed {
+  color: var(--status-warning, #eab308);
+  font-weight: 600;
+}
+.simulation-day .day-state-meta.state-all-ignore {
+  color: var(--muted);
+  font-weight: 500;
 }

@@ -2,12 +2,14 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { THEMES, applyTheme, getSavedThemeId } from "../src/theme.js";
 
-test("theme catalog contains exactly 4 light themes and 4 dark themes defaulting to AMOLED Black", () => {
+test("theme catalog contains 4 light themes and 6 dark themes defaulting to AMOLED Black", () => {
   const light = THEMES.filter((t) => t.group === "light");
   const dark = THEMES.filter((t) => t.group === "dark");
   assert.equal(light.length, 4);
-  assert.equal(dark.length, 4);
+  assert.equal(dark.length, 6);
   assert.ok(dark.some((t) => t.id === "amoled-black"));
+  assert.ok(dark.some((t) => t.id === "red-black"));
+  assert.ok(dark.some((t) => t.id === "espresso-brown"));
   assert.equal(getSavedThemeId(), "amoled-black");
   for (const theme of THEMES) {
     assert.ok(theme.id && theme.name && theme.accent && theme.onAccent);
@@ -38,6 +40,7 @@ test("applyTheme sets light/dark status tokens and falls back to amoled-black", 
     assert.equal(appliedLight.id, "matte-ivory");
     assert.equal(attr, "matte-ivory");
     assert.equal(vars.get("--status-good"), "#15803d");
+    assert.equal(vars.get("--status-warning"), "#b45309");
     assert.equal(vars.get("--status-danger"), "#dc2626");
     assert.equal(vars.get("color-scheme"), "light");
 
@@ -45,6 +48,7 @@ test("applyTheme sets light/dark status tokens and falls back to amoled-black", 
     assert.equal(appliedAzure.id, "midnight-azure");
     assert.equal(vars.get("--on-accent"), "#0b1320");
     assert.equal(vars.get("--status-good"), "#4ade80");
+    assert.equal(vars.get("--status-warning"), "#eab308");
     assert.equal(vars.get("color-scheme"), "dark");
 
     const fallback = applyTheme("non-existent-theme");

@@ -1,6 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
+  datesInRange,
+  daySimulationState,
   nextAttendanceStatus,
   simulationDays,
   simulateAttendance,
@@ -127,4 +129,83 @@ test("Saturday day orders use the replacement day's classes and zero totals stay
   };
   assert.equal(simulationDays(special, ["2026-11-14"])[0].classes.length, 2);
   assert.equal(simulateAttendance([], [], {}).after.percent, null);
+});
+
+test("datesInRange builds inclusive multi-day ranges across month boundaries and caps safely", () => {
+  assert.deepEqual(datesInRange("2026-11-18", "2026-11-18"), ["2026-11-18"]);
+  assert.deepEqual(datesInRange("2026-11-29", "2026-12-02"), [
+    "2026-11-29",
+    "2026-11-30",
+    "2026-12-01",
+    "2026-12-02",
+  ]);
+  assert.deepEqual(datesInRange("2026-11-20", "2026-11-18"), []);
+  assert.equal(datesInRange("2026-11-01", "2027-02-01", 10).length, 10);
+  assert.deepEqual(datesInRange("bad", "2026-11-20"), []);
+});
+
+test("daySimulationState classifies all-present, all-absent, all-ignore, mixed, and empty days", () => {
+  const [monday] = simulationDays(data, ["2026-11-09"]);
+  assert.equal(daySimulationState(monday, {}), "all-present");
+  assert.equal(
+    daySimulationState(monday, {
+      [monday.classes[0].key]: "absent",
+      [monday.classes[1].key]: "absent",
+    }),
+    "all-absent",
+  );
+  assert.equal(
+    daySimulationState(monday, {
+      [monday.classes[0].key]: "ignore",
+      [monday.classes[1].key]: "ignore",
+    }),
+    "all-ignore",
+  );
+  assert.equal(
+    daySimulationState(monday, {
+      [monday.classes[0].key]: "present",
+      [monday.classes[1].key]: "absent",
+    }),
+    "mixed",
+  );
+  const [sunday] = simulationDays(data, ["2026-11-08"]);
+  assert.equal(daySimulationState(sunday, {}), "empty");
+});
+
+test("simulationDays respects current IST time on today and omits finished today when requested", () => {
+  const timedData = {
+    attendance: courses,
+    overview: {
+      timetable: {
+        available: true,
+        classes: [
+          { day: "MON", code: "A", type: "Theory", slot: "A1", start: "08:00", end: "08:50" },
+          { day: "MON", code: "B", type: "Lab", slot: "L1+L2", start: "14:00", end: "15:40" },
+          { day: "TUE", code: "A", type: "Theory", slot: "TA1", start: "09:00", end: "09:50" },
+        ],
+      },
+    },
+  };
+
+  // At 1:00 PM (780 min) on Monday 2026-11-09: only the 14:00 lab remains on Monday
+  const atOnePm = simulationDays(timedData, ["2026-11-09", "2026-11-10"], {
+    today: "2026-11-09",
+    nowMinutes: 13 * 60,
+    omitFinishedToday: true,
+  });
+  assert.equal(atOnePm.length, 2);
+  assert.deepEqual(
+    atOnePm[0].classes.map((c) => c.start),
+    ["14:00"],
+  );
+  assert.equal(atOnePm[1].classes.length, 1);
+
+  // At 7:00 PM (1140 min) on Monday 2026-11-09: Monday is omitted completely
+  const atSevenPm = simulationDays(timedData, ["2026-11-09", "2026-11-10"], {
+    today: "2026-11-09",
+    nowMinutes: 19 * 60,
+    omitFinishedToday: true,
+  });
+  assert.equal(atSevenPm.length, 1);
+  assert.equal(atSevenPm[0].date, "2026-11-10");
 });

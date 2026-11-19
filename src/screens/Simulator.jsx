@@ -1,15 +1,17 @@
-import { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Calendar as CalendarIcon, ChevronDown } from "lucide-react";
 import {
+  datesInRange,
+  daySimulationState,
   simulationDays,
   simulateAttendance,
   nextAttendanceStatus,
 } from "../simulator.js";
 import { todayISO } from "../calendar-utils.js";
-import { shiftDate, weekDates } from "../schedule.js";
+import { istMinutesNow, shiftDate } from "../schedule.js";
+import { triggerLightHaptic } from "../native-bridge.js";
 import "../simulator.css";
 
-// Map from course code to its projected result for quick lookup
 function buildCourseMap(results) {
   return new Map(results.map((c) => [c.code, c]));
 }
@@ -19,11 +21,6 @@ const pctDiff = (before, after) => {
   if (before === null || after === null) return null;
   return after - before;
 };
-const changeLabel = (before, after) => {
-  if (before === null || after === null) return "No baseline yet";
-  const difference = after - before;
-  return `${difference > 0 ? "+" : ""}${difference.toFixed(1)} percentage points`;
-};
 const dateLabel = (date) =>
   new Date(`${date}T12:00:00Z`).toLocaleDateString("en-IN", {
     weekday: "long",
@@ -31,25 +28,99 @@ const dateLabel = (date) =>
     month: "short",
     timeZone: "Asia/Kolkata",
   });
+const shortDateLabel = (date) =>
+  new Date(`${date}T12:00:00Z`).toLocaleDateString("en-IN", {
+    day: "numeric",
+    month: "short",
+    timeZone: "Asia/Kolkata",
+  });
+
+const QUICK_OFFSETS = [
+  { offset: 1, label: "Tomorrow" },
+  { offset: 3, label: "+3 days" },
+  { offset: 7, label: "+7 days" },
+  { offset: 14, label: "+14 days" },
+];
+
+const DAY_STATE_LABELS = {
+  "all-present": "All present",
+  "all-absent": "All absent",
+  "all-ignore": "Ignored",
+  mixed: "Mixed",
+};
 
 export default function Simulator({ data }) {
-  const tomorrow = shiftDate(todayISO(), 1);
-  const nextMonday = weekDates(shiftDate(todayISO(), 7))[0].date;
-  const [mode, setMode] = useState("day");
-  const [dayDate, setDayDate] = useState(tomorrow);
-  const [weekDate, setWeekDate] = useState(nextMonday);
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const timer = setInterval(() => setNow(new Date()), 60000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const today = todayISO();
+  const tomorrow = shiftDate(today, 1);
+  const maxDate = shiftDate(today, 59);
+  const nowMinutes = istMinutesNow(now);
+  const todayHasRemaining =
+    (simulationDays(data, [today], { today, nowMinutes })[0]?.classes?.length ||
+      0) > 0;
+  const startDate = todayHasRemaining ? today : tomorrow;
+
+  const [targetDate, setTargetDate] = useState(() => shiftDate(today, 1));
   const [choices, setChoices] = useState({});
-  const days = simulationDays(
-    data,
-    mode === "day" ? [dayDate] : weekDates(weekDate).map((item) => item.date),
-  );
+  const dateInputRef = useRef(null);
+
+  const effectiveTarget = targetDate < startDate ? startDate : targetDate;
+  const rangeDates = datesInRange(startDate, effectiveTarget, 60);
+  const days = simulationDays(data, rangeDates, {
+    today,
+    nowMinutes,
+    omitFinishedToday: true,
+  });
   const result = simulateAttendance(data?.attendance || [], days, choices);
   const courseMap = buildCourseMap(result.courses);
-  const affected = result.courses.filter(
-    (course) => course.present || course.absent,
-  );
-  const update = (key, value) =>
+
+  const overallDiff = pctDiff(result.before.percent, result.after.percent);
+  const overallDiffState =
+    overallDiff === null || Math.abs(overallDiff) < 0.05
+      ? "neutral"
+      : overallDiff > 0
+        ? "up"
+        : "down";
+  const overallDiffText =
+    overallDiff === null
+      ? "—"
+      : Math.abs(overallDiff) < 0.05
+        ? "0.0%"
+        : `${overallDiff > 0 ? "+" : ""}${overallDiff.toFixed(1)}%`;
+
+  const afterPct = result.after.percent;
+  const afterTier =
+    afterPct === null
+      ? "neutral"
+      : afterPct < 75
+        ? "danger"
+        : afterPct <= 80
+          ? "warning"
+          : "good";
+
+  const openDatePicker = () => {
+    const input = dateInputRef.current;
+    if (!input) return;
+    try {
+      if (typeof input.showPicker === "function") {
+        input.showPicker();
+      } else {
+        input.focus();
+      }
+    } catch {
+      input.focus();
+    }
+  };
+
+  const update = (key, value) => {
+    void triggerLightHaptic();
     setChoices((current) => ({ ...current, [key]: value }));
+  };
   const ignoreDay = (day) =>
     setChoices((current) => ({
       ...current,
@@ -80,120 +151,139 @@ export default function Simulator({ data }) {
         days.flatMap((day) => day.classes.map((item) => [item.key, "present"])),
       ),
     }));
+
+  const startLabel = startDate === today ? "Today" : "Tomorrow";
+  const rangeSummary =
+    rangeDates.length <= 1
+      ? `${startLabel} (${shortDateLabel(startDate)})`
+      : `${startLabel} → ${shortDateLabel(effectiveTarget)} · ${rangeDates.length} days`;
+
   return (
     <div className="simulator-screen">
-      <div
-        className="simulator-modes"
-        role="group"
-        aria-label="Simulation mode"
-      >
-        {["day", "week"].map((value) => (
-          <button
-            type="button"
-            key={value}
-            aria-pressed={mode === value}
-            onClick={() => setMode(value)}
-          >
-            {value === "day" ? "Day" : "Week"}
-          </button>
-        ))}
+      <div className="simulation-range-card">
+        <div className="simulation-date">
+          <div className="simulation-date-top">
+            <label htmlFor="sim-target-date">Select end date</label>
+            <span className="simulation-range-badge">{rangeSummary}</span>
+          </div>
+          <div className="simulation-date-picker-wrap" onClick={openDatePicker}>
+            <CalendarIcon
+              size={16}
+              className="simulation-date-icon"
+              aria-hidden="true"
+            />
+            <input
+              ref={dateInputRef}
+              id="sim-target-date"
+              type="date"
+              value={effectiveTarget}
+              min={startDate}
+              max={maxDate}
+              onClick={(e) => e.stopPropagation()}
+              onChange={(event) => {
+                const value = event.target.value;
+                if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return;
+                if (value >= startDate && value <= maxDate) {
+                  void triggerLightHaptic();
+                  setTargetDate(value);
+                }
+              }}
+            />
+          </div>
+        </div>
+
+        <div
+          className="simulation-quick-chips"
+          role="group"
+          aria-label="Quick date range presets"
+        >
+          {QUICK_OFFSETS.map(({ offset, label }) => {
+            const presetDate = shiftDate(today, offset);
+            const active = effectiveTarget === presetDate;
+            return (
+              <button
+                key={offset}
+                type="button"
+                aria-pressed={active}
+                className={`simulation-quick-chip ${active ? "active" : ""}`}
+                onClick={() => {
+                  void triggerLightHaptic();
+                  setTargetDate(presetDate);
+                }}
+              >
+                {label}
+              </button>
+            );
+          })}
+        </div>
       </div>
-      <label className="simulation-date">
-        {mode === "day" ? "Choose a day" : "Week starting Monday"}
-        <input
-          type="date"
-          value={mode === "day" ? dayDate : weekDate}
-          min={mode === "day" ? tomorrow : nextMonday}
-          step={mode === "week" ? 7 : 1}
-          onChange={(event) => {
-            const value = event.target.value;
-            if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return;
-            if (mode === "day" && value >= tomorrow) setDayDate(value);
-            if (
-              mode === "week" &&
-              value >= nextMonday &&
-              weekDates(value)[0].date === value
-            )
-              setWeekDate(value);
-          }}
-        />
-      </label>
-      <p className="simulation-note">
-        Tap a class to cycle Present → Absent → Ignore. All classes start
-        Present. Ignore leaves attendance unchanged; lab blocks count by
-        periods.
-      </p>
+
       <section
-        className="simulation-overall"
+        className={`simulation-overall is-${overallDiffState}`}
         aria-label="Overall attendance projection"
         aria-live="polite"
       >
-        <span>Overall attendance</span>
-        <div>
-          <span>{percent(result.before.percent)}</span>
-          <span aria-hidden="true">→</span>
-          <strong>{percent(result.after.percent)}</strong>
+        <div className="simulation-overall-left">
+          <span className="simulation-overall-label">Overall attendance</span>
+          <div className="simulation-overall-values">
+            <span className="simulation-overall-before">
+              {percent(result.before.percent)}
+            </span>
+            <span className="simulation-overall-arrow" aria-hidden="true">
+              →
+            </span>
+            <strong className={`simulation-overall-after tier-${afterTier}`}>
+              {percent(result.after.percent)}
+            </strong>
+          </div>
         </div>
-        <small>
-          {changeLabel(result.before.percent, result.after.percent)}
-        </small>
-        <p>
-          {result.present} present · {result.absent} absent periods planned
-        </p>
+        <span className={`simulation-delta-pill is-${overallDiffState}`}>
+          {overallDiffText}
+        </span>
       </section>
+
       <div className="simulation-plan-heading">
         <h2>Your plan</h2>
         <button type="button" className="text-button" onClick={reset}>
           Reset plan
         </button>
       </div>
+
       {!data?.overview?.timetable?.available ? (
         <p className="empty-inline">
           Sync your timetable from Profile to simulate attendance.
         </p>
       ) : (
         days.map((day) => {
-          const DayContainer = mode === "week" ? "details" : "section";
-          const DayHeading = mode === "week" ? "summary" : "header";
-          // Per-day projection: net change for overall from this day's choices
-          const dayClasses = day.classes.filter(
-            (item) => item.matched && !!item.units,
-          );
-          const dayAffected = dayClasses.filter(
-            (item) =>
-              (choices[item.key] || "present") === "present" ||
-              (choices[item.key] || "present") === "absent",
-          );
-          // Compute how many of this day's courses have a non-default status
-          const dayHasChanges = dayClasses.some(
-            (item) =>
-              choices[item.key] && choices[item.key] !== "present",
-          );
+          const dayState = daySimulationState(day, choices);
+          const stateText = DAY_STATE_LABELS[dayState];
           return (
-            <DayContainer
-              className="simulation-day"
-              key={`${mode}-${day.date}`}
+            <details
+              className={`simulation-day day-state-${dayState}`}
+              key={day.date}
               aria-label={dateLabel(day.date)}
             >
-              <DayHeading>
-                <h3>{dateLabel(day.date)}</h3>
-                {mode === "week" ? (
-                  <>
-                    <small>
-                      {day.classes.length
-                        ? `${day.classes.length} classes`
-                        : day.holiday
-                          ? "Holiday"
-                          : "No classes"}
-                    </small>
-                    <ChevronDown size={17} aria-hidden="true" />
-                  </>
-                ) : null}
-              </DayHeading>
+              <summary>
+                <h3>
+                  {day.date === today
+                    ? `Today · ${shortDateLabel(day.date)}`
+                    : dateLabel(day.date)}
+                </h3>
+                <small className={`day-state-meta state-${dayState}`}>
+                  {day.classes.length
+                    ? `${day.classes.length} ${day.classes.length === 1 ? "class" : "classes"}${stateText ? ` · ${stateText}` : ""}`
+                    : day.holiday
+                      ? "Holiday"
+                      : "No classes"}
+                </small>
+                <ChevronDown size={17} aria-hidden="true" />
+              </summary>
               <div className="simulation-day-subheading">
-                <p className="schedule-caption">
-                  {day.holiday ? "Holiday · no classes" : day.label}
-                </p>
+                {day.holiday || day.label ? (
+                  <p className="schedule-caption">
+                    {day.holiday ? "Holiday · no classes" : day.label}
+                  </p>
+                ) : null}
                 {day.classes.length ? (
                   <div className="simulation-day-actions">
                     <button
@@ -243,7 +333,6 @@ export default function Simulator({ data }) {
                     )?.title ||
                     item.title ||
                     item.code;
-                  // Per-class live projection
                   const courseResult = courseMap.get(item.code);
                   const diff =
                     eligible && courseResult
@@ -304,45 +393,10 @@ export default function Simulator({ data }) {
                   );
                 })
               )}
-            </DayContainer>
+            </details>
           );
         })
       )}
-      <section
-        className="simulation-results"
-        aria-label="Course attendance projections"
-        aria-live="polite"
-      >
-        <h2>Course projections</h2>
-        {!affected.length ? (
-          <p className="simulation-note">
-            Mark classes Present or Absent to see each course’s change.
-          </p>
-        ) : (
-          affected.map((course) => (
-            <article key={course.code}>
-              <h3>{course.title || course.code}</h3>
-              <small>
-                {course.code} · {course.type}
-              </small>
-              <div className="simulation-scores">
-                <span>{percent(course.before)}</span>
-                <span aria-hidden="true">→</span>
-                <strong className={course.percent < 75 ? "warning" : ""}>
-                  {percent(course.percent)}
-                </strong>
-              </div>
-              <p>{changeLabel(course.before, course.percent)}</p>
-              <small>
-                {course.attended - course.present}/
-                {course.total - course.present - course.absent} →{" "}
-                {course.attended}/{course.total} attended · +{course.present}{" "}
-                present, +{course.absent} absent
-              </small>
-            </article>
-          ))
-        )}
-      </section>
     </div>
   );
 }

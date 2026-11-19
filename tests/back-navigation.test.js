@@ -60,8 +60,12 @@ test("step-by-step back navigation unwinds subsection stack then exits on overvi
 test("fallback hierarchy supports direct deep links like settings subpages and tabs", () => {
   assert.equal(FALLBACK_PARENT_SCREEN["widget-customization"], "settings");
   assert.equal(FALLBACK_PARENT_SCREEN["theme-customization"], "settings");
-  assert.equal(FALLBACK_PARENT_SCREEN["proctor"], "profile");
+  assert.equal(FALLBACK_PARENT_SCREEN["hostel-leave"], "settings");
+  assert.equal(FALLBACK_PARENT_SCREEN["courses"], "marks");
+  assert.equal(FALLBACK_PARENT_SCREEN["proctor"], "details");
+  assert.equal(FALLBACK_PARENT_SCREEN["calendar"], "overview");
   assert.equal(FALLBACK_PARENT_SCREEN["overview"], null);
+  assert.ok(TOP_LEVEL_TABS.includes("simulator"));
 
   for (const tab of TOP_LEVEL_TABS) {
     const res = popOrFallbackBackScreen(tab, []);

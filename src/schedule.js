@@ -35,20 +35,34 @@ export function scheduleForDate(timetable, calendar, date) {
     label:
       academic?.dayOrder && status === "working"
         ? `${academic.dayOrder} day order`
-        : status === "unknown"
-          ? "Weekly timetable · academic day not synced"
-          : "Working day",
+        : status === "working"
+          ? "Working day"
+          : "",
     classes,
   };
 }
+export function clockToMinutes(clock) {
+  if (!clock || typeof clock !== "string") return null;
+  const parts = clock.split(":").map(Number);
+  if (parts.length < 2 || !Number.isFinite(parts[0]) || !Number.isFinite(parts[1]))
+    return null;
+  return parts[0] * 60 + parts[1];
+}
+export function istMinutesNow(now = new Date()) {
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Asia/Kolkata",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  })
+    .format(now)
+    .split(":")
+    .map(Number);
+  return parts[0] * 60 + parts[1];
+}
 export function classTiming(item, minutes) {
-  const toMinutes = (clock) => {
-    const [h, m] = clock.split(":").map(Number);
-    return h * 60 + m;
-  };
-  return minutes >= toMinutes(item.end)
-    ? "finished"
-    : minutes >= toMinutes(item.start)
-      ? "current"
-      : "upcoming";
+  const start = clockToMinutes(item.start);
+  const end = clockToMinutes(item.end);
+  if (start === null || end === null) return "upcoming";
+  return minutes >= end ? "finished" : minutes >= start ? "current" : "upcoming";
 }

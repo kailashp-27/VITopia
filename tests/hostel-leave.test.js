@@ -2,7 +2,12 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { createServer } from "node:http";
 import { randomBytes } from "node:crypto";
-import { parseHostelLeave } from "../lib/hostel-leave.js";
+import {
+  parseHostelLeave,
+  parseLeaveSubmitResponse,
+  formatVtopDate,
+  applyHostelLeave,
+} from "../lib/hostel-leave.js";
 import { createLeaveHandler } from "../api/hostel-leave.js";
 import { VtopClient } from "../lib/vtop.js";
 import { sealSession, unsealSession } from "../lib/session.js";
@@ -174,6 +179,162 @@ test("API reads status and history via real HTTP, retains partial results, and r
     res = response();
     await handler(req({ token }), res);
     assert.equal(res.body.code, "SESSION_EXPIRED");
+  } finally {
+    await new Promise((resolve) => upstream.close(resolve));
+  }
+});
+
+test("formatVtopDate converts ISO date to VTOP DD-MMM-YYYY format", () => {
+  assert.equal(formatVtopDate("2026-11-20"), "20-Nov-2026");
+  assert.equal(formatVtopDate("2026-01-05"), "05-Jan-2026");
+  assert.equal(formatVtopDate("15-Aug-2026"), "15-Aug-2026");
+  assert.equal(formatVtopDate(""), "");
+});
+
+test("parseLeaveSubmitResponse identifies success, error alerts, and expired sessions", () => {
+  const successHtml = `<div><div class="alert alert-success">Leave request submitted successfully.</div></div>`;
+  assert.equal(
+    parseLeaveSubmitResponse(successHtml).message,
+    "Leave request submitted successfully.",
+  );
+
+  const tableHtml = fixture("status", "PENDING");
+  assert.equal(parseLeaveSubmitResponse(tableHtml).success, true);
+
+  const errorAlertHtml = `<div class="alert alert-danger">Leave already applied for this date range</div>`;
+  assert.throws(() => parseLeaveSubmitResponse(errorAlertHtml), {
+    code: "LEAVE_APPLICATION_FAILED",
+    message: "Leave already applied for this date range",
+  });
+
+  const fontErrorHtml = `<p><font color="red">Outing not allowed during working days</font></p>`;
+  assert.throws(() => parseLeaveSubmitResponse(fontErrorHtml), {
+    code: "LEAVE_APPLICATION_FAILED",
+    message: "Outing not allowed during working days",
+  });
+
+  const expiredHtml = `<form id="vtopLoginForm"></form>`;
+  assert.throws(() => parseLeaveSubmitResponse(expiredHtml), {
+    code: "SESSION_EXPIRED",
+  });
+});
+
+test("applyHostelLeave validates required fields before making requests", async () => {
+  const dummyClient = { authenticated: async () => "" };
+  await assert.rejects(
+    () => applyHostelLeave(dummyClient, null),
+    { code: "INVALID_LEAVE_DETAILS" },
+  );
+  await assert.rejects(
+    () =>
+      applyHostelLeave(dummyClient, {
+        leaveType: "-Select-",
+        visitingPlace: "Chennai",
+        fromDate: "2026-11-20",
+        fromTime: "16:00",
+        toDate: "2026-11-22",
+        toTime: "18:00",
+      }),
+    { code: "INVALID_LEAVE_TYPE" },
+  );
+  await assert.rejects(
+    () =>
+      applyHostelLeave(dummyClient, {
+        leaveType: "HOME TOWN",
+        visitingPlace: "  ",
+        fromDate: "2026-11-20",
+        fromTime: "16:00",
+        toDate: "2026-11-22",
+        toTime: "18:00",
+      }),
+    { code: "INVALID_LEAVE_PLACE" },
+  );
+  await assert.rejects(
+    () =>
+      applyHostelLeave(dummyClient, {
+        leaveType: "HOME TOWN",
+        visitingPlace: "Chennai",
+        fromDate: "2026-11-20",
+        fromTime: "",
+        toDate: "2026-11-22",
+        toTime: "18:00",
+      }),
+    { code: "INVALID_LEAVE_DATES" },
+  );
+});
+
+test("API handles action: 'apply' and returns updated leave tables", async () => {
+  const calls = [];
+  const upstream = createServer(async (request, res) => {
+    let body = "";
+    for await (const chunk of request) body += chunk;
+    const form = new URLSearchParams(body);
+    calls.push({
+      path: request.url,
+      control: form.get("control"),
+      leaveType: form.get("leaveType"),
+      visitingPlace: form.get("visitingPlace"),
+      fromDate: form.get("fromDate"),
+      toDate: form.get("toDate"),
+    });
+    res.setHeader("Content-Type", "text/html");
+    if (request.url.endsWith("/2")) {
+      res.end(
+        `<div class="alert alert-success">Leave request recorded successfully.</div>`,
+      );
+      return;
+    }
+    if (request.url.endsWith("/1")) {
+      res.end('<input name="_csrf" value="applied-csrf">');
+      return;
+    }
+    res.end(fixture(request.url.endsWith("/4") ? "status" : "history", "SUBMITTED"));
+  });
+  await new Promise((resolve) => upstream.listen(0, "127.0.0.1", resolve));
+  const base = `http://127.0.0.1:${upstream.address().port}`;
+  const handler = createLeaveHandler(
+    (session) =>
+      new VtopClient(session, (url, options) =>
+        fetch(new URL(url.pathname, base), options),
+      ),
+  );
+  const token = sealSession({ authorizedID: "fixture-student", csrf: "token-csrf" });
+
+  try {
+    const res = response();
+    await handler(
+      req({
+        token,
+        action: "apply",
+        application: {
+          leaveType: "HOME TOWN",
+          visitingPlace: "Chennai",
+          fromDate: "2026-11-20",
+          fromTime: "16:00",
+          toDate: "2026-11-22",
+          toTime: "20:00",
+          reason: "Visiting parents",
+        },
+      }),
+      res,
+    );
+    assert.equal(res.statusCode, 200);
+    assert.equal(res.body.success, true);
+    assert.equal(
+      res.body.message,
+      "Leave request recorded successfully.",
+    );
+    assert.equal(res.body.leave.status.items[0].status, "SUBMITTED");
+    assert.ok(
+      calls.some(
+        (c) =>
+          c.path === "/vtop/hostels/student/leave/2" &&
+          c.leaveType === "HOME TOWN" &&
+          c.visitingPlace === "Chennai" &&
+          c.fromDate === "20-Nov-2026" &&
+          c.toDate === "22-Nov-2026",
+      ),
+    );
   } finally {
     await new Promise((resolve) => upstream.close(resolve));
   }

@@ -8,3 +8,4 @@ artifacts/
 .npm-cache/
 *.apk
 release/
+.data/

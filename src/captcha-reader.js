@@ -39,26 +39,70 @@ export function decodePixels(rgba, model) {
     if (saturation[i] > 100) ink++;
   }
   if (ink < 60) return null;
+
+  // Upgraded dynamic alignment search:
+  // Evaluates horizontal & vertical sub-window alignments and adaptive contrast
+  // thresholds to correctly center jittered glyphs and ignore stray line noise.
+  const OFFSETS_X = [0, -1, 1, -2, 2];
+  const OFFSETS_Y = [0, -1, 1];
   const glyphs = [];
+
   for (let i = 0; i < 6; i++) {
-    const left = (i + 1) * 25 + 2,
-      top = 8 + 5 * (i % 2);
-    const pixels = [];
-    for (let y = top; y < top + 22; y++)
-      for (let x = left; x < left + 24; x++)
-        pixels.push(saturation[y * 200 + x]);
-    const mean = pixels.reduce((a, b) => a + b, 0) / pixels.length;
-    glyphs.push(
-      predictGlyph(
-        pixels.map((value) => (value > mean ? 1 : 0)),
+    const baseLeft = (i + 1) * 25 + 2;
+    const baseTop = 8 + 5 * (i % 2);
+
+    let bestGlyph = null;
+    let bestScore = -1;
+
+    for (const dy of OFFSETS_Y) {
+      const top = Math.max(0, Math.min(40 - 22, baseTop + dy));
+      for (const dx of OFFSETS_X) {
+        const left = Math.max(0, Math.min(200 - 24, baseLeft + dx));
+        const pixels = [];
+        for (let y = top; y < top + 22; y++) {
+          const rowOffset = y * 200;
+          for (let x = left; x < left + 24; x++) {
+            pixels.push(saturation[rowOffset + x]);
+          }
+        }
+        const mean = pixels.reduce((a, b) => a + b, 0) / pixels.length;
+        if (mean < 3) continue;
+
+        // Test dynamic contrast thresholds
+        const thresholds = [mean, mean * 1.15, mean * 0.85];
+        for (const thresh of thresholds) {
+          const binarized = pixels.map((v) => (v > thresh ? 1 : 0));
+          const pred = predictGlyph(binarized, model);
+          const score = pred.confidence * (1 + pred.margin);
+          if (score > bestScore) {
+            bestScore = score;
+            bestGlyph = pred;
+          }
+        }
+      }
+    }
+
+    if (!bestGlyph) {
+      const pixels = [];
+      for (let y = baseTop; y < baseTop + 22; y++) {
+        for (let x = baseLeft; x < baseLeft + 24; x++) {
+          pixels.push(saturation[y * 200 + x]);
+        }
+      }
+      const mean = pixels.reduce((a, b) => a + b, 0) / pixels.length;
+      bestGlyph = predictGlyph(
+        pixels.map((v) => (v > mean ? 1 : 0)),
         model,
-      ),
-    );
+      );
+    }
+
+    glyphs.push(bestGlyph);
   }
+
   return {
     text: glyphs.map((g) => g.text).join(""),
     confidence: Math.min(...glyphs.map((g) => g.confidence)),
-    reliable: glyphs.every((g) => g.confidence >= 0.7 && g.margin >= 0.3),
+    reliable: glyphs.every((g) => g.confidence >= 0.7 && g.margin >= 0.25),
   };
 }
 export async function readCaptcha(

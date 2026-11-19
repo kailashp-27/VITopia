@@ -131,6 +131,38 @@ export const THEMES = [
     amber: "#6ee7b7",
     previewDots: ["#10b981", "#e6f7f2"],
   },
+  {
+    id: "red-black",
+    name: "Red Black",
+    group: "dark",
+    bg: "#000000",
+    surface: "#0f090a",
+    surfaceAlt: "#1a1012",
+    line: "#2f1b1f",
+    text: "#f8f4f4",
+    muted: "#9d8388",
+    accent: "#ef4444",
+    accentHover: "#dc2626",
+    onAccent: "#ffffff",
+    amber: "#fbbf24",
+    previewDots: ["#ef4444", "#ffffff"],
+  },
+  {
+    id: "espresso-brown",
+    name: "Espresso Brown",
+    group: "dark",
+    bg: "#120c08",
+    surface: "#1c140e",
+    surfaceAlt: "#281c14",
+    line: "#3d2c20",
+    text: "#f6efe8",
+    muted: "#a99281",
+    accent: "#d97745",
+    accentHover: "#c26332",
+    onAccent: "#ffffff",
+    amber: "#f5c28b",
+    previewDots: ["#d97745", "#f6efe8"],
+  },
 ];
 
 export function getSavedThemeId() {
@@ -163,6 +195,11 @@ export function applyTheme(themeId) {
   root.style.setProperty(
     "--status-good-bg",
     isLight ? "rgba(21, 128, 61, 0.12)" : "rgba(74, 222, 128, 0.14)",
+  );
+  root.style.setProperty("--status-warning", isLight ? "#b45309" : "#eab308");
+  root.style.setProperty(
+    "--status-warning-bg",
+    isLight ? "rgba(180, 83, 9, 0.12)" : "rgba(234, 179, 8, 0.14)",
   );
   root.style.setProperty("--status-danger", isLight ? "#dc2626" : "#f87171");
   root.style.setProperty(

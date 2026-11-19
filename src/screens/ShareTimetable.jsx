@@ -14,6 +14,7 @@ import {
   X,
   MapPin,
   AlertCircle,
+  Palette,
 } from "lucide-react";
 import {
   encodeTimetableShare,
@@ -418,9 +419,7 @@ export default function ShareTimetable({
         </button>
         <div className="friend-header-text">
           <h1 className="friend-header-title">Friends’ Schedule</h1>
-          <span className="friend-header-subtitle">
-            {studentName.toUpperCase()}
-          </span>
+          <span className="friend-header-subtitle">{studentName}</span>
         </div>
         <div className="friend-header-actions">
           <button
@@ -446,9 +445,9 @@ export default function ShareTimetable({
         </div>
       </header>
 
-      {/* 2. Card 1: MY SCHEDULE */}
+      {/* 2. Card 1: My schedule */}
       <section className="friend-card-section">
-        <h2 className="friend-card-title">MY SCHEDULE</h2>
+        <h2 className="friend-card-title">My schedule</h2>
         <div className="friend-grid-matrix-box">
           <div className="friend-matrix-grid">
             <MatrixTimeHeader />
@@ -481,11 +480,9 @@ export default function ShareTimetable({
         </div>
       </section>
 
-      {/* 3. Card 2: FRIENDS (X/X) */}
+      {/* 3. Card 2: Friends */}
       <section className="friend-card-section">
-        <h2 className="friend-card-title">
-          FRIENDS ({friends.length}/{friends.length})
-        </h2>
+        <h2 className="friend-card-title">Friends ({friends.length})</h2>
         {friends.length === 0 ? (
           <div className="friend-empty-prompt">
             <p>No friends added yet.</p>
@@ -539,12 +536,13 @@ export default function ShareTimetable({
                     type="button"
                     className="friend-chip-color-btn"
                     title="Change friend color"
+                    aria-label="Change friend color"
                     onClick={(e) => {
                       e.stopPropagation();
                       cycleFriendColor(f.id);
                     }}
                   >
-                    🎨
+                    <Palette size={12} aria-hidden="true" />
                   </button>
                   <button
                     type="button"
@@ -564,11 +562,11 @@ export default function ShareTimetable({
         )}
       </section>
 
-      {/* 4. Card 3: OVERALL SCHEDULES */}
+      {/* 4. Card 3: Schedule comparison */}
       {friends.length > 0 && (isAllMode || activeFriend) ? (
         <section className="friend-card-section">
           <div className="friend-card-heading-row">
-            <h2 className="friend-card-title">OVERALL SCHEDULES</h2>
+            <h2 className="friend-card-title">Schedule comparison</h2>
             <span className="friend-mode-badge">
               {isAllMode
                 ? `You + All (${friends.length})`

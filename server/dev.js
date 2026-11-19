@@ -6,6 +6,7 @@ import sync from "../api/sync.js";
 import calendar from "../api/calendar.js";
 import overview from "../api/overview.js";
 import hostelLeave from "../api/hostel-leave.js";
+import admin from "../api/admin.js";
 if (!process.env.SESSION_SECRET)
   process.env.SESSION_SECRET = randomBytes(32).toString("base64");
 const vite = await createViteServer({
@@ -19,6 +20,7 @@ const server = createServer((req, res) => {
   if (path === "/api/calendar") return void calendar(req, res);
   if (path === "/api/overview") return void overview(req, res);
   if (path === "/api/hostel-leave") return void hostelLeave(req, res);
+  if (path === "/api/admin") return void admin(req, res);
   if (path.startsWith("/api/")) {
     res.writeHead(404, { "Content-Type": "application/json" });
     return res.end('{"message":"Not found"}');

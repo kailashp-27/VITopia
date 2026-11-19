@@ -4,6 +4,7 @@ import {
   ArrowRight,
   BarChart3,
   BookOpen,
+  CalendarCheck2,
   CalendarDays,
   Download,
   Home,
@@ -19,10 +20,17 @@ import Sync from "./screens/Sync.jsx";
 import Overview from "./screens/Overview.jsx";
 import Login from "./screens/Login.jsx";
 import { Calculator, CourseTable, Marks } from "./components/Academic.jsx";
+import ScreenSkeleton from "./components/ScreenSkeleton.jsx";
+import AdminConsole from "./components/AdminConsole.jsx";
 import { clearLogin, readLogin } from "./credentials.js";
 import { clearEvents } from "./events.js";
 import { clearCache, readCache, saveCache } from "./db.js";
-import { fetchCalendar } from "./api-client.js";
+import { fetchCalendar, pingTelemetry } from "./api-client.js";
+import {
+  filterCalendarForCategory,
+  getSavedCalendarCategory,
+  saveCalendarCategory,
+} from "./calendar-utils.js";
 import { demo } from "./demo.js";
 import { unreadMarksCourses } from "./marks-updates.js";
 import {
@@ -47,6 +55,7 @@ const Simulator = lazy(() => import("./screens/Simulator.jsx"));
 const HostelLeave = lazy(() => import("./screens/HostelLeave.jsx"));
 const CgpaCalculator = lazy(() => import("./screens/CgpaCalculator.jsx"));
 const ShareTimetable = lazy(() => import("./screens/ShareTimetable.jsx"));
+const AttendanceMatrix = lazy(() => import("./screens/AttendanceMatrix.jsx"));
 const QuickSyncModal = lazy(() => import("./components/QuickSyncModal.jsx"));
 const NAV = [
   { id: "overview", label: "Home", title: "Overview", icon: Home },
@@ -56,7 +65,12 @@ const NAV = [
     title: "Attendance",
     icon: BarChart3,
   },
-  { id: "calendar", label: "Calendar", title: "Calendar", icon: CalendarDays },
+  {
+    id: "simulator",
+    label: "Simulator",
+    title: "Attendance Simulator",
+    icon: CalendarCheck2,
+  },
   { id: "marks", label: "Marks", title: "Marks", icon: BookOpen },
   { id: "profile", label: "Profile", title: "Profile", icon: UserRound },
 ];
@@ -94,8 +108,18 @@ export default function App() {
   const [authHold, setAuthHold] = useState(false);
   const [sessionToken, setSessionToken] = useState(null);
   const [calendarBusy, setCalendarBusy] = useState(false);
+  const [calendarCategory, setCalendarCategory] = useState(
+    getSavedCalendarCategory,
+  );
+  const categoryData = data?.calendar
+    ? {
+        ...data,
+        calendar: filterCalendarForCategory(data.calendar, calendarCategory),
+      }
+    : data;
   const [quickSyncOpen, setQuickSyncOpen] = useState(false);
   const [quickSyncBusy, setQuickSyncBusy] = useState(false);
+  const [keyboardOpen, setKeyboardOpen] = useState(false);
   const [pendingTarget, setPendingTarget] = useState(null);
   const [widgetStatus, setWidgetStatus] = useState("");
   const [nativeVersion, setNativeVersion] = useState(null);
@@ -135,7 +159,7 @@ export default function App() {
     "settings",
     "courses",
     "exams",
-    "simulator",
+    "attendance-matrix",
     "cgpa-calculator",
     "share-timetable",
     "hostel-leave",
@@ -211,11 +235,13 @@ export default function App() {
   const currentPage =
     {
       settings: { title: "Settings" },
+      calendar: { title: "Calendar" },
       courses: { title: "Course list" },
       exams: { title: "Exam schedule" },
+      "attendance-matrix": { title: "Attendance Matrix" },
       simulator: { title: "Attendance Simulator" },
-      "cgpa-calculator": { title: "CGPA Predictor & Targeter" },
-      "share-timetable": { title: "Friend’s Timetable" },
+      "cgpa-calculator": { title: "CGPA Predictor" },
+      "share-timetable": { title: "Friends’ Schedule" },
       "hostel-leave": { title: "Hostel leave" },
       "widget-customization": { title: "Timetable widget" },
       "theme-customization": { title: "Appearance & Theme" },
@@ -255,6 +281,69 @@ export default function App() {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
   }, [screen]);
+  useEffect(() => {
+    const isTextEntry = (el) => {
+      if (!el || el.disabled || el.readOnly) return false;
+      const tag = (el.tagName || "").toLowerCase();
+      if (tag === "textarea") return true;
+      if (tag !== "input") return false;
+      const type = (el.getAttribute("type") || "text").toLowerCase();
+      return ![
+        "button",
+        "submit",
+        "reset",
+        "checkbox",
+        "radio",
+        "range",
+        "color",
+        "file",
+        "date",
+        "time",
+        "hidden",
+      ].includes(type);
+    };
+
+    const syncKeyboardState = () => {
+      const activeIsText = isTextEntry(document.activeElement);
+      const vv = window.visualViewport;
+      const viewportShrunk = Boolean(
+        vv && window.innerHeight > 0 && vv.height < window.innerHeight * 0.8,
+      );
+      setKeyboardOpen(activeIsText || viewportShrunk);
+    };
+
+    let blurTimer = null;
+    const onFocusIn = (e) => {
+      if (blurTimer) {
+        clearTimeout(blurTimer);
+        blurTimer = null;
+      }
+      if (isTextEntry(e.target)) {
+        setKeyboardOpen(true);
+        if (e.target.name === "captcha") {
+          setTimeout(() => {
+            try {
+              e.target.scrollIntoView({ block: "center", behavior: "smooth" });
+            } catch {}
+          }, 140);
+        }
+      }
+    };
+    const onFocusOut = () => {
+      if (blurTimer) clearTimeout(blurTimer);
+      blurTimer = setTimeout(syncKeyboardState, 120);
+    };
+
+    document.addEventListener("focusin", onFocusIn, true);
+    document.addEventListener("focusout", onFocusOut, true);
+    window.visualViewport?.addEventListener("resize", syncKeyboardState);
+    return () => {
+      if (blurTimer) clearTimeout(blurTimer);
+      document.removeEventListener("focusin", onFocusIn, true);
+      document.removeEventListener("focusout", onFocusOut, true);
+      window.visualViewport?.removeEventListener("resize", syncKeyboardState);
+    };
+  }, []);
   useEffect(() => {
     if (screen !== "marks" || demoMode) {
       setMarksHighlights([]);
@@ -314,6 +403,18 @@ export default function App() {
     if (!ready || !isNativeApp) return;
     void pushWidgetSnapshot(data, demoMode);
   }, [ready, isNativeApp, data, demoMode]);
+  useEffect(() => {
+    if (!ready || demoMode) return;
+    const name = data?.overview?.profile?.name;
+    if (!name || typeof name !== "string") return;
+    try {
+      const lastPing = sessionStorage.getItem("vtopia_tp");
+      if (!lastPing || Date.now() - Number(lastPing) > 15 * 60 * 1000) {
+        sessionStorage.setItem("vtopia_tp", String(Date.now()));
+        void pingTelemetry(name);
+      }
+    } catch {}
+  }, [ready, demoMode, data?.overview?.profile?.name]);
   async function runAppUpdateCheck(versionInfo) {
     const info = versionInfo || nativeVersion;
     if (!info?.versionCode) return null;
@@ -609,7 +710,9 @@ export default function App() {
   }
 
   return (
-    <div className="app-shell compact-app">
+    <div
+      className={`app-shell compact-app ${keyboardOpen ? "keyboard-open" : ""}`}
+    >
       <a className="skip-link" href="#main">
         Skip to content
       </a>
@@ -618,9 +721,10 @@ export default function App() {
           <div className="page-title">
             {[
               "settings",
+              "calendar",
               "courses",
               "exams",
-              "simulator",
+              "attendance-matrix",
               "cgpa-calculator",
               "hostel-leave",
               "widget-customization",
@@ -645,6 +749,16 @@ export default function App() {
                 <WifiOff size={15} />
                 <span className="sr-only">Offline</span>
               </span>
+            ) : null}
+            {screen === "overview" ? (
+              <button
+                type="button"
+                className="header-icon"
+                aria-label="Open academic calendar"
+                onClick={() => navigateTo("calendar")}
+              >
+                <CalendarDays size={22} />
+              </button>
             ) : null}
             {screen !== "settings" ? (
               <>
@@ -712,10 +826,7 @@ export default function App() {
           </div>
         ) : null}
         {!ready ? (
-          <div className="empty-inline">
-            <LoaderCircle className="spinning" size={24} />
-            Loading…
-          </div>
+          <ScreenSkeleton cards={3} />
         ) : profilePages.includes(screen) ? (
           <div className="profile-screen">
             {screen !== "share-timetable" ? (
@@ -738,12 +849,7 @@ export default function App() {
             ) : null}
             {["profile", "courses", "exams", "widget-customization", "theme-customization", "details", "proctor", "settings"].includes(screen) ? (
               <Suspense
-                fallback={
-                  <div className="empty-inline">
-                    <LoaderCircle className="spinning" size={22} />
-                    Loading…
-                  </div>
-                }
+                fallback={<ScreenSkeleton cards={2} />}
               >
                 <ProfileDetails
                   data={data}
@@ -755,16 +861,9 @@ export default function App() {
                 />
               </Suspense>
             ) : null}
-            {screen === "simulator" ? (
-              <Suspense
-                fallback={
-                  <div className="empty-inline">
-                    <LoaderCircle className="spinning" size={22} />
-                    Loading…
-                  </div>
-                }
-              >
-                <Simulator
+            {screen === "attendance-matrix" ? (
+              <Suspense fallback={<ScreenSkeleton cards={2} />}>
+                <AttendanceMatrix
                   key={`${demoMode}-${data?.semester?.id}`}
                   data={data}
                 />
@@ -772,12 +871,7 @@ export default function App() {
             ) : null}
             {screen === "cgpa-calculator" ? (
               <Suspense
-                fallback={
-                  <div className="empty-inline">
-                    <LoaderCircle className="spinning" size={22} />
-                    Loading…
-                  </div>
-                }
+                fallback={<ScreenSkeleton cards={2} />}
               >
                 <CgpaCalculator
                   key={`${demoMode}-${data?.semester?.id}-${data?.overview?.profile?.registration || ""}`}
@@ -789,12 +883,7 @@ export default function App() {
             ) : null}
             {screen === "share-timetable" ? (
               <Suspense
-                fallback={
-                  <div className="empty-inline">
-                    <LoaderCircle className="spinning" size={22} />
-                    Loading…
-                  </div>
-                }
+                fallback={<ScreenSkeleton cards={2} />}
               >
                 <ShareTimetable
                   data={data}
@@ -806,12 +895,7 @@ export default function App() {
             ) : null}
             {screen === "hostel-leave" ? (
               <Suspense
-                fallback={
-                  <div className="empty-inline">
-                    <LoaderCircle className="spinning" size={22} />
-                    Loading…
-                  </div>
-                }
+                fallback={<ScreenSkeleton cards={2} />}
               >
                 <HostelLeave
                   data={data}
@@ -909,12 +993,12 @@ export default function App() {
                   <div className="settings-version-row">
                     <div>
                       <strong>
-                        Vtopia v{nativeVersion?.versionName || "1.1.0"}
+                        Vtopia v{nativeVersion?.versionName || "1.2.0"}
                       </strong>
                       <span className="settings-update-meta">
                         {appUpdate
                           ? `Up to date · Build ${nativeVersion?.versionCode ?? appUpdate.versionCode}`
-                          : `Build ${nativeVersion?.versionCode ?? 3}`}
+                          : `Build ${nativeVersion?.versionCode ?? 4}`}
                       </span>
                     </div>
                     <button
@@ -942,41 +1026,43 @@ export default function App() {
               </button>
             ) : null}
             {screen === "settings" ? (
-              <footer className="author-credit">
-                <a
-                  href="https://github.com/kailashp-27"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="author-badge"
-                  title="View Kailash's GitHub profile"
-                >
-                  <span>Developed by Kailash</span>
-                  <svg
-                    className="github-icon"
-                    viewBox="0 0 24 24"
-                    width="16"
-                    height="16"
-                    fill="currentColor"
-                    aria-hidden="true"
+              <>
+                <footer className="author-credit">
+                  <a
+                    href="https://github.com/kailashp-27"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="author-badge"
+                    title="View Kailash's GitHub profile"
                   >
-                    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
-                  </svg>
-                </a>
-              </footer>
+                    <span>Developed by Kailash</span>
+                    <svg
+                      className="github-icon"
+                      viewBox="0 0 24 24"
+                      width="16"
+                      height="16"
+                      fill="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+                    </svg>
+                  </a>
+                </footer>
+                <AdminConsole />
+              </>
             ) : null}
           </div>
         ) : screen === "calendar" ? (
           <Suspense
-            fallback={
-              <div className="empty-inline">
-                <LoaderCircle className="spinning" size={22} />
-                Loading…
-              </div>
-            }
+            fallback={<ScreenSkeleton cards={3} />}
           >
             <Calendar
               calendar={data?.calendar}
               demoMode={demoMode}
+              category={calendarCategory}
+              onCategoryChange={(next) =>
+                setCalendarCategory(saveCalendarCategory(next))
+              }
               onSync={() => navigateTo("profile")}
             />
           </Suspense>
@@ -1023,7 +1109,7 @@ export default function App() {
               </div>
             ) : null}
             <Overview
-              data={data}
+              data={categoryData}
               onNavigate={navigateTo}
               onCalculate={openCalculator}
               timetableWidget={timetableWidget}
@@ -1034,18 +1120,41 @@ export default function App() {
             <CourseTable
               courses={data.attendance}
               target={75}
-              onOpen={openCalculator}
+              attendanceHistory={data.overview?.attendanceHistory}
+              timetable={categoryData?.overview?.timetable}
+              calendar={categoryData?.calendar}
             />
           ) : (
             <div className="empty-inline">No attendance published.</div>
           )
+        ) : screen === "simulator" ? (
+          <Suspense
+            fallback={<ScreenSkeleton cards={3} />}
+          >
+            <Simulator
+              key={`${demoMode}-${data?.semester?.id}-${calendarCategory}`}
+              data={categoryData}
+            />
+          </Suspense>
         ) : (
-          <Marks data={data} newCourseKeys={marksHighlights} />
+          <Marks
+            data={data}
+            newCourseKeys={marksHighlights}
+            onOpenCourses={() => navigateTo("courses")}
+          />
         )}
         {data &&
-        screen !== "calendar" &&
-        screen !== "profile" &&
-        screen !== "settings" ? (
+        ![
+          "calendar",
+          "profile",
+          "settings",
+          "overview",
+          "details",
+          "simulator",
+          "share-timetable",
+          "cgpa-calculator",
+          "attendance-matrix",
+        ].includes(screen) ? (
           <div className="semester-line">
             <span>{data.semester?.name || "Your semester"}</span>
             <span className="last-sync">
@@ -1068,7 +1177,8 @@ export default function App() {
             }
             className={
               screen === id ||
-              (profilePages.includes(screen) && id === "profile")
+              (profilePages.includes(screen) && id === "profile") ||
+              (screen === "calendar" && id === "overview")
                 ? "active"
                 : ""
             }

@@ -1,6 +1,6 @@
 {
-  "versionCode": 3,
-  "versionName": "1.1.0",
+  "versionCode": 4,
+  "versionName": "1.2.0",
   "downloadUrl": "https://github.com/kailashp-27/VITopia/releases/latest",
-  "releaseNotes": "In-app APK update checker in Settings, subtle native haptics, and smooth subsection transitions."
+  "releaseNotes": "Hostel leave application directly to VTOP, Attendance Matrix, 6 new themes, next 3 classes simulator per subject, upgraded captcha solver, and performance optimizations."
 }

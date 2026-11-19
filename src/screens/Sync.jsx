@@ -84,7 +84,8 @@ export default function Sync({
         page === "theme-customization" ||
         page === "details" ||
         page === "proctor" ||
-        page === "cgpa-calculator"
+        page === "cgpa-calculator" ||
+        page === "attendance-matrix"
       }
       className={settings ? "sync-layout account-settings" : "sync-layout"}
     >

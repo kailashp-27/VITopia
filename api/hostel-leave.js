@@ -3,7 +3,7 @@ import { sealSession, unsealSession } from "../lib/session.js";
 import { prepare, readBody, sendError } from "../lib/http.js";
 import { rateLimit } from "../lib/rate-limit.js";
 import { AppError } from "../lib/errors.js";
-import { fetchHostelLeave } from "../lib/hostel-leave.js";
+import { fetchHostelLeave, applyHostelLeave } from "../lib/hostel-leave.js";
 
 export function createLeaveHandler(
   clientFactory = (session) => new VtopClient(session),
@@ -21,6 +21,23 @@ export function createLeaveHandler(
           401,
         );
       const client = clientFactory(session);
+
+      if (body?.action === "apply") {
+        const result = await applyHostelLeave(client, body.application);
+        const leave = await fetchHostelLeave(client);
+        res.setHeader("Content-Type", "application/json");
+        res.end(
+          JSON.stringify({
+            success: true,
+            message:
+              result.message || "Leave application submitted successfully.",
+            leave,
+            token: sealSession(client.snapshot()),
+          }),
+        );
+        return;
+      }
+
       const leave = await fetchHostelLeave(client);
       res.setHeader("Content-Type", "application/json");
       res.end(JSON.stringify({ leave, token: sealSession(client.snapshot()) }));

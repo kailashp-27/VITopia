@@ -45,6 +45,100 @@ export const demo = {
       hours: 4,
       limit: 40,
       unit: "class hours",
+      items: [
+        {
+          date: "09-Nov-2026",
+          courseCode: "BCSE302L",
+          courseTitle: "Database Management Systems",
+          slot: "A1",
+          timing: "MON, 08:00 - 08:50",
+          hours: 1,
+          status: "On Duty",
+        },
+        {
+          date: "10-Nov-2026",
+          courseCode: "BCSE302P",
+          courseTitle: "Database Management Systems Lab",
+          slot: "L3+L4",
+          timing: "TUE, 09:50 - 11:30",
+          hours: 2,
+          status: "On Duty",
+        },
+        {
+          date: "11-Nov-2026",
+          courseCode: "BMAT201L",
+          courseTitle: "Probability and Statistics",
+          slot: "C1",
+          timing: "WED, 11:00 - 11:50",
+          hours: 1,
+          status: "On Duty",
+        },
+      ],
+    },
+    attendanceHistory: {
+      available: true,
+      byCourse: {
+        "BCSE302L::A1": {
+          code: "BCSE302L",
+          slot: "A1",
+          records: [
+            { date: "02-Nov-2026", slot: "A1", timing: "MON, 08:00 - 08:50", status: "Present", kind: "present", hours: 1 },
+            { date: "04-Nov-2026", slot: "A1", timing: "WED, 09:00 - 09:50", status: "Present", kind: "present", hours: 1 },
+            { date: "06-Nov-2026", slot: "TA1", timing: "FRI, 10:00 - 10:50", status: "Absent", kind: "absent", hours: 1 },
+            { date: "09-Nov-2026", slot: "A1", timing: "MON, 08:00 - 08:50", status: "On Duty", kind: "od", rawStatus: "On Duty", hours: 1 },
+            { date: "11-Nov-2026", slot: "A1", timing: "WED, 09:00 - 09:50", status: "Present", kind: "present", hours: 1 },
+            { date: "13-Nov-2026", slot: "TA1", timing: "FRI, 10:00 - 10:50", status: "Present", kind: "present", hours: 1 },
+          ],
+        },
+        "BCSE303L::B1": {
+          code: "BCSE303L",
+          slot: "B1",
+          records: [
+            { date: "03-Nov-2026", slot: "B1", timing: "TUE, 08:00 - 08:50", status: "Present", kind: "present", hours: 1 },
+            { date: "05-Nov-2026", slot: "B1", timing: "THU, 09:00 - 09:50", status: "Absent", kind: "absent", hours: 1 },
+            { date: "10-Nov-2026", slot: "B1", timing: "TUE, 08:00 - 08:50", status: "Present", kind: "present", hours: 1 },
+            { date: "12-Nov-2026", slot: "B1", timing: "THU, 09:00 - 09:50", status: "Present", kind: "present", hours: 1 },
+          ],
+        },
+        "BMAT201L::C1": {
+          code: "BMAT201L",
+          slot: "C1",
+          records: [
+            { date: "02-Nov-2026", slot: "C1", timing: "MON, 10:00 - 10:50", status: "Absent", kind: "absent", hours: 1 },
+            { date: "04-Nov-2026", slot: "C1", timing: "WED, 11:00 - 11:50", status: "Absent", kind: "absent", hours: 1 },
+            { date: "06-Nov-2026", slot: "TC1", timing: "FRI, 12:00 - 12:50", status: "Present", kind: "present", hours: 1 },
+            { date: "09-Nov-2026", slot: "C1", timing: "MON, 10:00 - 10:50", status: "Present", kind: "present", hours: 1 },
+            { date: "11-Nov-2026", slot: "C1", timing: "WED, 11:00 - 11:50", status: "On Duty", kind: "od", rawStatus: "On Duty", hours: 1 },
+            { date: "13-Nov-2026", slot: "TC1", timing: "FRI, 12:00 - 12:50", status: "Present", kind: "present", hours: 1 },
+          ],
+        },
+        "BCSE308L::D1": {
+          code: "BCSE308L",
+          slot: "D1",
+          records: [
+            { date: "03-Nov-2026", slot: "D1", timing: "TUE, 10:00 - 10:50", status: "Present", kind: "present", hours: 1 },
+            { date: "05-Nov-2026", slot: "D1", timing: "THU, 11:00 - 11:50", status: "Present", kind: "present", hours: 1 },
+            { date: "10-Nov-2026", slot: "D1", timing: "TUE, 10:00 - 10:50", status: "Present", kind: "present", hours: 1 },
+          ],
+        },
+        "BCSE302P::L3+L4": {
+          code: "BCSE302P",
+          slot: "L3+L4",
+          records: [
+            { date: "03-Nov-2026", slot: "L3+L4", timing: "TUE, 09:50 - 11:30", status: "Present", kind: "present", hours: 2 },
+            { date: "10-Nov-2026", slot: "L3+L4", timing: "TUE, 09:50 - 11:30", status: "On Duty", kind: "od", rawStatus: "On Duty", hours: 2 },
+          ],
+        },
+        "BENG101L::E1": {
+          code: "BENG101L",
+          slot: "E1",
+          records: [
+            { date: "04-Nov-2026", slot: "E1", timing: "WED, 12:00 - 12:50", status: "Present", kind: "present", hours: 1 },
+            { date: "06-Nov-2026", slot: "E1", timing: "FRI, 09:00 - 09:50", status: "Present", kind: "present", hours: 1 },
+            { date: "11-Nov-2026", slot: "E1", timing: "WED, 12:00 - 12:50", status: "Absent", kind: "absent", hours: 1 },
+          ],
+        },
+      },
     },
     courses: [
       {
@@ -213,11 +307,45 @@ export const demo = {
         label: "No instructional day",
         dayOrder: null,
       },
+      ...[2, 3, 4, 5, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 23, 24, 25, 26, 27, 30].map(
+        (day) => ({
+          date: `2026-11-${String(day).padStart(2, "0")}`,
+          instructional: true,
+          label: "",
+          dayOrder: null,
+        }),
+      ),
       {
         date: "2026-11-06",
         instructional: false,
         label: "Diwali holidays (sample)",
         dayOrder: null,
+      },
+      {
+        date: "2026-11-07",
+        instructional: true,
+        label:
+          "General - Wednesday Day Order / General Flexible - Holiday / Fresher - Thursday Day Order",
+        dayOrder: "Wednesday",
+      },
+      {
+        date: "2026-11-14",
+        instructional: true,
+        label: "General Flexible - Wednesday Day Order",
+        dayOrder: "Wednesday",
+      },
+      {
+        date: "2026-11-21",
+        instructional: true,
+        label:
+          "General - Thursday Day Order / General Flexible - Thursday Day Order / Fresher - Holiday",
+        dayOrder: "Thursday",
+      },
+      {
+        date: "2026-11-28",
+        instructional: true,
+        label: "Fresher - Friday Day Order",
+        dayOrder: "Friday",
       },
     ],
   },

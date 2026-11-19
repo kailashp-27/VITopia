@@ -10,20 +10,39 @@ import {
   CalendarCheck,
 } from "lucide-react";
 import {
+  CALENDAR_CATEGORIES,
+  getSavedCalendarCategory,
+  saveCalendarCategory,
+  resolveDayForCategory,
+  workingSaturdaysForMonth,
   monthGrid,
   moveMonth,
   monthLabel,
   todayISO,
-  academicDayStatus,
   reminderCountdown,
 } from "../calendar-utils.js";
 import { addEvent, readEvents, removeEvent } from "../events.js";
 import { useBackOverlay } from "../hooks/useBackOverlay.js";
+import { triggerLightHaptic } from "../native-bridge.js";
 const WEEK = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-export default function Calendar({ calendar, onSync, demoMode }) {
+export default function Calendar({
+  calendar,
+  onSync,
+  demoMode,
+  category,
+  onCategoryChange,
+}) {
   const today = todayISO();
   const [month, setMonth] = useState(today.slice(0, 7));
   const [selected, setSelected] = useState(today);
+  const [localCategory, setLocalCategory] = useState(getSavedCalendarCategory);
+  const activeCategory = category || localCategory;
+  const handleCategoryChange = (nextCategory) => {
+    void triggerLightHaptic();
+    const saved = saveCalendarCategory(nextCategory);
+    setLocalCategory(saved);
+    if (onCategoryChange) onCategoryChange(saved);
+  };
   const [events, setEvents] = useState([]);
   const [adding, setAdding] = useState(false);
   useBackOverlay(adding, () => setAdding(false));
@@ -81,9 +100,17 @@ export default function Calendar({ calendar, onSync, demoMode }) {
   const academic = new Map(
     (calendar?.days || []).map((day) => [
       day.date,
-      { ...day, status: academicDayStatus(day) },
+      resolveDayForCategory(day, activeCategory),
     ]),
   );
+  const workingSaturdays = workingSaturdaysForMonth(
+    calendar,
+    month,
+    activeCategory,
+  );
+  const activeCategoryLabel =
+    CALENDAR_CATEGORIES.find((c) => c.id === activeCategory)?.label ||
+    "General";
   const personal = events.filter((event) => event.date === selected);
   const selectedDay = academic.get(selected);
   function changeMonth(delta) {
@@ -121,6 +148,23 @@ export default function Calendar({ calendar, onSync, demoMode }) {
   }
   return (
     <div className="calendar-screen">
+      <div
+        className="calendar-category-bar"
+        role="group"
+        aria-label="Academic calendar category"
+      >
+        {CALENDAR_CATEGORIES.map((cat) => (
+          <button
+            key={cat.id}
+            type="button"
+            aria-pressed={activeCategory === cat.id}
+            className={`calendar-category-pill ${activeCategory === cat.id ? "active" : ""}`}
+            onClick={() => handleCategoryChange(cat.id)}
+          >
+            {cat.label}
+          </button>
+        ))}
+      </div>
       <section className="calendar-card">
         <div className="calendar-month">
           <button
@@ -153,7 +197,7 @@ export default function Calendar({ calendar, onSync, demoMode }) {
             return (
               <button
                 key={date}
-                aria-label={`${date}, ${status === "working" ? "Working day" : status === "holiday" ? "Holiday / no classes" : "Academic status not synced"}${day?.label ? `, ${day.label}` : ""}${hasReminder ? ", Reminder" : ""}`}
+                aria-label={`${date}, ${status === "working" ? "Working day" : status === "holiday" ? "Holiday / no classes" : "Academic status not synced"}${day?.dayOrder ? `, ${day.dayOrder} day order` : ""}${day?.label ? `, ${day.label}` : ""}${hasReminder ? ", Reminder" : ""}`}
                 aria-pressed={date === selected}
                 aria-current={date === today ? "date" : undefined}
                 className={`${status} ${date === selected ? "selected" : ""} ${date === today ? "today" : ""}`}
@@ -184,6 +228,46 @@ export default function Calendar({ calendar, onSync, demoMode }) {
           <Bell size={12} /> Reminder
         </span>
       </div>
+      {workingSaturdays.length ? (
+        <section
+          className="calendar-working-saturdays"
+          aria-label={`Working Saturdays for ${activeCategoryLabel}`}
+        >
+          <div className="working-saturdays-head">
+            <h3>Working Saturdays</h3>
+            <span className="working-saturdays-cat">{activeCategoryLabel}</span>
+          </div>
+          <div className="working-saturdays-list">
+            {workingSaturdays.map((sat) => {
+              const labelDate = new Date(`${sat.date}T12:00:00Z`).toLocaleDateString(
+                "en-IN",
+                {
+                  day: "numeric",
+                  month: "short",
+                  timeZone: "Asia/Kolkata",
+                },
+              );
+              return (
+                <button
+                  key={sat.date}
+                  type="button"
+                  className={`working-saturday-row ${selected === sat.date ? "selected" : ""}`}
+                  onClick={() => setSelected(sat.date)}
+                >
+                  <span className="working-saturday-date">
+                    Sat, {labelDate}
+                  </span>
+                  <span className="working-saturday-order">
+                    {sat.dayOrder
+                      ? `${sat.dayOrder} order`
+                      : sat.label || "Working day"}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </section>
+      ) : null}
       <button
         className="add-event"
         ref={reminderTrigger}

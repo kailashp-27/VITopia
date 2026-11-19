@@ -23,13 +23,16 @@ import {
   Sun,
   User,
   UserCheck,
+  X,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { findFacultyCabin } from "../faculty-cabins.js";
 import { readFacultyCabins, saveFacultyCabins } from "../db.js";
 import { getExamCountdown } from "../exam-utils.js";
 import { demo } from "../demo.js";
 import { THEMES, applyTheme, getSavedThemeId } from "../theme.js";
+import { useBackOverlay } from "../hooks/useBackOverlay.js";
+import { triggerLightHaptic } from "../native-bridge.js";
 
 function inferBranchFromReg(reg) {
   if (typeof reg !== "string" || !reg) return "";
@@ -73,7 +76,7 @@ function inferYearFromReg(reg) {
 
 function renderPreviewWidget(widgetType) {
   if (widgetType === "attendance") {
-    return <span className="class-widget attendance-widget">85.0%</span>;
+    return <span className="class-widget attendance-widget good">85.0%</span>;
   }
   if (widgetType === "venue") {
     return (
@@ -94,7 +97,7 @@ const WIDGET_OPTIONS = [
     id: "attendance",
     label: "Course Attendance",
     description: "Current course attendance percentage",
-    sample: <span className="class-widget attendance-widget">85.0%</span>,
+    sample: <span className="class-widget attendance-widget good">85.0%</span>,
   },
   {
     id: "venue",
@@ -348,26 +351,17 @@ export default function ProfileDetails({
     <div className="profile-details">
       {page === "profile" ? (
         <nav className="profile-page-list" aria-label="Profile sections">
-          <button onClick={() => onNavigate("proctor")}>
-            Proctor information <span aria-hidden="true">›</span>
-          </button>
-          <button onClick={() => onNavigate("courses")}>
-            Course list <span aria-hidden="true">›</span>
-          </button>
           <button onClick={() => onNavigate("exams")}>
             Exam schedule <span aria-hidden="true">›</span>
           </button>
-          <button onClick={() => onNavigate("share-timetable")}>
-            Friend’s timetable & QR sharing <span aria-hidden="true">›</span>
+          <button onClick={() => onNavigate("attendance-matrix")}>
+            Attendance matrix <span aria-hidden="true">›</span>
           </button>
-          <button onClick={() => onNavigate("simulator")}>
-            Attendance Simulator <span aria-hidden="true">›</span>
+          <button onClick={() => onNavigate("share-timetable")}>
+            Friends’ schedule <span aria-hidden="true">›</span>
           </button>
           <button onClick={() => onNavigate("cgpa-calculator")}>
-            CGPA Predictor & Targeter <span aria-hidden="true">›</span>
-          </button>
-          <button onClick={() => onNavigate("hostel-leave")}>
-            Hostel leave <span aria-hidden="true">›</span>
+            CGPA predictor <span aria-hidden="true">›</span>
           </button>
           <button onClick={() => onNavigate("settings")}>
             Settings <span aria-hidden="true">›</span>
@@ -549,6 +543,12 @@ export default function ProfileDetails({
               onClick={() => onNavigate("theme-customization")}
             >
               Appearance & Theme <span aria-hidden="true">›</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => onNavigate("hostel-leave")}
+            >
+              Hostel leave <span aria-hidden="true">›</span>
             </button>
           </nav>
         </section>

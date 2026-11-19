@@ -1,5 +1,20 @@
 import { overallAttendance } from "./calc.js";
-import { scheduleForDate } from "./schedule.js";
+import { clockToMinutes, scheduleForDate, shiftDate } from "./schedule.js";
+
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
+
+export function datesInRange(startISO, endISO, maxDays = 60) {
+  if (!ISO_DATE.test(startISO || "") || !ISO_DATE.test(endISO || "")) return [];
+  if (endISO < startISO) return [];
+  const limit = Math.max(1, Number(maxDays) || 60);
+  const dates = [];
+  let cursor = startISO;
+  while (cursor <= endISO && dates.length < limit) {
+    dates.push(cursor);
+    cursor = shiftDate(cursor, 1);
+  }
+  return dates;
+}
 
 export function sessionKey(date, item) {
   return [date, item.code, item.type, item.start, item.slot].join("|");
@@ -25,18 +40,37 @@ export function attendanceUnits(item) {
   return 1;
 }
 
-export function simulationDays(data, dates) {
+export function simulationDays(data, dates, options = {}) {
   const courses = data?.attendance || [];
-  return dates.map((date) => {
+  const { today = null, nowMinutes = null, omitFinishedToday = false } =
+    options || {};
+  const hasCutoff = Boolean(today && Number.isFinite(nowMinutes));
+  const result = [];
+  for (const date of dates) {
     const schedule = scheduleForDate(
       data?.overview?.timetable,
       data?.calendar,
       date,
     );
-    return {
+    const filteredClasses =
+      hasCutoff && date === today
+        ? schedule.classes.filter((item) => {
+            const startMin = clockToMinutes(item.start);
+            return startMin === null || startMin >= nowMinutes;
+          })
+        : schedule.classes;
+    if (
+      omitFinishedToday &&
+      hasCutoff &&
+      date === today &&
+      !filteredClasses.length
+    ) {
+      continue;
+    }
+    result.push({
       ...schedule,
       date,
-      classes: schedule.classes.map((item) => {
+      classes: filteredClasses.map((item) => {
         const matches = courses.filter((course) => course.code === item.code);
         return {
           ...item,
@@ -45,8 +79,9 @@ export function simulationDays(data, dates) {
           matched: matches.length === 1,
         };
       }),
-    };
-  });
+    });
+  }
+  return result;
 }
 
 export function simulateAttendance(courses, days, choices) {
@@ -87,4 +122,26 @@ export function simulateAttendance(courses, days, choices) {
     present: results.reduce((sum, c) => sum + c.present, 0),
     absent: results.reduce((sum, c) => sum + c.absent, 0),
   };
+}
+
+
+export function daySimulationState(day, choices = {}) {
+  if (!day || !day.available || day.holiday) return "empty";
+  const eligible = (day.classes || []).filter(
+    (item) => item.matched && !!item.units,
+  );
+  if (!eligible.length) return "empty";
+  let present = 0;
+  let absent = 0;
+  let ignore = 0;
+  for (const item of eligible) {
+    const status = choices[item.key] || "present";
+    if (status === "present") present++;
+    else if (status === "absent") absent++;
+    else ignore++;
+  }
+  if (present === eligible.length) return "all-present";
+  if (absent === eligible.length) return "all-absent";
+  if (ignore === eligible.length) return "all-ignore";
+  return "mixed";
 }

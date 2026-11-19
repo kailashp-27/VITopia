@@ -83,6 +83,42 @@ export async function fetchHostelLeave(token, signal) {
     throw apiError(result, "Hostel leave details could not be fetched.");
   return result;
 }
+export async function submitHostelLeave(token, application, signal) {
+  const response = await fetch(apiUrl("/api/hostel-leave"), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ token, action: "apply", application }),
+    signal,
+    cache: "no-store",
+  });
+  const result = await response.json();
+  if (!response.ok)
+    throw apiError(result, "Hostel leave application could not be submitted.");
+  return result;
+}
+export async function pingTelemetry(name) {
+  if (!name || typeof name !== "string") return;
+  try {
+    await fetch(apiUrl("/api/admin"), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "ping", name: name.trim() }),
+      cache: "no-store",
+    });
+  } catch {}
+}
+export async function fetchAdminUsers(pin, signal) {
+  const response = await fetch(apiUrl("/api/admin"), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action: "list", pin }),
+    signal,
+    cache: "no-store",
+  });
+  const result = await response.json();
+  if (!response.ok) throw apiError(result, "Admin access denied.");
+  return result;
+}
 export async function syncRequest(payload, onProgress, signal) {
   const response = await fetch(apiUrl("/api/sync"), {
     method: "POST",
