@@ -12,7 +12,6 @@ A modern, device-first VTOP companion for **VIT Chennai**, featuring an AMOLED B
 - 🎯 **Focused Overview Schedule**: Only the ongoing class (`Now`) is highlighted on the daily schedule; upcoming classes remain clean and distraction-free.
 - 🎨 **Expanded Theme Engine**: 10 themes including AMOLED Pure Black, Velvet Noir, Neon Cyberpunk, Forest Night, Crimson Red-Black, Mocha Brown, and 4 clean light palettes.
 - ⚡ **Enhanced Captcha Solver**: Upgraded sub-pixel offset alignment and multi-threshold contrast search for significantly higher first-attempt accuracy.
-- 🛡️ **Privacy-First Admin Console**: Hidden, silent 10-tap unlock with PIN verification (`27112006`) to view active user telemetry without tracking passwords, campus, or private student data.
 - 📲 **In-App APK Updater**: Automatic update detection in Settings that alerts installed Android app users when a new APK release is published on GitHub with one-tap updates.
 
 ---
