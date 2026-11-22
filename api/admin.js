@@ -14,6 +14,27 @@ const USERS_FILE = process.env.VERCEL
 const kvUrl = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
 const kvToken = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
 const firebaseUrl = process.env.FIREBASE_DATABASE_URL;
+const redisUrl = process.env.REDIS_URL;
+
+let redisClientPromise = null;
+async function getRedisClient() {
+  if (!redisUrl) return null;
+  if (!redisClientPromise) {
+    redisClientPromise = (async () => {
+      try {
+        const { createClient } = await import("@redis/client");
+        const client = createClient({ url: redisUrl });
+        client.on("error", (err) => console.warn("[Redis client error]", err?.message || err));
+        await client.connect();
+        return client;
+      } catch (err) {
+        console.warn("[Redis connection failed]", err?.message || err);
+        return null;
+      }
+    })();
+  }
+  return redisClientPromise;
+}
 
 export async function loadStore(store, loadRemote = (store === usersStore)) {
   if (!loadRemote) return;
@@ -67,6 +88,25 @@ export async function loadStore(store, loadRemote = (store === usersStore)) {
       }
     } catch {}
   }
+
+  // 3. Try Native Redis (REDIS_URL, e.g. rediss://...)
+  try {
+    const client = await getRedisClient();
+    if (client) {
+      const raw = await client.get("vtopia_users");
+      if (raw) {
+        const arr = JSON.parse(raw);
+        if (Array.isArray(arr)) {
+          for (const u of arr) {
+            if (u && (u.name || u.regNo)) {
+              const k = (u.regNo || u.name).toLowerCase().trim();
+              store.set(k, { ...u, id: k });
+            }
+          }
+        }
+      }
+    }
+  } catch {}
 
   // 3. Always merge from local disk store (e.g. .data/vtopia_users.json on localhost or /tmp on serverless)
   try {
@@ -137,6 +177,14 @@ export async function saveStore(store, saveRemote = (store === usersStore)) {
       });
     } catch {}
   }
+
+  // 3. Save to Native Redis (REDIS_URL, e.g. rediss://...)
+  try {
+    const client = await getRedisClient();
+    if (client) {
+      await client.set("vtopia_users", JSON.stringify(arr));
+    }
+  } catch {}
 
   // 3. Always persist to disk
   try {
@@ -238,6 +286,33 @@ export function createAdminHandler(store = usersStore) {
             users: list,
           }),
         );
+        return;
+      }
+
+      if (action === "delete") {
+        if (body?.pin !== ADMIN_PIN) {
+          throw new AppError("FORBIDDEN", "Invalid admin PIN.", 403);
+        }
+        const target = (body?.regNo || body?.name || body?.id || "").toLowerCase().trim();
+        if (!target) {
+          throw new AppError("BAD_REQUEST", "Registration number or name required to delete.", 400);
+        }
+        let deleted = false;
+        for (const [key, val] of Array.from(store.entries())) {
+          if (
+            key === target ||
+            (val.regNo && val.regNo.toLowerCase().trim() === target) ||
+            (val.name && val.name.toLowerCase().trim() === target)
+          ) {
+            store.delete(key);
+            deleted = true;
+          }
+        }
+        if (deleted) {
+          await saveStore(store);
+        }
+        res.setHeader("Content-Type", "application/json");
+        res.end(JSON.stringify({ success: true, deleted, total: store.size }));
         return;
       }
 
