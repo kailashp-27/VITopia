@@ -273,26 +273,6 @@ export function useVtopSync({
       } else setPassword("");
       await onData?.(result.data);
 
-      const earlyReg = (
-        payload?.username ||
-        username ||
-        result.data?.student?.registration ||
-        ""
-      ).trim().toUpperCase();
-      const earlyName = (
-        result.data?.student?.name ||
-        earlyReg ||
-        "Student"
-      ).trim();
-      if (earlyName || earlyReg) {
-        void pingTelemetry({
-          name: earlyName,
-          regNo: earlyReg,
-          isApp: false,
-          version: "1.2.0",
-        });
-      }
-
       let overviewFailed = false;
       setProgress("Fetching timetable, ODs and feedback status…");
       try {

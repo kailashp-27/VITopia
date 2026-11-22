@@ -213,18 +213,53 @@ export function createAdminHandler(store = usersStore) {
         }
 
         const key = (regNo || name).toLowerCase();
-        let existing = store.get(key);
-        if (!existing && name && regNo) {
-          const nameKey = name.toLowerCase();
-          if (store.has(nameKey)) {
-            existing = store.get(nameKey);
-            store.delete(nameKey);
+        
+        // Find existing record by regNo, name, or username prefix
+        let existingKey = null;
+        if (store.has(key)) {
+          existingKey = key;
+        } else {
+          for (const [k, v] of store.entries()) {
+            const vReg = (v.regNo || "").toLowerCase().trim();
+            const vName = (v.name || "").toLowerCase().trim();
+            const currentReg = regNo.toLowerCase().trim();
+            const currentName = name.toLowerCase().trim();
+
+            if (
+              (vReg && currentReg && vReg === currentReg) ||
+              (vName && currentName && vName === currentName) ||
+              (currentReg && vName.includes(currentReg)) ||
+              (vReg && currentName.includes(vReg))
+            ) {
+              existingKey = k;
+              break;
+            }
           }
         }
+
+        const existing = existingKey ? store.get(existingKey) : null;
+        if (existingKey && existingKey !== key) {
+          store.delete(existingKey);
+        }
+
+        // Prefer official registration format (e.g. 24BRS1382 over KAILASH1382)
+        const isOfficialReg = (r) => /^[0-9]{2}[A-Z]{3}[0-9]{4}$/i.test(r || "");
+        let finalRegNo = regNo || existing?.regNo || "";
+        if (existing?.regNo && isOfficialReg(existing.regNo) && !isOfficialReg(regNo)) {
+          finalRegNo = existing.regNo;
+        }
+
+        let finalName = name || existing?.name || "Student";
+        if (existing?.name && existing.name.length > finalName.length) {
+          finalName = existing.name;
+        }
+
+        const finalKey = (finalRegNo || finalName).toLowerCase();
+
         const record = {
-          id: key,
-          name: name || existing?.name || "Student",
-          regNo: regNo || existing?.regNo || "",
+          id: finalKey,
+          name: finalName,
+          regNo: finalRegNo,
           firstSeen: existing?.firstSeen || new Date().toISOString(),
           lastActive: new Date().toISOString(),
           loginCount: (existing?.loginCount || 0) + 1,
@@ -232,7 +267,7 @@ export function createAdminHandler(store = usersStore) {
           version: body?.version || existing?.version || "1.2.0",
         };
 
-        store.set(key, record);
+        store.set(finalKey, record);
         await saveStore(store);
 
         res.setHeader("Content-Type", "application/json");

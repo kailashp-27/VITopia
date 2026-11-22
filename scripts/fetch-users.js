@@ -103,7 +103,11 @@ function readLocalDb() {
 }
 
 function mergeUsers(existingList = [], incomingList = []) {
+  // If remote provided fresh data, remote is the single source of truth
+  const listToUse = (incomingList && incomingList.length > 0) ? incomingList : existingList;
   const map = new Map();
+
+  const isOfficialReg = (r) => /^[0-9]{2}[A-Z]{3}[0-9]{4}$/i.test(r || "");
 
   function findExistingKey(u) {
     const regKey = (u.regNo || "").trim().toUpperCase();
@@ -112,25 +116,32 @@ function mergeUsers(existingList = [], incomingList = []) {
     if (regKey && map.has(regKey)) return regKey;
     if (nameKey && map.has(nameKey)) return nameKey;
 
-    // Check if any existing entry has the same name
+    // Check if any existing entry has matching name or registration
     for (const [k, v] of map.entries()) {
       const vName = (v.name || "").trim().toUpperCase();
       const vReg = (v.regNo || "").trim().toUpperCase();
+
       if (regKey && vReg === regKey) return k;
       if (nameKey && vName === nameKey) return k;
+
+      // Smart match: check username patterns like KAILASH1382 vs KAILASH P / 24BRS1382
+      if (
+        (nameKey && vName.includes(nameKey)) ||
+        (nameKey && nameKey.includes(vName)) ||
+        (regKey && vReg.includes(regKey.slice(-4)))
+      ) {
+        return k;
+      }
     }
     return null;
   }
 
-  const combined = [...existingList, ...incomingList];
-
-  for (const u of combined) {
+  for (const u of listToUse) {
     const name = (u.name || "").trim();
     const regNo = (u.regNo || "").trim().toUpperCase();
     if (!name && !regNo) continue;
 
     const matchedKey = findExistingKey(u);
-    const targetKey = regNo || name.toUpperCase();
 
     if (matchedKey) {
       const prev = map.get(matchedKey);
@@ -139,16 +150,18 @@ function mergeUsers(existingList = [], incomingList = []) {
       const prevFirst = new Date(prev.firstSeen || Date.now()).getTime();
       const incFirst = new Date(u.firstSeen || Date.now()).getTime();
 
+      // Prefer official registration number over username
+      const preferredReg = isOfficialReg(regNo) ? regNo : (isOfficialReg(prev.regNo) ? prev.regNo : (regNo || prev.regNo));
+      const preferredName = (name && name.length >= (prev.name || "").length) ? name : (prev.name || name);
+      const targetKey = preferredReg || preferredName.toUpperCase();
+
       const merged = {
-        name: name || prev.name,
-        regNo: regNo || prev.regNo,
+        name: preferredName,
+        regNo: preferredReg,
         firstSeen: new Date(Math.min(prevFirst, incFirst)).toISOString(),
         lastActive: new Date(Math.max(prevActive, incActive)).toISOString(),
-        loginCount: Math.max(
-          (prev.loginCount || 1) + (u.loginCount || 1) - 1,
-          prev.loginCount || 1,
-          u.loginCount || 1,
-        ),
+        // Keep true count from remote rather than doubling
+        loginCount: Math.max(prev.loginCount || 1, u.loginCount || 1),
         platform: u.platform || prev.platform || "Web",
         version: u.version || prev.version || "1.2.0",
       };
@@ -158,6 +171,7 @@ function mergeUsers(existingList = [], incomingList = []) {
       }
       map.set(targetKey, merged);
     } else {
+      const targetKey = regNo || name.toUpperCase();
       map.set(targetKey, {
         name: name || "Unknown Student",
         regNo: regNo || "",
